@@ -106,7 +106,7 @@ export class DepartmentsService {
 
     await this.departmentsRepository.update(id, {
       ...dto,
-      updated_at: new Date(),
+      updatedAt: new Date(),
     });
 
     return this.findById(id, companyId);
@@ -118,7 +118,7 @@ export class DepartmentsService {
     // Soft delete by setting is_active to false
     await this.departmentsRepository.update(id, {
       is_active: false,
-      updated_at: new Date(),
+      updatedAt: new Date(),
     });
   }
 
@@ -136,4 +136,3 @@ export class DepartmentsService {
     };
   }
 }
-

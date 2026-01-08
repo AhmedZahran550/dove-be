@@ -107,7 +107,7 @@ export class ScheduleService {
   async getScheduleFiles(companyId: string): Promise<ScheduleFile[]> {
     return this.scheduleFileRepository.find({
       where: { company_id: companyId },
-      order: { created_at: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -127,4 +127,3 @@ export class ScheduleService {
     return this.findScheduleDataById(id, companyId);
   }
 }
-

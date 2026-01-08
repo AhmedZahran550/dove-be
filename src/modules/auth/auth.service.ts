@@ -37,9 +37,6 @@ export class AuthService {
       throw new BadRequestException('User with this email already exists');
     }
 
-    // Hash password
-    const passwordHash = await argon2.hash(dto.password);
-
     // Create company
     const nameParts = dto.fullName.split(' ');
     const firstName = nameParts[0];
@@ -72,24 +69,18 @@ export class AuthService {
     });
 
     const savedLocation = await this.locationsRepository.save(location);
-
-    // Create user (company admin)
-    const userId = uuidv4();
     const user = this.usersRepository.create({
-      id: userId,
-      company_id: savedCompany.id,
-      location_id: savedLocation.id,
+      companyId: savedCompany.id,
+      locationId: savedLocation.id,
       email: dto.email.toLowerCase(),
-      first_name: firstName,
-      last_name: lastName,
+      firstName: firstName,
+      lastName: lastName,
       phone: dto.phone,
       role: 'company_admin',
-      password_hash: passwordHash,
-      is_active: true,
+      password: dto.password,
+      isActive: true,
     });
-
     const savedUser = await this.usersRepository.save(user);
-
     // Generate tokens
     return this.generateTokens(savedUser);
   }
@@ -103,26 +94,23 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.password_hash) {
+    if (!user.password) {
       throw new UnauthorizedException('Please reset your password');
     }
 
-    const isPasswordValid = await argon2.verify(
-      user.password_hash,
-      dto.password,
-    );
+    const isPasswordValid = await argon2.verify(user.password, dto.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.is_active) {
+    if (!user.isActive) {
       throw new UnauthorizedException('Account is deactivated');
     }
 
     // Update last login
     await this.usersRepository.update(user.id, {
-      last_login_at: new Date(),
+      lastLoginAt: new Date(),
     });
 
     return this.generateTokens(user);
@@ -134,13 +122,9 @@ export class AuthService {
         secret: this.configService.get('jwt.refreshSecret'),
       });
 
-      const user = await this.usersRepository.findOne({
+      const user = await this.usersRepository.findOneOrFail({
         where: { id: payload.sub },
       });
-
-      if (!user || user.refresh_token !== refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
 
       return this.generateTokens(user);
     } catch (error) {
@@ -148,15 +132,11 @@ export class AuthService {
     }
   }
 
-  async logout(userId: string): Promise<void> {
-    await this.usersRepository.update(userId, {
-      refresh_token: undefined as any,
-    });
-  }
+  async logout(userId: string): Promise<void> {}
 
   async validateUser(userId: string): Promise<User | null> {
-    return this.usersRepository.findOne({
-      where: { id: userId, is_active: true },
+    return this.usersRepository.findOneOrFail({
+      where: { id: userId, isActive: true },
     });
   }
 
@@ -165,7 +145,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
-      company_id: user.company_id,
+      company_id: user.companyId,
     };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -178,21 +158,16 @@ export class AuthService {
       expiresIn: this.configService.get('jwt.refreshExpiresIn'),
     });
 
-    // Store refresh token
-    await this.usersRepository.update(user.id, {
-      refresh_token: refreshToken,
-    });
-
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
       user: {
         id: user.id,
         email: user.email,
-        first_name: user.first_name || '',
-        last_name: user.last_name || '',
+        first_name: user.firstName || '',
+        last_name: user.lastName || '',
         role: user.role,
-        company_id: user.company_id,
+        company_id: user.companyId,
       },
     };
   }
@@ -208,4 +183,3 @@ export class AuthService {
     return `${baseSlug}-${randomSuffix}`;
   }
 }
-

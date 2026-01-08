@@ -12,10 +12,7 @@ import {
   UpdateWorkOrderDto,
   CloseWorkOrderDto,
 } from './dto/work-order.dto';
-import {
-  PaginationQuery,
-  PaginatedResult,
-} from '../../common/types/pagination.types';
+import { PaginatedResult, PaginationQuery } from 'src/database';
 
 @Injectable()
 export class WorkOrdersService {
@@ -215,4 +212,3 @@ export class WorkOrdersService {
     return uuidRegex.test(str);
   }
 }
-

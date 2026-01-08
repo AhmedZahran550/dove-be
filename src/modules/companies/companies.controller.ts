@@ -2,7 +2,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('companies')
@@ -14,8 +14,7 @@ export class CompaniesController {
 
   @Get('current')
   @ApiOperation({ summary: 'Get current user company' })
-  async getCurrentCompany(@CurrentUser() user: User) {
-    return this.companiesService.findById(user.company_id);
+  async getCurrentCompany(@AuthUser() user: User) {
+    return this.companiesService.findById(user.companyId);
   }
 }
-

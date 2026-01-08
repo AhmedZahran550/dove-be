@@ -6,32 +6,33 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  BeforeUpdate,
+  BeforeInsert,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Company } from './company.entity';
 import { Location } from './location.entity';
+import * as argon from 'argon2';
+import { BaseEntity } from './base.entity';
 
 // User entity uses PrimaryColumn instead of PrimaryGeneratedColumn
 // because id comes from auth system, so we don't extend BaseEntity
 @Entity('user_profiles')
-export class User {
-  @PrimaryColumn('uuid')
-  id: string;
-
+export class User extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  location_id: string;
+  locationId: string;
 
   @Column({ length: 255, unique: true })
   email: string;
 
   @Column({ length: 100, nullable: true })
-  first_name: string;
+  firstName: string;
 
   @Column({ length: 100, nullable: true })
-  last_name: string;
+  lastName: string;
 
   @Column({ length: 50, default: 'operator' })
   role: string;
@@ -40,28 +41,18 @@ export class User {
   phone: string;
 
   @Column({ type: 'text', nullable: true })
-  avatar_url: string;
+  avatarUrl: string;
 
   @Column({ default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
-  last_login_at: Date;
-
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
+  lastLoginAt: Date;
 
   // Auth-specific fields
   @Column({ nullable: true })
   @Exclude()
-  password_hash: string;
-
-  @Column({ nullable: true })
-  @Exclude()
-  refresh_token: string;
+  password: string;
 
   // Relations
   @ManyToOne(() => Company, (company) => company.users)
@@ -71,4 +62,15 @@ export class User {
   @ManyToOne(() => Location, { nullable: true })
   @JoinColumn({ name: 'location_id' })
   location: Location;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async beforeChanges() {
+    if (this.password && this.password?.startsWith('$argon2')) {
+      return;
+    }
+    if (this.password) {
+      this.password = await argon.hash(this.password);
+    }
+  }
 }

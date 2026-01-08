@@ -25,8 +25,8 @@ import {
   CloseWorkOrderDto,
 } from './dto/work-order.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../database/entities';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 
 @ApiTags('work-orders')
 @Controller('work-orders')
@@ -44,9 +44,9 @@ export class WorkOrdersController {
   })
   async create(
     @Body() dto: CreateWorkOrderDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; message: string; data: WorkOrder }> {
-    const workOrder = await this.workOrdersService.create(user.company_id, dto);
+    const workOrder = await this.workOrdersService.create(user.companyId, dto);
     return {
       success: true,
       message: 'Work order started successfully',
@@ -63,9 +63,9 @@ export class WorkOrdersController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 20,
     @Query('sortBy') sortBy: string = 'created_at:DESC',
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ) {
-    return this.workOrdersService.findAll(user.company_id, {
+    return this.workOrdersService.findAll(user.companyId, {
       page,
       limit,
       sortBy,
@@ -74,8 +74,8 @@ export class WorkOrdersController {
 
   @Get('active')
   @ApiOperation({ summary: 'Get all active (unclosed) work orders' })
-  async findActive(@CurrentUser() user: User): Promise<WorkOrder[]> {
-    return this.workOrdersService.findActive(user.company_id);
+  async findActive(@AuthUser() user: User): Promise<WorkOrder[]> {
+    return this.workOrdersService.findActive(user.companyId);
   }
 
   @Get(':id')
@@ -84,9 +84,9 @@ export class WorkOrdersController {
   @ApiResponse({ status: 404, description: 'Work order not found' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<WorkOrder> {
-    return this.workOrdersService.findById(id, user.company_id);
+    return this.workOrdersService.findById(id, user.companyId);
   }
 
   @Patch(':id')
@@ -94,9 +94,9 @@ export class WorkOrdersController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateWorkOrderDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<WorkOrder> {
-    return this.workOrdersService.update(id, user.company_id, dto, user.id);
+    return this.workOrdersService.update(id, user.companyId, dto, user.id);
   }
 
   @Post(':id/close')
@@ -104,11 +104,11 @@ export class WorkOrdersController {
   async close(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CloseWorkOrderDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; message: string; data: WorkOrder }> {
     const workOrder = await this.workOrdersService.close(
       id,
-      user.company_id,
+      user.companyId,
       dto,
       user.id,
     );
@@ -124,13 +124,12 @@ export class WorkOrdersController {
   @ApiResponse({ status: 200, description: 'Work order deleted' })
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; message: string }> {
-    await this.workOrdersService.delete(id, user.company_id);
+    await this.workOrdersService.delete(id, user.companyId);
     return {
       success: true,
       message: 'Work order deleted successfully',
     };
   }
 }
-

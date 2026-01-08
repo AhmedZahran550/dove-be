@@ -88,7 +88,7 @@ describe('UsersService', () => {
       const result = await service.findByCompany('company-uuid');
 
       expect(result).toHaveLength(1);
-      expect(result[0].company_id).toBe('company-uuid');
+      expect(result[0].companyId).toBe('company-uuid');
     });
 
     it('should return empty array if no users found', async () => {
@@ -100,4 +100,3 @@ describe('UsersService', () => {
     });
   });
 });
-

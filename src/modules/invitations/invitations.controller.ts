@@ -12,7 +12,7 @@ import { InvitationsService } from './invitations.service';
 import { Invitation } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('invitations')
@@ -24,8 +24,8 @@ export class InvitationsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all invitations for current company' })
-  async findAll(@CurrentUser() user: User): Promise<Invitation[]> {
-    return this.invitationsService.findByCompany(user.company_id);
+  async findAll(@AuthUser() user: User): Promise<Invitation[]> {
+    return this.invitationsService.findByCompany(user.companyId);
   }
 
   @Post()
@@ -34,10 +34,10 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Create a new invitation' })
   async create(
     @Body() dto: CreateInvitationDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; data: Invitation; message: string }> {
     const invitation = await this.invitationsService.create(
-      user.company_id,
+      user.companyId,
       user.id,
       dto,
     );
@@ -75,12 +75,9 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Resend an invitation' })
   async resend(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; data: Invitation }> {
-    const invitation = await this.invitationsService.resend(
-      id,
-      user.company_id,
-    );
+    const invitation = await this.invitationsService.resend(id, user.companyId);
     return { success: true, data: invitation };
   }
 
@@ -90,10 +87,9 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Revoke an invitation' })
   async revoke(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; message: string }> {
-    await this.invitationsService.revoke(id, user.company_id);
+    await this.invitationsService.revoke(id, user.companyId);
     return { success: true, message: 'Invitation revoked' };
   }
 }
-

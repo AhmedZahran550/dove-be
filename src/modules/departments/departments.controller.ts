@@ -19,7 +19,7 @@ import { DepartmentsService } from './departments.service';
 import { Department } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('departments')
@@ -31,13 +31,13 @@ export class DepartmentsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all departments for current company' })
-  async findAll(@CurrentUser() user: User): Promise<{
+  async findAll(@AuthUser() user: User): Promise<{
     success: boolean;
     data: Department[];
     count: number;
   }> {
     const departments = await this.departmentsService.findByCompany(
-      user.company_id,
+      user.companyId,
     );
     return {
       success: true,
@@ -48,17 +48,17 @@ export class DepartmentsController {
 
   @Get('filter-options')
   @ApiOperation({ summary: 'Get available filter options for departments' })
-  async getFilterOptions(@CurrentUser() user: User) {
-    return this.departmentsService.getFilterOptions(user.company_id);
+  async getFilterOptions(@AuthUser() user: User) {
+    return this.departmentsService.getFilterOptions(user.companyId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a department by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<Department> {
-    return this.departmentsService.findById(id, user.company_id);
+    return this.departmentsService.findById(id, user.companyId);
   }
 
   @Post()
@@ -66,10 +66,10 @@ export class DepartmentsController {
   @ApiResponse({ status: 201, description: 'Department created successfully' })
   async create(
     @Body() dto: CreateDepartmentDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; data: Department; message: string }> {
     const department = await this.departmentsService.create(
-      user.company_id,
+      user.companyId,
       dto,
     );
     return {
@@ -84,22 +84,21 @@ export class DepartmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateDepartmentDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<Department> {
-    return this.departmentsService.update(id, user.company_id, dto);
+    return this.departmentsService.update(id, user.companyId, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a department (soft delete)' })
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; message: string }> {
-    await this.departmentsService.delete(id, user.company_id);
+    await this.departmentsService.delete(id, user.companyId);
     return {
       success: true,
       message: 'Department deleted successfully',
     };
   }
 }
-

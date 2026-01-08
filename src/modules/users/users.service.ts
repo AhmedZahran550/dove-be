@@ -31,8 +31,8 @@ export class UsersService {
 
   async findByCompany(companyId: string): Promise<User[]> {
     return this.usersRepository.find({
-      where: { company_id: companyId, is_active: true },
-      order: { first_name: 'ASC' },
+      where: { companyId: companyId, isActive: true },
+      order: { firstName: 'ASC' },
     });
   }
 
@@ -43,8 +43,7 @@ export class UsersService {
 
   async updateLastLogin(id: string): Promise<void> {
     await this.usersRepository.update(id, {
-      last_login_at: new Date(),
+      lastLoginAt: new Date(),
     });
   }
 }
-

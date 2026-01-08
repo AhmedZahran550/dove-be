@@ -72,7 +72,7 @@ export class InvitationsService {
   async findByCompany(companyId: string): Promise<Invitation[]> {
     return this.invitationsRepository.find({
       where: { company_id: companyId },
-      order: { created_at: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -107,14 +107,14 @@ export class InvitationsService {
     const userId = uuidv4();
     const user = this.usersRepository.create({
       id: userId,
-      company_id: invitation.company_id,
-      location_id: invitation.location_id,
+      companyId: invitation.company_id,
+      locationId: invitation.location_id,
       email: invitation.email,
-      first_name: dto.first_name,
-      last_name: dto.last_name,
+      firstName: dto.first_name,
+      lastName: dto.last_name,
       role: invitation.role,
       password_hash: passwordHash,
-      is_active: true,
+      isActive: true,
     });
 
     const savedUser = await this.usersRepository.save(user);
@@ -165,4 +165,3 @@ export class InvitationsService {
     });
   }
 }
-

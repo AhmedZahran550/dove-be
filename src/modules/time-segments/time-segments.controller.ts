@@ -37,20 +37,20 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Create a new time segment' })
   async create(
     @Body() dto: CreateTimeSegmentDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment> {
-    return this.timeSegmentsService.create(user.company_id, dto);
+    return this.timeSegmentsService.create(user.companyId, dto);
   }
 
   @Get('by-work-order/:workOrderId')
   @ApiOperation({ summary: 'Get time segments for a work order' })
   async findByWorkOrder(
     @Param('workOrderId', ParseUUIDPipe) workOrderId: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment[]> {
     return this.timeSegmentsService.findByWorkOrder(
       workOrderId,
-      user.company_id,
+      user.companyId,
     );
   }
 
@@ -58,11 +58,11 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Get active time segment for an operator' })
   async findActiveByOperator(
     @Param('operatorId', ParseUUIDPipe) operatorId: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment | null> {
     return this.timeSegmentsService.findActiveByOperator(
       operatorId,
-      user.company_id,
+      user.companyId,
     );
   }
 
@@ -70,9 +70,9 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Get a time segment by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment> {
-    return this.timeSegmentsService.findById(id, user.company_id);
+    return this.timeSegmentsService.findById(id, user.companyId);
   }
 
   @Patch(':id')
@@ -80,9 +80,9 @@ export class TimeSegmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTimeSegmentDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment> {
-    return this.timeSegmentsService.update(id, user.company_id, dto);
+    return this.timeSegmentsService.update(id, user.companyId, dto);
   }
 
   @Post(':id/end')
@@ -90,9 +90,8 @@ export class TimeSegmentsController {
   async endSegment(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: EndTimeSegmentDto,
-    @CurrentUser() user: User,
+    @AuthUser() user: User,
   ): Promise<TimeSegment> {
-    return this.timeSegmentsService.endSegment(id, user.company_id, dto);
+    return this.timeSegmentsService.endSegment(id, user.companyId, dto);
   }
 }
-
