@@ -9,9 +9,8 @@ import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { AuthUserDto } from './dto/auth-user.dto';
 import { ErrorCodes } from '@/common/error-codes';
-import { Policy } from '../policies.types';
+import { AuthUserDto } from '../dto/auth-user.dto';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -45,9 +44,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get('jwt.accessToken.secret'),
       });
-      if (payload.policies && payload.policies?.length > 0) {
-        payload.policies = this.deserializePolicies(payload.policies);
-      }
+      // if (payload.policies && payload.policies?.length > 0) {
+      //   payload.policies = this.deserializePolicies(payload.policies);
+      // }
       const user: any = {
         ...payload,
         id: payload.sub,
@@ -86,31 +85,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   /**
    * Deserializes compact policy strings back into Policy objects.
    */
-  private deserializePolicies(serialized: string[]): Policy[] {
-    if (!serialized) return [];
+  // private deserializePolicies(serialized: string[]): Policy[] {
+  //   if (!serialized) return [];
 
-    const reverseActionMap: Record<string, string> = {
-      g: 'get',
-      l: 'list',
-      c: 'create',
-      u: 'update',
-      d: 'delete',
-      m: 'manage',
-    };
+  //   const reverseActionMap: Record<string, string> = {
+  //     g: 'get',
+  //     l: 'list',
+  //     c: 'create',
+  //     u: 'update',
+  //     d: 'delete',
+  //     m: 'manage',
+  //   };
 
-    return serialized
-      .map((item) => {
-        const [subject, actionsStr] = item?.split(':');
-        if (!subject || !actionsStr) return null;
-        const actions = actionsStr
-          .split(',')
-          .map((abbrev) => reverseActionMap[abbrev] || abbrev);
+  //   return serialized
+  //     .map((item) => {
+  //       const [subject, actionsStr] = item?.split(':');
+  //       if (!subject || !actionsStr) return null;
+  //       const actions = actionsStr
+  //         .split(',')
+  //         .map((abbrev) => reverseActionMap[abbrev] || abbrev);
 
-        return {
-          subject,
-          actions,
-        };
-      })
-      .filter((policy) => policy !== null) as Policy[];
-  }
+  //       return {
+  //         subject,
+  //         actions,
+  //       };
+  //     })
+  //     .filter((policy) => policy !== null) as Policy[];
+  // }
 }

@@ -1,4 +1,3 @@
-import { DBErrorCode } from '@/database/db.errors';
 import {
   BadRequestException,
   Catch,
@@ -8,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
 import { ErrorCodes } from '../error-codes';
+import { DBErrorCode } from 'src/database/db.errors copy';
 
 @Catch(TypeORMError)
 export class DBExceptionFilter implements ExceptionFilter {

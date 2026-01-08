@@ -113,7 +113,7 @@ export class InvitationsService {
       firstName: dto.first_name,
       lastName: dto.last_name,
       role: invitation.role,
-      password_hash: passwordHash,
+      password: passwordHash,
       isActive: true,
     });
 

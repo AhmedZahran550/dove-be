@@ -20,6 +20,7 @@ import { ScheduleFile } from '../../database/entities';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
+import { QueryOptions, Paginate } from '../../common/query-options';
 
 @ApiTags('schedule')
 @Controller('schedule')
@@ -36,20 +37,10 @@ export class ScheduleController {
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({ name: 'search', required: false, type: String })
   async findScheduleData(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 50,
-    @Query('department') department?: string,
-    @Query('status') status?: string,
-    @Query('search') search?: string,
+    @Paginate() query: QueryOptions,
     @AuthUser() user?: User,
   ) {
-    return this.scheduleService.findScheduleData(user!.companyId, {
-      page,
-      limit,
-      department,
-      status,
-      search,
-    });
+    return this.scheduleService.findScheduleData(user!.companyId, query);
   }
 
   @Get('data/department/:department')

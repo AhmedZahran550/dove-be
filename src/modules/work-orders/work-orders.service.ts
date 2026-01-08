@@ -12,7 +12,7 @@ import {
   UpdateWorkOrderDto,
   CloseWorkOrderDto,
 } from './dto/work-order.dto';
-import { PaginatedResult, PaginationQuery } from 'src/database';
+import { QueryOptions } from '../../common/query-options';
 
 @Injectable()
 export class WorkOrdersService {
@@ -74,19 +74,16 @@ export class WorkOrdersService {
     return this.workOrdersRepository.save(workOrder);
   }
 
-  async findAll(
-    companyId: string,
-    query: PaginationQuery,
-  ): Promise<PaginatedResult<WorkOrder>> {
+  async findAll(companyId: string, query: QueryOptions) {
     const page = query.page || 1;
     const limit = Math.min(query.limit || 20, 100);
     const skip = (page - 1) * limit;
 
-    // Parse sortBy (format: "field:direction")
+    // Parse sortBy (nestjs-paginate returns [[field, direction]] tuples)
     let orderField = 'created_at';
     let orderDirection: 'ASC' | 'DESC' = 'DESC';
-    if (query.sortBy) {
-      const [field, direction] = query.sortBy.split(':');
+    if (query.sortBy && query.sortBy.length > 0) {
+      const [field, direction] = query.sortBy[0];
       orderField = field || 'created_at';
       orderDirection = direction?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
     }

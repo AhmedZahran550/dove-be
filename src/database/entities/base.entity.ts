@@ -18,10 +18,10 @@ export abstract class BaseEntity {
   id: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deletedAt?: Date;

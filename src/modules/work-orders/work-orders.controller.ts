@@ -27,6 +27,7 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../../database/entities';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
+import { QueryOptions, Paginate } from '../../common/query-options';
 
 @ApiTags('work-orders')
 @Controller('work-orders')
@@ -56,20 +57,8 @@ export class WorkOrdersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all work orders with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20,
-    @Query('sortBy') sortBy: string = 'created_at:DESC',
-    @AuthUser() user: User,
-  ) {
-    return this.workOrdersService.findAll(user.companyId, {
-      page,
-      limit,
-      sortBy,
-    });
+  async findAll(@Paginate() query: QueryOptions, @AuthUser() user: User) {
+    return this.workOrdersService.findAll(user.companyId, query);
   }
 
   @Get('active')

@@ -1,7 +1,5 @@
-import { RequestValidationError } from '@/app-setup';
 import { AppErrorResponse, FieldError } from '@/common/models/error-response';
-import { getError } from '@/database/db.errors';
-import { LocalizationService } from '@/i18n/localization.service';
+import { getError } from '@/database/db.errors copy';
 import {
   ArgumentsHost,
   BadRequestException,
@@ -14,16 +12,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ValidationError } from 'class-validator';
 import { EntityNotFoundError, QueryFailedError } from 'typeorm';
+export class RequestValidationError extends ValidationError {
+  message: string;
+  code: string;
+}
 
 @Catch()
 export class GeneralExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GeneralExceptionFilter.name);
 
-  constructor(
-    private readonly httpAdapterHost: HttpAdapterHost,
-    private readonly localizationService: LocalizationService,
-  ) {}
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     this.logger.error(
@@ -38,36 +38,36 @@ export class GeneralExceptionFilter implements ExceptionFilter {
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorCode = 'INTERNAL_SERVER_ERROR';
-    let message = this.localizationService.t('errors.INTERNAL_SERVER_ERROR');
-    let errors: FieldError[] = undefined;
+    let message = 'Internal Server Error';
+    let errors: FieldError[] = [];
 
     if (exception instanceof QueryFailedError) {
       const dbError = getError(exception);
       statusCode = dbError?.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
       errorCode = dbError?.errorCode || 'INTERNAL_SERVER_ERROR';
       message = dbError?.message || 'INTERNAL_SERVER_ERROR';
-      errors = dbError?.errors;
+      errors = dbError?.errors || [];
     } else if (exception instanceof EntityNotFoundError) {
       statusCode = HttpStatus.NOT_FOUND;
       errorCode = exception?.['code'] || 'NOT_FOUND';
-      message = this.localizationService.t(`errors.${errorCode}`);
+      message = 'Not Found';
     } else if (exception instanceof BadRequestException) {
       statusCode = HttpStatus.BAD_REQUEST;
       const appError = exception.getResponse();
       errorCode = appError?.['code'] || 'BAD_REQUEST';
-      message = this.getLocalizedMessage(exception);
+      message = 'Bad Request';
       errors = this.extractErrors(appError);
     } else if (exception instanceof ConflictException) {
       statusCode = HttpStatus.CONFLICT;
       const resp = exception.getResponse();
       errorCode = resp?.['code'] || 'CONFLICT';
-      message = this.getLocalizedMessage(exception);
+      message = 'Conflict';
       errors = this.extractErrors(resp?.['message']);
     } else if (exception instanceof UnauthorizedException) {
       statusCode = HttpStatus.UNAUTHORIZED;
       const resp = exception.getResponse();
       errorCode = resp?.['code'] || 'UNAUTHORIZED';
-      message = this.getLocalizedMessage(exception);
+      message = 'Unauthorized';
     } else if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       errorCode = 'HTTP_EXCEPTION';
@@ -75,28 +75,18 @@ export class GeneralExceptionFilter implements ExceptionFilter {
       const resp = exception.getResponse();
       errors = this.extractErrors(resp);
     } else if (exception instanceof RequestValidationError) {
-      message = exception.message || message;
-      errorCode = exception.code || errorCode;
+      message = (exception as any).message || message;
+      errorCode = (exception as any).code || errorCode;
     } else if (exception instanceof Error) {
       errorCode = exception?.['code'] || errorCode;
-      message = this.localizationService.t(`errors.${errorCode}`) || message;
+      message = exception.message || message;
     }
-    const localizedErrors = errors?.map((error) => {
-      if (error.code) {
-        const message = this.localizationService.t(`errors.${error.code}`);
-        if (!message) {
-          console.warn(`Missing translation for error code: ${error.code}`);
-        }
-        error.message = message ?? error.message;
-      }
-      return error;
-    });
 
     const responseBody: AppErrorResponse = {
       statusCode,
       errorCode,
       path: httpAdapter.getRequestUrl(request),
-      errors: localizedErrors,
+      errors,
       message,
       requestId: response.locals.requestId,
       timestamp: new Date().toISOString(),
@@ -104,15 +94,6 @@ export class GeneralExceptionFilter implements ExceptionFilter {
 
     httpAdapter.reply(response, responseBody, statusCode);
   }
-  private getLocalizedMessage(exception: HttpException) {
-    let message = exception.message;
-    const code = exception.getResponse()?.['code'];
-    if (code) {
-      message = this.localizationService.t(`errors.${code}`);
-    }
-    return message || 'Unauthorized';
-  }
-
   /**
    * Extracts errors from the exception response.
    * @param response The response object from the exception.

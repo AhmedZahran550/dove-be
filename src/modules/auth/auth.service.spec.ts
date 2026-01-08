@@ -34,14 +34,11 @@ class MockAuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.password_hash) {
+    if (!user.password) {
       throw new UnauthorizedException('Please reset your password');
     }
 
-    const isPasswordValid = await argon2.verify(
-      user.password_hash,
-      dto.password,
-    );
+    const isPasswordValid = await argon2.verify(user.password, dto.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -107,7 +104,7 @@ describe('AuthService', () => {
   const mockUser = {
     id: 'user-uuid',
     email: 'test@example.com',
-    password_hash: 'hashed_password',
+    password: 'hashed_password',
     first_name: 'John',
     last_name: 'Doe',
     role: 'admin',
@@ -242,4 +239,3 @@ describe('AuthService', () => {
     });
   });
 });
-

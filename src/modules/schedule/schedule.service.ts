@@ -3,10 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, ILike } from 'typeorm';
 import { ScheduleData } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
-import {
-  PaginationQuery,
-  PaginatedResult,
-} from '../../common/types/pagination.types';
+import { QueryOptions } from '../../common/query-options';
 
 @Injectable()
 export class ScheduleService {
@@ -19,12 +16,12 @@ export class ScheduleService {
 
   async findScheduleData(
     companyId: string,
-    query: PaginationQuery & {
+    query: QueryOptions & {
       department?: string;
       status?: string;
       search?: string;
     },
-  ): Promise<PaginatedResult<ScheduleData>> {
+  ) {
     const page = query.page || 1;
     const limit = Math.min(query.limit || 50, 200);
     const skip = (page - 1) * limit;

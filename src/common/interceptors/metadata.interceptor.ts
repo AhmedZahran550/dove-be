@@ -5,7 +5,6 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { IMetadata } from '@/database/entities/embeded/metadata.entity';
 
 @Injectable()
 export class MetadataInterceptor implements NestInterceptor {

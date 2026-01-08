@@ -1,227 +1,347 @@
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import { paginate, Paginated } from 'nestjs-paginate';
 import {
-  Repository,
-  FindOptionsWhere,
-  FindOptionsOrder,
+  DataSource,
   DeepPartial,
-  EntityManager,
-  ObjectLiteral,
+  FindOptionsWhere,
+  QueryRunner,
+  Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
+import {
+  QueryConfig,
+  QueryOneOptions,
+  QueryOptions,
+  TransactionOptions,
+} from '../common/query-options';
+import { BaseEntity } from './entities/base.entity';
+import { CacheManagerStore, Cache } from 'cache-manager';
+import { ErrorCodes } from '@/common/error-codes';
 
-/**
- * Pagination query parameters
- */
-export interface PaginationQuery {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
-  search?: string;
-}
+export const defaultQueryConfig: QueryConfig<BaseEntity> = {
+  sortableColumns: ['createdAt'],
+  maxLimit: 100,
+  defaultLimit: 50,
+  // defaultSortBy: [['metadata.createdAt', 'DESC']],
+};
 
-/**
- * Paginated result with metadata
- */
-export interface PaginatedResult<T> {
-  data: T[];
-  meta: {
-    totalItems: number;
-    itemsPerPage: number;
-    totalPages: number;
-    currentPage: number;
-  };
-}
-
-/**
- * Base service options
- */
-export interface DBServiceOptions {
-  sortableColumns?: string[];
-  searchableColumns?: string[];
-  defaultSortColumn?: string;
-  defaultSortOrder?: 'ASC' | 'DESC';
-}
-
-/**
- * Abstract base database service with common CRUD operations
- * @template E Entity type
- * @template CreateDto DTO for creating entities
- * @template UpdateDto DTO for updating entities
- */
 export abstract class DBService<
-  E extends ObjectLiteral,
-  CreateDto = DeepPartial<E>,
-  UpdateDto = DeepPartial<E>,
+  E extends BaseEntity,
+  C extends DeepPartial<E> = E,
+  U extends DeepPartial<C> = C,
+  T = E,
 > {
-  protected readonly options: DBServiceOptions;
-
+  protected readonly logger = new Logger(this.constructor.name);
+  private TTL: number;
   constructor(
-    protected readonly repository: Repository<E>,
-    options: DBServiceOptions = {},
+    protected repository: Repository<E>,
+    protected queryConfig?: QueryConfig<E>,
   ) {
-    this.options = {
-      sortableColumns: ['created_at', 'updated_at'],
-      searchableColumns: [],
-      defaultSortColumn: 'created_at',
-      defaultSortOrder: 'DESC',
-      ...options,
-    };
+    this.queryConfig = {
+      ...defaultQueryConfig,
+      ...queryConfig,
+    } as QueryConfig<E>;
   }
-
-  /**
-   * Find all entities with pagination
-   */
-  async findAll(
-    where: FindOptionsWhere<E> = {} as FindOptionsWhere<E>,
-    query: PaginationQuery = {},
-  ): Promise<PaginatedResult<E>> {
-    const page = Math.max(1, query.page || 1);
-    const limit = Math.min(100, Math.max(1, query.limit || 20));
-    const skip = (page - 1) * limit;
-
-    // Build sort order
-    const order = this.buildSortOrder(query.sortBy, query.sortOrder);
-
-    const [data, totalItems] = await this.repository.findAndCount({
-      where,
-      order,
-      skip,
-      take: limit,
-    });
-
-    return {
-      data,
-      meta: {
-        totalItems,
-        itemsPerPage: limit,
-        totalPages: Math.ceil(totalItems / limit),
-        currentPage: page,
-      },
-    };
-  }
-
-  /**
-   * Find entity by ID
-   */
-  async findById(id: string, relations: string[] = []): Promise<E> {
-    const entity = await this.repository.findOne({
-      where: { id } as unknown as FindOptionsWhere<E>,
-      relations,
-    });
-
-    if (!entity) {
-      throw new NotFoundException(`Entity with ID '${id}' not found`);
+  async findAll(options: QueryOptions, qb?: SelectQueryBuilder<E>) {
+    try {
+      this.validateQuery(options);
+      const repo = this.getRepository(options);
+      const resp = await paginate<E>(options, qb ?? repo, this.queryConfig);
+      return resp;
+    } catch (error) {
+      this.logger.error('error', error);
+      throw error;
     }
-
-    return entity;
   }
 
-  /**
-   * Find one entity by criteria
-   */
-  async findOne(
-    where: FindOptionsWhere<E>,
-    relations: string[] = [],
-  ): Promise<E | null> {
-    return this.repository.findOne({ where, relations });
+  async findById(id: string, options?: QueryOneOptions<E>) {
+    try {
+      const repo = this.getRepository(options);
+      const entity = await repo.findOneOrFail({
+        ...options,
+        where: {
+          ...options?.where,
+          id: id as any,
+        },
+      });
+      return this.mapper(entity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Create a new entity
-   */
-  async create(dto: CreateDto): Promise<E> {
-    const entity = this.repository.create(dto as DeepPartial<E>);
-    return this.repository.save(entity);
+  async find(options?: QueryOneOptions<E>) {
+    try {
+      const repo = this.getRepository(options);
+      const entities = await repo.find(options);
+      return entities.map(this.mapper);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async findOne(options?: QueryOneOptions<E>) {
+    try {
+      const repo = this.getRepository(options);
+      const entity = await repo.findOne(options);
+      return this.mapper(entity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Update an entity by ID
-   */
-  async update(id: string, dto: UpdateDto): Promise<E> {
-    await this.findById(id); // Verify exists
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.repository.update(id, dto as any);
-    return this.findById(id);
+  async findOneOrFail(options?: QueryOneOptions<E>) {
+    try {
+      const repo = this.getRepository(options);
+      const entity = await repo.findOneOrFail(options);
+      return this.mapper(entity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Delete an entity by ID (hard delete)
-   */
-  async delete(id: string): Promise<void> {
-    const entity = await this.findById(id);
-    await this.repository.remove(entity);
+  async create(data: C, options?: TransactionOptions): Promise<T> {
+    try {
+      const repo = this.getRepository(options);
+      const entity = repo.create(data);
+      const newEntity = await repo.save(entity);
+      return this.mapper(newEntity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Soft delete an entity by ID
-   */
-  async softDelete(id: string): Promise<void> {
-    await this.findById(id);
-    await this.repository.softDelete(id);
+  async save(data: C, options?: TransactionOptions): Promise<T> {
+    try {
+      const repo = this.getRepository(options);
+      const entity = repo.create(data);
+      const newEntity = await repo.save(entity);
+      return this.mapper(newEntity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Count entities matching criteria
-   */
-  async count(
-    where: FindOptionsWhere<E> = {} as FindOptionsWhere<E>,
-  ): Promise<number> {
-    return this.repository.count({ where });
+  async batchCreate(data: C[], options?: TransactionOptions): Promise<T[]> {
+    try {
+      const repo = this.getRepository(options);
+      const entities = repo.create(data);
+      const newEntities = await repo.save(entities);
+      return newEntities.map(this.mapper);
+    } catch (error) {
+      console.error('error', error);
+      throw error;
+    }
   }
 
-  /**
-   * Check if entity exists
-   */
-  async exists(where: FindOptionsWhere<E>): Promise<boolean> {
-    const count = await this.count(where);
-    return count > 0;
+  async set(id: string, data: C, options?: TransactionOptions): Promise<T> {
+    try {
+      const repo = this.getRepository(options);
+      const entity = repo.create({ id, ...data });
+      const newEntity = await repo.save(entity);
+      return this.mapper(newEntity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Start a database transaction
-   */
-  async startTransaction<T>(
-    work: (manager: EntityManager) => Promise<T>,
-  ): Promise<T> {
-    const dataSource = this.repository.manager.connection;
-    return dataSource.transaction(work);
+  async update(id: string, data: Partial<U>, options?: QueryOneOptions<E>) {
+    try {
+      const repo = this.getRepository(options);
+      const entity = await repo.findOneOrFail({
+        ...options,
+        where: {
+          ...options?.where,
+          id: id as any,
+        },
+      });
+      const mergeEntity = repo.merge(entity, data as any as DeepPartial<E>);
+      const savedEntity = await repo.save(mergeEntity);
+      return this.mapper(savedEntity);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  /**
-   * Build sort order from query parameters
-   */
-  protected buildSortOrder(
-    sortBy?: string,
-    sortOrder?: 'ASC' | 'DESC',
-  ): FindOptionsOrder<E> {
-    const column = sortBy || this.options.defaultSortColumn!;
-    const order = sortOrder || this.options.defaultSortOrder!;
+  async delete(id: string, options?: QueryOneOptions<E>): Promise<void> {
+    try {
+      const repo = this.getRepository(options);
+      const findOneOption: FindOptionsWhere<E> = {
+        ...(options?.where as FindOptionsWhere<E>),
+        id: id as any,
+      };
+      const result = await repo.delete(findOneOption);
+      if (result.affected === 0) {
+        throw new NotFoundException([
+          {
+            property: 'id',
+            code: ErrorCodes.RESOURCE_NOT_FOUND,
+          },
+        ]);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
 
-    // Validate sortable column
-    if (sortBy && !this.options.sortableColumns?.includes(sortBy)) {
+  async deleteBy(where: FindOptionsWhere<E>): Promise<void> {
+    try {
+      const repo = this.repository;
+      const result = await repo.delete(where);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  async restore(id: string, options?: QueryOneOptions<E>): Promise<void> {
+    try {
+      const repo = this.getRepository(options);
+      const result = await repo.restore({ id, ...options?.where } as any);
+      if (result.affected === 0) {
+        throw new NotFoundException([
+          {
+            property: 'id',
+            code: ErrorCodes.RESOURCE_NOT_FOUND,
+          },
+        ]);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  remove(id: string, options?: TransactionOptions) {
+    return this.delete(id, options);
+  }
+
+  async softDelete(id: string, options?: QueryOneOptions<E>) {
+    const repo = this.getRepository(options);
+    const deleted = await repo.softDelete({ id, ...options?.where } as any);
+    return deleted as any;
+  }
+
+  // add a mapper method to map the entity to the response object
+  mapper(entity: E) {
+    return entity as any as T;
+  }
+
+  private validateFilters(options: QueryOptions) {
+    const filterableColumns = this.queryConfig.filterableColumns || {};
+    const allowedFilters = Object.keys(filterableColumns);
+
+    if (options.filter) {
+      // Collect any invalid filters
+      const invalidFilters = Object.keys(options.filter).filter(
+        (filter) => !allowedFilters.includes(filter),
+      );
+
+      if (invalidFilters.length > 0) {
+        throw new BadRequestException({
+          message: `Invalid filter(s): ${invalidFilters.join(', ')}. Allowed filters are: ${allowedFilters.join(', ')}`,
+          code: ErrorCodes.INVALID_FILTERS,
+        });
+      }
+
+      // Optionally, validate operators for each filter
+      for (const [field, filterValue] of Object.entries(options.filter)) {
+        const allowedOperators = filterableColumns[field];
+        if (allowedOperators && typeof filterValue === 'string') {
+          let operator = '';
+          const operatorMatch = filterValue.match(/^(.+):/);
+          if (filterValue === '$null') {
+            let operator = '$null';
+          } else if (operatorMatch) {
+            operator = operatorMatch[1].toLowerCase();
+            if (!allowedOperators.some((op) => op.toLowerCase() === operator)) {
+              throw new BadRequestException(
+                `Invalid operator '${operator}' for filter '${field}'. Allowed operators are: ${allowedOperators
+                  .map((op) => `${op}`)
+                  .join(', ')}`,
+              );
+            }
+          } else {
+            throw new BadRequestException(
+              `Invalid filter format for '${field}'. Expected format: $operator:value`,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  private validateSearch(options: QueryOptions) {
+    const searchableColumns = this.queryConfig.searchableColumns || [];
+    if (options.search && searchableColumns.length === 0) {
       throw new BadRequestException(
-        `Cannot sort by '${sortBy}'. Allowed columns: ${this.options.sortableColumns?.join(', ')}`,
+        `Search is not supported on this resource.`,
       );
     }
-
-    return { [column]: order } as FindOptionsOrder<E>;
   }
 
-  /**
-   * Validate filter parameters
-   */
-  protected validateFilters(
-    filters: Record<string, unknown>,
-    allowedFilters: string[],
-  ): void {
-    const invalidFilters = Object.keys(filters).filter(
-      (key) => !allowedFilters.includes(key),
-    );
+  private validateSortBy(options: QueryOptions) {
+    const sortableColumns: string[] = this.queryConfig.sortableColumns || [];
 
-    if (invalidFilters.length > 0) {
-      throw new BadRequestException(
-        `Invalid filter(s): ${invalidFilters.join(', ')}. Allowed: ${allowedFilters.join(', ')}`,
-      );
+    if (options.sortBy) {
+      const invalidSortColumns = [];
+      // Check if sortBy is an array of tuples
+      if (Array.isArray(options.sortBy)) {
+        const invalidSortColumns = options.sortBy?.filter(
+          ([column]) => !sortableColumns.includes(column),
+        );
+      } else if (typeof options.sortBy === 'string') {
+        const invalidSortColumns = [options.sortBy];
+      }
+
+      if (invalidSortColumns.length > 0) {
+        this.logger.warn(
+          `Invalid sort columns attempted: ${invalidSortColumns.join(', ')}`,
+        );
+        throw new BadRequestException(
+          `Invalid sort column(s): ${invalidSortColumns.join(', ')}. Allowed sort columns are: ${sortableColumns.join(', ')}`,
+        );
+      }
     }
+  }
+
+  async startTransaction(
+    datasource: DataSource,
+    isolationLevel?: IsolationLevel,
+  ) {
+    const queryRunner: QueryRunner = datasource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction(isolationLevel);
+    return queryRunner;
+  }
+
+  private validateQuery = (options: QueryOptions) => {
+    this.validateFilters(options);
+    this.validateSearch(options);
+    this.validateSortBy(options);
+  };
+
+  private getRepository(options: TransactionOptions) {
+    return options?.manager
+      ? options.manager.getRepository<E>(this.repository.metadata.target)
+      : this.repository;
+  }
+
+  getQueryBuilder({
+    alias,
+    queryRunner,
+  }: {
+    alias?: string;
+    queryRunner?: QueryRunner;
+  } = {}) {
+    return this.repository.createQueryBuilder(alias, queryRunner);
   }
 }

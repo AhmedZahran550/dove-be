@@ -3,8 +3,8 @@ import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import * as requestIp from 'request-ip';
 import { v4 as uuid } from 'uuid';
-import { AuthUserDto } from '../modules/auth/dto/auth-user.dto';
-import { LogsService } from '../modules/logs/logs.service';
+import { LogsService } from '@/modules/logs/logs.service';
+import { AuthUserDto } from '@/modules/auth/dto/auth-user.dto';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
