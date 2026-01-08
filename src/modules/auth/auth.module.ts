@@ -17,9 +17,9 @@ import { Location } from '../../database/entities';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('jwt.secret'),
+        secret: configService.get('jwt.accessToken.secret'),
         signOptions: {
-          expiresIn: configService.get('jwt.expiresIn'),
+          expiresIn: configService.get('jwt.accessToken.expiresIn') || '1h',
         },
       }),
       inject: [ConfigService],
@@ -30,4 +30,3 @@ import { Location } from '../../database/entities';
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
-

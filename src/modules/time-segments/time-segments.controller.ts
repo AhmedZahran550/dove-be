@@ -23,7 +23,7 @@ import {
   EndTimeSegmentDto,
 } from './dto/time-segment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('time-segments')

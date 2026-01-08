@@ -20,7 +20,7 @@ import { SettingsService } from './settings.service';
 import { RejectionCategory } from '../../database/entities';
 import { RejectionReason } from '../../database/entities';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('settings')

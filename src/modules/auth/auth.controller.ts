@@ -20,7 +20,7 @@ import {
   AuthResponseDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthUser } from './decorators/auth-user.decorator';
 import { User } from '../../database/entities';
 
 @ApiTags('auth')
