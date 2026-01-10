@@ -1,142 +1,165 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index, Unique } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Location } from './location.entity';
-import { User } from './user.entity';
+import { WorkOrderStatus } from './work-order-status.entity';
+import { UserProfile } from './user-profile.entity';
+import { TimeSegment } from './time-segment.entity';
+import { QCRejection } from './qc-rejection.entity';
+import { WorkOrderOperator } from './work-order-operator.entity';
 
 @Entity('work_orders')
-@Unique(['company_id', 'wo_number'])
-@Index('idx_work_orders_company_id', ['company_id'])
-@Index('idx_work_orders_location_id', ['location_id'])
-@Index('idx_work_orders_current_status', ['current_status'])
+@Unique(['companyId', 'woNumber'])
+@Index(['companyId'])
+@Index(['locationId'])
+@Index(['departmentId'])
+@Index(['statusId'])
+@Index(['currentStatus'])
+@Index(['woNumber'])
+@Index(['productId'])
+@Index(['startTime'])
+@Index(['closingTime'])
 export class WorkOrder extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  location_id: string;
+  locationId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId?: string;
 
-  @Column({ length: 50 })
-  wo_number: string;
+  @Column({ type: 'varchar', length: 50 })
+  woNumber: string;
 
-  @Column({ type: 'int' })
-  wo_qty: number;
+  @Column({ type: 'integer' })
+  woQty: number;
 
   @Column({ type: 'uuid', nullable: true })
-  product_id: string;
+  productId?: string;
 
-  @Column({ length: 100, nullable: true })
-  lot_number: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  lotNumber?: string;
 
-  @Column({ length: 100, nullable: true })
-  bulk_lot_number: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  bulkLotNumber?: string;
 
-  @Column({ length: 100, nullable: true })
-  pail_serial: string;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  bulk_a_start: Date;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  pailSerial?: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  bulk_a_end: Date;
+  bulkAStart?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  bulk_b_start: Date;
+  bulkAEnd?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  bulk_b_end: Date;
+  bulkBStart?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  start_time: Date;
+  bulkBEnd?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  closing_time: Date;
+  startTime?: Date;
 
-  @Column({ type: 'int', default: 0 })
-  setup_time: number;
+  @Column({ type: 'timestamptz', nullable: true })
+  closingTime?: Date;
+
+  @Column({ type: 'integer', default: 0 })
+  setupTime: number;
 
   @Column({ type: 'text', nullable: true })
-  setup_comment: string;
+  setupComment?: string;
 
-  @Column({ type: 'int', default: 0 })
-  qty_completed: number;
+  @Column({ type: 'integer', default: 0 })
+  qtyCompleted: number;
 
-  @Column({ type: 'int', default: 0 })
-  qty_rejected: number;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  inspection_start_time: Date;
+  @Column({ type: 'integer', default: 0 })
+  qtyRejected: number;
 
   @Column({ type: 'timestamptz', nullable: true })
-  inspection_end_time: Date;
-
-  @Column({ type: 'uuid', nullable: true })
-  equipment_id: string;
-
-  @Column({ default: false })
-  manual_run: boolean;
-
-  @Column({ type: 'int', default: 0 })
-  down_time: number;
-
-  @Column({ type: 'int', default: 0 })
-  break_time: number;
-
-  @Column({ type: 'uuid', nullable: true })
-  status_id: string;
-
-  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-  availability: number;
-
-  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-  performance: number;
-
-  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-  quality: number;
-
-  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-  oee: number;
-
-  @Column({ type: 'int', nullable: true })
-  run_time: number;
-
-  @Column({ type: 'int', nullable: true })
-  uptime: number;
-
-  @Column({ type: 'text', nullable: true })
-  operator_comment: string;
-
-  @Column({ type: 'text', nullable: true })
-  lead_hand_comment: string;
-
-  @Column({ type: 'text', nullable: true })
-  supervisor_comment: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  shift_id: string;
-
-  @Column({ length: 50, default: 'Waiting' })
-  current_status: string;
+  inspectionStartTime?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  status_updated_at: Date;
+  inspectionEndTime?: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  status_updated_by: string;
+  equipmentId?: string;
+
+  @Column({ type: 'boolean', default: false })
+  manualRun: boolean;
+
+  @Column({ type: 'integer', default: 0 })
+  downTime: number;
+
+  @Column({ type: 'integer', default: 0 })
+  breakTime: number;
+
+  @Column({ type: 'uuid', nullable: true })
+  statusId?: string;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  availability?: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  performance?: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  quality?: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  oee?: number;
+
+  @Column({ type: 'integer', nullable: true })
+  runTime?: number;
+
+  @Column({ type: 'integer', nullable: true })
+  uptime?: number;
+
+  @Column({ type: 'text', nullable: true })
+  operatorComment?: string;
+
+  @Column({ type: 'text', nullable: true })
+  leadHandComment?: string;
+
+  @Column({ type: 'text', nullable: true })
+  supervisorComment?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  shiftId?: string;
+
+  @Column({ type: 'varchar', length: 50, default: 'Waiting' })
+  currentStatus: string;
+
+  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  statusUpdatedAt: Date;
+
+  @Column({ type: 'uuid', nullable: true })
+  statusUpdatedBy?: string;
 
   // Relations
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.workOrders, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
 
-  @ManyToOne(() => Location)
-  @JoinColumn({ name: 'location_id' })
-  location: Location;
+  @ManyToOne(() => Location, (location) => location.workOrders, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'locationId' })
+  location?: Location;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'status_updated_by' })
-  statusUpdatedBy: User;
+  @ManyToOne(() => WorkOrderStatus, (status) => status.workOrders)
+  @JoinColumn({ name: 'statusId' })
+  status?: WorkOrderStatus;
+
+  @ManyToOne(() => UserProfile)
+  @JoinColumn({ name: 'statusUpdatedBy' })
+  statusUpdatedByUser?: UserProfile;
+
+  @OneToMany(() => TimeSegment, (segment) => segment.workOrder)
+  timeSegments?: TimeSegment[];
+
+  @OneToMany(() => QCRejection, (rejection) => rejection.workOrder)
+  qcRejections?: QCRejection[];
+
+  @OneToMany(() => WorkOrderOperator, (wo) => wo.workOrder)
+  workOrderOperators?: WorkOrderOperator[];
 }

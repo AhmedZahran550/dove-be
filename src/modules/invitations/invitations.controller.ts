@@ -13,7 +13,7 @@ import { Invitation } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 
 @ApiTags('invitations')
 @Controller('invitations')
@@ -34,7 +34,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Create a new invitation' })
   async create(
     @Body() dto: CreateInvitationDto,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; data: Invitation; message: string }> {
     const invitation = await this.invitationsService.create(
       user.companyId,
@@ -75,7 +75,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Resend an invitation' })
   async resend(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; data: Invitation }> {
     const invitation = await this.invitationsService.resend(id, user.companyId);
     return { success: true, data: invitation };
@@ -87,7 +87,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Revoke an invitation' })
   async revoke(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; message: string }> {
     await this.invitationsService.revoke(id, user.companyId);
     return { success: true, message: 'Invitation revoked' };

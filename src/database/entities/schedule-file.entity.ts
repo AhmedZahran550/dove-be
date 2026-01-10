@@ -1,65 +1,59 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  Index,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
-import { User } from './user.entity';
+import { UserProfile } from './user-profile.entity';
 import { ScheduleData } from './schedule-data.entity';
 
 @Entity('schedule_files')
-@Index('idx_schedule_files_company_id', ['company_id'])
-@Index('idx_schedule_files_is_active', ['is_active'])
+@Index(['companyId'])
+@Index(['isActive'])
+@Index(['fileName'])
 export class ScheduleFile extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
-  @Column({ length: 255 })
-  file_name: string;
-
-  @Column({ type: 'text', nullable: true })
-  file_path: string;
+  @Column({ type: 'varchar', length: 255 })
+  fileName: string;
 
   @Column({ type: 'text', nullable: true })
-  file_url: string;
+  filePath?: string;
 
-  @Column({ length: 50, default: 'database' })
-  source_type: string;
+  @Column({ type: 'text', nullable: true })
+  fileUrl?: string;
 
-  @Column({ length: 50, default: 'hourly' })
-  sync_frequency: string;
+  @Column({ type: 'varchar', length: 50, default: 'database' })
+  sourceType: string;
 
-  @Column({ default: true })
-  auto_sync_enabled: boolean;
+  @Column({ type: 'varchar', length: 50, default: 'hourly' })
+  syncFrequency: string;
 
-  @Column({ default: true })
-  publish_to_schedule_page: boolean;
+  @Column({ type: 'boolean', default: true })
+  autoSyncEnabled: boolean;
 
-  @Column({ default: false })
-  is_active: boolean;
+  @Column({ type: 'boolean', default: true })
+  publishToSchedulePage: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isActive: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
-  last_synced_at: Date;
+  lastSyncedAt?: Date;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, any>;
+  metadata?: any;
 
   @Column({ type: 'uuid', nullable: true })
-  uploaded_by: string;
+  uploadedBy?: string;
 
   // Relations
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.scheduleFiles, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'uploaded_by' })
-  uploadedBy: User;
+  @ManyToOne(() => UserProfile)
+  @JoinColumn({ name: 'uploadedBy' })
+  uploader?: UserProfile;
 
   @OneToMany(() => ScheduleData, (data) => data.scheduleFile)
-  scheduleDataEntries: ScheduleData[];
+  scheduleData?: ScheduleData[];
 }

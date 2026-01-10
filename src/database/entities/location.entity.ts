@@ -1,48 +1,53 @@
-import { Entity, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
+import { WorkOrder } from './work-order.entity';
 
 @Entity('locations')
-@Unique(['company_id', 'code'])
+@Unique(['companyId', 'code'])
+@Index(['companyId'])
 export class Location extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ length: 50 })
+  @Column({ type: 'varchar', length: 50 })
   code: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ type: 'text', nullable: true })
-  address: string;
+  address?: string;
 
-  @Column({ length: 100, nullable: true })
-  city: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  city?: string;
 
-  @Column({ length: 100, nullable: true })
-  state: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  state?: string;
 
-  @Column({ length: 20, nullable: true })
-  postal_code: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  postalCode?: string;
 
-  @Column({ length: 100, nullable: true })
-  country: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  country?: string;
 
-  @Column({ length: 50, nullable: true })
-  phone: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  phone?: string;
 
-  @Column({ length: 255, nullable: true })
-  email: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email?: string;
 
-  @Column({ default: true })
-  is_active: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.locations)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.locations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
+
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder.location)
+  workOrders?: WorkOrder[];
 }

@@ -20,7 +20,7 @@ import { Department } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 
 @ApiTags('departments')
 @Controller('departments')
@@ -56,7 +56,7 @@ export class DepartmentsController {
   @ApiOperation({ summary: 'Get a department by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<Department> {
     return this.departmentsService.findById(id, user.companyId);
   }
@@ -66,7 +66,7 @@ export class DepartmentsController {
   @ApiResponse({ status: 201, description: 'Department created successfully' })
   async create(
     @Body() dto: CreateDepartmentDto,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; data: Department; message: string }> {
     const department = await this.departmentsService.create(
       user.companyId,
@@ -84,7 +84,7 @@ export class DepartmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateDepartmentDto,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<Department> {
     return this.departmentsService.update(id, user.companyId, dto);
   }
@@ -93,7 +93,7 @@ export class DepartmentsController {
   @ApiOperation({ summary: 'Delete a department (soft delete)' })
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; message: string }> {
     await this.departmentsService.delete(id, user.companyId);
     return {

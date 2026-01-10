@@ -5,87 +5,93 @@ import { ScheduleFile } from './schedule-file.entity';
 import { WorkOrder } from './work-order.entity';
 
 @Entity('schedule_data')
-@Unique(['company_id', 'wo_id'])
-@Index('idx_schedule_data_company_id', ['company_id'])
-@Index('idx_schedule_data_wo_id', ['wo_id'])
-@Index('idx_schedule_data_department', ['department'])
-@Index('idx_schedule_data_status', ['status'])
+@Unique(['companyId', 'woId'])
+@Index(['companyId'])
+@Index(['woId'])
+@Index(['department'])
+@Index(['status'])
+@Index(['scheduleFileId'])
+@Index(['importBatchId'])
 export class ScheduleData extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  schedule_file_id: string;
+  scheduleFileId?: string;
 
-  @Column({ length: 100 })
-  wo_id: string;
+  // Work Order Information
+  @Column({ type: 'varchar', length: 100 })
+  woId: string;
 
-  @Column({ length: 100, nullable: true })
-  wo_number: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  woNumber?: string;
 
-  @Column({ length: 100, nullable: true })
-  release_date: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  releaseDate?: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'integer', default: 0 })
   sequence: number;
 
-  @Column({ length: 100, nullable: true })
-  due_date: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  dueDate?: string;
 
-  @Column({ length: 100, nullable: true })
-  status: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  status?: string;
 
-  @Column({ length: 255, nullable: true })
-  part_number: string;
+  // Product Information
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  partNumber?: string;
 
-  @Column({ length: 100, nullable: true })
-  department: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  department?: string;
 
-  @Column({ type: 'int', default: 0 })
-  qty_open: number;
+  @Column({ type: 'integer', default: 0 })
+  qtyOpen: number;
 
-  @Column({ length: 100, nullable: true })
-  prod_date: string;
+  // Production Information
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  prodDate?: string;
 
-  @Column({ length: 100, nullable: true })
-  bulk_lot: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  bulkLot?: string;
 
-  @Column({ length: 100, nullable: true })
-  prod_qty: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  prodQty?: string;
 
-  @Column({ type: 'int', default: 0 })
-  insp_qty: number;
+  // Inspection Information
+  @Column({ type: 'integer', default: 0 })
+  inspQty: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'integer', default: 0 })
   rejected: number;
 
-  @Column({ length: 50, nullable: true })
-  shift: string;
+  // Additional Information
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  shift?: string;
 
+  // Metadata
   @Column({ type: 'jsonb', nullable: true })
-  raw_data: Record<string, any>;
+  rawData?: any;
 
-  @Column({ length: 100, nullable: true })
-  import_batch_id: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  importBatchId?: string;
 
-  @Column({ default: false })
-  is_synced: boolean;
+  @Column({ type: 'boolean', default: false })
+  isSynced: boolean;
 
   @Column({ type: 'uuid', nullable: true })
-  synced_work_order_id: string;
+  syncedWorkOrderId?: string;
 
   // Relations
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.scheduleData, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
 
-  @ManyToOne(() => ScheduleFile, (file) => file.scheduleDataEntries, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'schedule_file_id' })
-  scheduleFile: ScheduleFile;
+  @ManyToOne(() => ScheduleFile, (file) => file.scheduleData, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'scheduleFileId' })
+  scheduleFile?: ScheduleFile;
 
-  @ManyToOne(() => WorkOrder, { nullable: true })
-  @JoinColumn({ name: 'synced_work_order_id' })
-  syncedWorkOrder: WorkOrder;
+  @ManyToOne(() => WorkOrder, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'syncedWorkOrderId' })
+  syncedWorkOrder?: WorkOrder;
 }

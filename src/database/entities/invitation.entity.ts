@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
-import { User } from './user.entity';
+import { UserProfile } from './user-profile.entity';
 
 @Entity('invitations')
 @Index('idx_invitations_company_id', ['company_id'])
@@ -40,7 +40,7 @@ export class Invitation extends BaseEntity {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => UserProfile, { nullable: true })
   @JoinColumn({ name: 'invited_by' })
-  invitedByUser: User;
+  invitedByUser: UserProfile;
 }

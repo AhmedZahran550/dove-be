@@ -2,95 +2,100 @@ import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
-import { User } from './user.entity';
+import { UserProfile } from './user-profile.entity';
 
 @Entity('time_segments')
-@Index('idx_time_segments_company_id', ['company_id'])
-@Index('idx_time_segments_work_order_id', ['work_order_id'])
-@Index('idx_time_segments_operator_id', ['operator_id'])
-@Index('idx_time_segments_start_time', ['start_time'])
-@Index('idx_time_segments_is_active', ['is_active'])
+@Index(['companyId'])
+@Index(['workOrderId'])
+@Index(['operatorId'])
+@Index(['startTime'])
+@Index(['shiftDate'])
+@Index(['isActive'])
 export class TimeSegment extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  work_order_id: string;
+  workOrderId: string;
 
   @Column({ type: 'uuid' })
-  operator_id: string;
+  operatorId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  operator_ass_id: string;
+  operatorAssId?: string;
 
   @Column({ type: 'timestamptz' })
-  start_time: Date;
+  startTime: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  end_time: Date;
+  endTime?: Date;
 
-  @Column({ type: 'int', nullable: true })
-  duration_minutes: number;
+  @Column({ type: 'integer', nullable: true })
+  durationMinutes?: number;
 
   @Column({ type: 'uuid', nullable: true })
-  shift_id: string;
+  shiftId?: string;
 
   @Column({ type: 'date', nullable: true })
-  shift_date: string;
+  shiftDate?: Date;
 
-  @Column({ length: 50, default: 'productive' })
-  segment_type: string;
+  @Column({ type: 'varchar', length: 50, default: 'productive' })
+  segmentType: string;
 
   @Column({ type: 'uuid', nullable: true })
-  downtime_reason_id: string;
+  downtimeReasonId?: string;
 
-  @Column({ length: 50, nullable: true })
-  downtime_category: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  downtimeCategory?: string;
 
   @Column({ type: 'text', nullable: true })
-  downtime_notes: string;
+  downtimeNotes?: string;
 
-  @Column({ length: 50, nullable: true })
-  break_type: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  breakType?: string;
 
-  @Column({ type: 'int', default: 0 })
-  qty_produced: number;
+  @Column({ type: 'integer', default: 0 })
+  qtyProduced: number;
 
-  @Column({ type: 'int', default: 0 })
-  qty_rejected: number;
-
-  @Column({ type: 'uuid', nullable: true })
-  equipment_id: string;
-
-  @Column({ default: true })
-  is_active: boolean;
-
-  @Column({ default: false })
-  is_approved: boolean;
+  @Column({ type: 'integer', default: 0 })
+  qtyRejected: number;
 
   @Column({ type: 'uuid', nullable: true })
-  approved_by: string;
+  equipmentId?: string;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isApproved: boolean;
+
+  @Column({ type: 'uuid', nullable: true })
+  approvedBy?: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  approved_at: Date;
+  approvedAt?: Date;
 
   @Column({ type: 'text', nullable: true })
-  notes: string;
+  notes?: string;
 
   // Relations
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.timeSegments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
 
-  @ManyToOne(() => WorkOrder)
-  @JoinColumn({ name: 'work_order_id' })
-  workOrder: WorkOrder;
+  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.timeSegments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workOrderId' })
+  workOrder?: WorkOrder;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'operator_id' })
-  operator: User;
+  @ManyToOne(() => UserProfile, (user) => user.timeSegments, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'operatorId' })
+  operator?: UserProfile;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'operator_ass_id' })
-  operatorAssistant: User;
+  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'operatorAssId' })
+  operatorAssistant?: UserProfile;
+
+  @ManyToOne(() => UserProfile)
+  @JoinColumn({ name: 'approvedBy' })
+  approver?: UserProfile;
 }

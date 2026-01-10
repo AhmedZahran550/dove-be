@@ -27,9 +27,9 @@ export class WorkOrdersService {
     // Check if work order already exists and is active
     const existingWO = await this.workOrdersRepository.findOne({
       where: {
-        company_id: companyId,
-        wo_number: dto.wo_id,
-        closing_time: IsNull(),
+        companyId: companyId,
+        woNumber: dto.wo_id,
+        closingTime: IsNull(),
       },
     });
 
@@ -41,7 +41,7 @@ export class WorkOrdersService {
 
     // Get default location for the company
     const defaultLocation = await this.locationsRepository.findOne({
-      where: { company_id: companyId, is_active: true },
+      where: { companyId: companyId, isActive: true },
     });
 
     if (!defaultLocation) {
@@ -58,17 +58,17 @@ export class WorkOrdersService {
         : undefined;
 
     const workOrder = this.workOrdersRepository.create({
-      company_id: companyId,
-      location_id: defaultLocation.id,
-      wo_number: dto.wo_id,
-      lot_number: dto.lot_number || dto.part_number,
-      bulk_lot_number: dto.bulk_lot_number,
-      wo_qty: dto.wo_qty || 1,
-      equipment_id: equipmentId,
-      setup_time: setupMinutes,
-      start_time: dto.start_time ? new Date(dto.start_time) : new Date(),
-      current_status: 'running',
-      status_updated_at: new Date(),
+      companyId: companyId,
+      locationId: defaultLocation.id,
+      woNumber: dto.wo_id,
+      lotNumber: dto.lot_number || dto.part_number,
+      bulkLotNumber: dto.bulk_lot_number,
+      woQty: dto.wo_qty || 1,
+      equipmentId: equipmentId,
+      setupTime: setupMinutes,
+      startTime: dto.start_time ? new Date(dto.start_time) : new Date(),
+      currentStatus: 'running',
+      statusUpdatedAt: new Date(),
     });
 
     return this.workOrdersRepository.save(workOrder);
@@ -89,7 +89,7 @@ export class WorkOrdersService {
     }
 
     const [data, totalItems] = await this.workOrdersRepository.findAndCount({
-      where: { company_id: companyId },
+      where: { companyId: companyId },
       relations: ['location'],
       order: { [orderField]: orderDirection },
       skip,
@@ -110,17 +110,17 @@ export class WorkOrdersService {
   async findActive(companyId: string): Promise<WorkOrder[]> {
     return this.workOrdersRepository.find({
       where: {
-        company_id: companyId,
-        closing_time: IsNull(),
+        companyId: companyId,
+        closingTime: IsNull(),
       },
-      order: { start_time: 'DESC' },
+      order: { startTime: 'DESC' },
       relations: ['location'],
     });
   }
 
   async findById(id: string, companyId: string): Promise<WorkOrder> {
     const workOrder = await this.workOrdersRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
       relations: ['location', 'statusUpdatedBy'],
     });
 
@@ -139,12 +139,12 @@ export class WorkOrdersService {
   ): Promise<WorkOrder> {
     const workOrder = await this.findById(id, companyId);
 
-    const updateData: Partial<WorkOrder> = { ...dto };
+    const updateData = { ...dto };
 
     if (dto.current_status || dto.status_id) {
-      updateData.status_updated_at = new Date();
+      updateData.statusUpdatedAt = new Date();
       if (userId) {
-        updateData.status_updated_by = userId;
+        updateData.statusUpdatedBy = userId;
       }
     }
 
@@ -160,27 +160,27 @@ export class WorkOrdersService {
   ): Promise<WorkOrder> {
     const workOrder = await this.findById(id, companyId);
 
-    if (workOrder.closing_time) {
+    if (workOrder.closingTime) {
       throw new BadRequestException('Work order is already closed');
     }
 
     const updateData: Partial<WorkOrder> = {
-      closing_time: new Date(),
-      current_status: 'closed',
-      status_updated_at: new Date(),
+      closingTime: new Date(),
+      currentStatus: 'closed',
+      statusUpdatedAt: new Date(),
     };
 
     if (dto.qty_completed !== undefined) {
-      updateData.qty_completed = dto.qty_completed;
+      updateData.qtyCompleted = dto.qty_completed;
     }
     if (dto.qty_rejected !== undefined) {
-      updateData.qty_rejected = dto.qty_rejected;
+      updateData.qtyRejected = dto.qty_rejected;
     }
     if (dto.operator_comment) {
-      updateData.operator_comment = dto.operator_comment;
+      updateData.operatorComment = dto.operator_comment;
     }
     if (userId) {
-      updateData.status_updated_by = userId;
+      updateData.statusUpdatedBy = userId;
     }
 
     await this.workOrdersRepository.update(id, updateData);

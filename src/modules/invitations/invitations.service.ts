@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
 import { Invitation } from '../../database/entities';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
 import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';

@@ -19,8 +19,8 @@ import { ScheduleData } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { User } from '../../database/entities';
 import { QueryOptions, Paginate } from '../../common/query-options';
+import { UserProfile } from '@/database/entities/user-profile.entity';
 
 @ApiTags('schedule')
 @Controller('schedule')
@@ -38,7 +38,7 @@ export class ScheduleController {
   @ApiQuery({ name: 'search', required: false, type: String })
   async findScheduleData(
     @Paginate() query: QueryOptions,
-    @AuthUser() user?: User,
+    @AuthUser() user?: UserProfile,
   ) {
     return this.scheduleService.findScheduleData(user!.companyId, query);
   }
@@ -47,7 +47,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data for a specific department' })
   async findByDepartment(
     @Param('department') department: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<ScheduleData[]> {
     return this.scheduleService.findScheduleDataByDepartment(
       user.companyId,
@@ -59,7 +59,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data by work order ID' })
   async findByWoId(
     @Param('woId') woId: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<ScheduleData | null> {
     return this.scheduleService.findScheduleDataByWoId(woId, user.companyId);
   }
@@ -68,7 +68,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<ScheduleData> {
     return this.scheduleService.findScheduleDataById(id, user.companyId);
   }
@@ -78,7 +78,7 @@ export class ScheduleController {
   async updateScheduleData(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateData: Partial<ScheduleData>,
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<ScheduleData> {
     return this.scheduleService.updateScheduleData(
       id,
@@ -89,20 +89,22 @@ export class ScheduleController {
 
   @Get('departments')
   @ApiOperation({ summary: 'Get available departments from schedule data' })
-  async getDepartments(@AuthUser() user: User): Promise<string[]> {
+  async getDepartments(@AuthUser() user: UserProfile): Promise<string[]> {
     return this.scheduleService.getAvailableDepartments(user.companyId);
   }
 
   @Get('files')
   @ApiOperation({ summary: 'Get all schedule files' })
-  async getScheduleFiles(@AuthUser() user: User): Promise<ScheduleFile[]> {
+  async getScheduleFiles(
+    @AuthUser() user: UserProfile,
+  ): Promise<ScheduleFile[]> {
     return this.scheduleService.getScheduleFiles(user.companyId);
   }
 
   @Get('files/active')
   @ApiOperation({ summary: 'Get the active schedule file' })
   async getActiveScheduleFile(
-    @AuthUser() user: User,
+    @AuthUser() user: UserProfile,
   ): Promise<ScheduleFile | null> {
     return this.scheduleService.getActiveScheduleFile(user.companyId);
   }

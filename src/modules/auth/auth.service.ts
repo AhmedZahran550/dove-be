@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 import { Company } from '../../database/entities';
 import { Location } from '../../database/entities';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';

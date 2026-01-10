@@ -101,6 +101,10 @@ export class UpdateWorkOrderDto {
   @IsOptional()
   @IsString()
   supervisor_comment?: string;
+
+  statusUpdatedBy?: string;
+
+  statusUpdatedAt?: Date;
 }
 
 export class CloseWorkOrderDto {
@@ -150,4 +154,3 @@ export class WorkOrderResponseDto {
   @ApiProperty()
   created_at: Date;
 }
-

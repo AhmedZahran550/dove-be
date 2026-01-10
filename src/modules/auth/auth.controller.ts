@@ -21,7 +21,7 @@ import {
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthUser } from './decorators/auth-user.decorator';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 
 @ApiTags('auth')
 @Controller('auth')

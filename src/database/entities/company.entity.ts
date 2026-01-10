@@ -1,68 +1,105 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { User } from './user.entity';
 import { Location } from './location.entity';
+import { UserProfile } from './user-profile.entity';
+import { WorkOrderStatus } from './work-order-status.entity';
+import { WorkOrder } from './work-order.entity';
+import { TimeSegment } from './time-segment.entity';
+import { RejectionCategory } from './rejection-category.entity';
+import { RejectionReason } from './rejection-reason.entity';
+import { QCRejection } from './qc-rejection.entity';
+import { SystemConfiguration } from './system-configuration.entity';
+import { ScheduleFile } from './schedule-file.entity';
+import { ScheduleData } from './schedule-data.entity';
 
 @Entity('companies')
+@Index(['slug'])
 export class Company extends BaseEntity {
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ length: 100, unique: true })
+  @Column({ type: 'varchar', length: 100, unique: true })
   slug: string;
 
-  @Column({ length: 100, nullable: true })
-  industry: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  industry?: string;
 
-  @Column({ length: 255, nullable: true })
-  website: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  website?: string;
 
-  @Column({ length: 50, nullable: true })
-  phone: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  phone?: string;
 
-  @Column({ length: 255, nullable: true })
-  email: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email?: string;
 
   @Column({ type: 'text', nullable: true })
-  address: string;
+  address?: string;
 
-  @Column({ length: 100, nullable: true })
-  city: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  city?: string;
 
-  @Column({ length: 100, nullable: true })
-  state: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  state?: string;
 
-  @Column({ length: 20, nullable: true })
-  postal_code: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  postalCode?: string;
 
-  @Column({ length: 100, nullable: true })
-  country: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  country?: string;
 
-  @Column({ length: 50, default: 'America/Toronto' })
+  @Column({ type: 'varchar', length: 50, default: 'America/Toronto' })
   timezone: string;
 
-  @Column({ length: 50, default: 'free' })
-  subscription_tier: string;
+  @Column({ type: 'varchar', length: 50, default: 'free' })
+  subscriptionTier: string;
 
-  @Column({ length: 50, default: 'active' })
-  subscription_status: string;
+  @Column({ type: 'varchar', length: 50, default: 'active' })
+  subscriptionStatus: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  trial_ends_at: Date;
+  trialEndsAt?: Date;
 
-  @Column({ type: 'int', default: 5 })
-  max_users: number;
+  @Column({ type: 'integer', default: 5 })
+  maxUsers: number;
 
-  @Column({ type: 'int', default: 1 })
-  max_locations: number;
+  @Column({ type: 'integer', default: 1 })
+  maxLocations: number;
 
-  @Column({ default: true })
-  is_active: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
-  // Relations (use lazy loading to avoid circular deps)
-  @OneToMany('User', 'company')
-  users: User[];
+  // Relations
+  @OneToMany(() => Location, (location) => location.company)
+  locations?: Location[];
 
-  @OneToMany('Location', 'company')
-  locations: Location[];
+  @OneToMany(() => UserProfile, (userProfile) => userProfile.company)
+  userProfiles?: UserProfile[];
+
+  @OneToMany(() => WorkOrderStatus, (status) => status.company)
+  workOrderStatuses?: WorkOrderStatus[];
+
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder.company)
+  workOrders?: WorkOrder[];
+
+  @OneToMany(() => TimeSegment, (timeSegment) => timeSegment.company)
+  timeSegments?: TimeSegment[];
+
+  @OneToMany(() => RejectionCategory, (category) => category.company)
+  rejectionCategories?: RejectionCategory[];
+
+  @OneToMany(() => RejectionReason, (reason) => reason.company)
+  rejectionReasons?: RejectionReason[];
+
+  @OneToMany(() => QCRejection, (rejection) => rejection.company)
+  qcRejections?: QCRejection[];
+
+  @OneToMany(() => SystemConfiguration, (config) => config.company)
+  systemConfigurations?: SystemConfiguration[];
+
+  @OneToMany(() => ScheduleFile, (file) => file.company)
+  scheduleFiles?: ScheduleFile[];
+
+  @OneToMany(() => ScheduleData, (data) => data.company)
+  scheduleData?: ScheduleData[];
 }

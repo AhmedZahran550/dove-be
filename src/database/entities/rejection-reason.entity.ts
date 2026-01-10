@@ -1,55 +1,60 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { RejectionCategory } from './rejection-category.entity';
+import { QCRejection } from './qc-rejection.entity';
 
 @Entity('rejection_reasons')
-@Index('idx_rejection_reasons_company_id', ['company_id'])
-@Index('idx_rejection_reasons_category_id', ['category_id'])
-@Index('idx_rejection_reasons_is_active', ['is_active'])
+@Index(['companyId'])
+@Index(['departmentId'])
+@Index(['categoryId'])
+@Index(['isActive'])
 export class RejectionReason extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId?: string;
 
   @Column({ type: 'uuid' })
-  category_id: string;
+  categoryId: string;
 
-  @Column({ length: 200 })
+  @Column({ type: 'varchar', length: 200 })
   name: string;
 
-  @Column({ length: 50 })
+  @Column({ type: 'varchar', length: 50 })
   code: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
-  @Column({ default: false })
-  requires_photo: boolean;
+  @Column({ type: 'boolean', default: false })
+  requiresPhoto: boolean;
 
-  @Column({ default: false })
-  requires_comment: boolean;
+  @Column({ type: 'boolean', default: false })
+  requiresComment: boolean;
 
-  @Column({ default: false })
-  requires_approval: boolean;
+  @Column({ type: 'boolean', default: false })
+  requiresApproval: boolean;
 
-  @Column({ length: 20, nullable: true })
-  default_action: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  defaultAction?: string;
 
-  @Column({ default: true })
-  is_active: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
-  @Column({ type: 'int', default: 0 })
-  display_order: number;
+  @Column({ type: 'integer', default: 0 })
+  displayOrder: number;
 
   // Relations
-  @ManyToOne(() => Company)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  @ManyToOne(() => Company, (company) => company.rejectionReasons, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company?: Company;
 
-  @ManyToOne(() => RejectionCategory, (category) => category.reasons)
-  @JoinColumn({ name: 'category_id' })
-  category: RejectionCategory;
+  @ManyToOne(() => RejectionCategory, (category) => category.rejectionReasons, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'categoryId' })
+  category?: RejectionCategory;
+
+  @OneToMany(() => QCRejection, (rejection) => rejection.rejectionReason)
+  qcRejections?: QCRejection[];
 }

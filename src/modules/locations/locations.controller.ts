@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { LocationsService } from './locations.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { User } from '../../database/entities';
+import { UserProfile } from '../../database/entities';
 
 @ApiTags('locations')
 @Controller('locations')
