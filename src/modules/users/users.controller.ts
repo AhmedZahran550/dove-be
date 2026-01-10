@@ -14,13 +14,13 @@ export class UsersController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })
-  async getProfile(@AuthUser() user: User) {
+  async getProfile(@AuthUser() user: UserProfile) {
     return this.usersService.findById(user.id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all users in company' })
-  async findAll(@AuthUser() user: User) {
+  async findAll(@AuthUser() user: UserProfile) {
     return this.usersService.findByCompany(user.companyId);
   }
 }

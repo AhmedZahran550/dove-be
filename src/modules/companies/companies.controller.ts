@@ -14,7 +14,7 @@ export class CompaniesController {
 
   @Get('current')
   @ApiOperation({ summary: 'Get current user company' })
-  async getCurrentCompany(@AuthUser() user: User) {
+  async getCurrentCompany(@AuthUser() user: UserProfile) {
     return this.companiesService.findById(user.companyId);
   }
 }

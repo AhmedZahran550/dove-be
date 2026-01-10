@@ -24,7 +24,7 @@ export class InvitationsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all invitations for current company' })
-  async findAll(@AuthUser() user: User): Promise<Invitation[]> {
+  async findAll(@AuthUser() user: UserProfile): Promise<Invitation[]> {
     return this.invitationsService.findByCompany(user.companyId);
   }
 
@@ -34,7 +34,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Create a new invitation' })
   async create(
     @Body() dto: CreateInvitationDto,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; data: Invitation; message: string }> {
     const invitation = await this.invitationsService.create(
       user.companyId,
@@ -75,7 +75,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Resend an invitation' })
   async resend(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; data: Invitation }> {
     const invitation = await this.invitationsService.resend(id, user.companyId);
     return { success: true, data: invitation };
@@ -87,7 +87,7 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Revoke an invitation' })
   async revoke(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; message: string }> {
     await this.invitationsService.revoke(id, user.companyId);
     return { success: true, message: 'Invitation revoked' };

@@ -17,8 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersRepository: Repository<UserProfile>,
     @InjectRepository(Company)
     private companiesRepository: Repository<Company>,
     @InjectRepository(Location)
@@ -45,27 +45,27 @@ export class AuthService {
     // Generate slug from organization name
     const slug = this.generateSlug(dto.organizationName);
 
-    const company = this.companiesRepository.create({
+    const company: Company = this.companiesRepository.create({
       name: dto.organizationName,
       slug,
       phone: dto.phone,
       timezone: 'America/Toronto',
-      subscription_tier: 'free',
-      subscription_status: 'trial',
-      trial_ends_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
-      max_users: 5,
-      max_locations: 1,
-      is_active: true,
+      subscriptionTier: 'free',
+      subscriptionStatus: 'trial',
+      trialEndsAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
+      maxUsers: 5,
+      maxLocations: 1,
+      isActive: true,
     });
 
     const savedCompany = await this.companiesRepository.save(company);
 
     // Create default location
     const location = this.locationsRepository.create({
-      company_id: savedCompany.id,
+      companyId: savedCompany.id,
       name: 'Main Location',
       code: 'MAIN',
-      is_active: true,
+      isActive: true,
     });
 
     const savedLocation = await this.locationsRepository.save(location);
@@ -134,13 +134,13 @@ export class AuthService {
 
   async logout(userId: string): Promise<void> {}
 
-  async validateUser(userId: string): Promise<User | null> {
+  async validateUser(userId: string): Promise<UserProfile | null> {
     return this.usersRepository.findOneOrFail({
       where: { id: userId, isActive: true },
     });
   }
 
-  private async generateTokens(user: User): Promise<AuthResponseDto> {
+  private async generateTokens(user: UserProfile): Promise<AuthResponseDto> {
     const payload = {
       sub: user.id,
       email: user.email,

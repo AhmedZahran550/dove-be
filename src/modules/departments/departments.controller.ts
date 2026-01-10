@@ -31,7 +31,7 @@ export class DepartmentsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all departments for current company' })
-  async findAll(@AuthUser() user: User): Promise<{
+  async findAll(@AuthUser() user: UserProfile): Promise<{
     success: boolean;
     data: Department[];
     count: number;
@@ -48,7 +48,7 @@ export class DepartmentsController {
 
   @Get('filter-options')
   @ApiOperation({ summary: 'Get available filter options for departments' })
-  async getFilterOptions(@AuthUser() user: User) {
+  async getFilterOptions(@AuthUser() user: UserProfile) {
     return this.departmentsService.getFilterOptions(user.companyId);
   }
 

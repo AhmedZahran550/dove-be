@@ -44,7 +44,7 @@ export class WorkOrdersController {
   })
   async create(
     @Body() dto: CreateWorkOrderDto,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; message: string; data: WorkOrder }> {
     const workOrder = await this.workOrdersService.create(user.companyId, dto);
     return {
@@ -58,14 +58,14 @@ export class WorkOrdersController {
   @ApiOperation({ summary: 'Get all work orders with pagination' })
   async findAll(
     @Paginate() query: QueryOptions,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ) {
     return this.workOrdersService.findAll(user.companyId, query);
   }
 
   @Get('active')
   @ApiOperation({ summary: 'Get all active (unclosed) work orders' })
-  async findActive(@AuthUser() user: UserProfile): Promise<WorkOrder[]> {
+  async findActive(@AuthUser() user: UserProfileProfile): Promise<WorkOrder[]> {
     return this.workOrdersService.findActive(user.companyId);
   }
 
@@ -75,7 +75,7 @@ export class WorkOrdersController {
   @ApiResponse({ status: 404, description: 'Work order not found' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<WorkOrder> {
     return this.workOrdersService.findById(id, user.companyId);
   }
@@ -85,7 +85,7 @@ export class WorkOrdersController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateWorkOrderDto,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<WorkOrder> {
     return this.workOrdersService.update(id, user.companyId, dto, user.id);
   }
@@ -95,7 +95,7 @@ export class WorkOrdersController {
   async close(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CloseWorkOrderDto,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; message: string; data: WorkOrder }> {
     const workOrder = await this.workOrdersService.close(
       id,
@@ -115,7 +115,7 @@ export class WorkOrdersController {
   @ApiResponse({ status: 200, description: 'Work order deleted' })
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<{ success: boolean; message: string }> {
     await this.workOrdersService.delete(id, user.companyId);
     return {

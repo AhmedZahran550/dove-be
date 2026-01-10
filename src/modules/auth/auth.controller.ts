@@ -75,7 +75,7 @@ export class AuthController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Logout and invalidate refresh token' })
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
-  async logout(@AuthUser() user: User): Promise<{ message: string }> {
+  async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);
     return { message: 'Logged out successfully' };
   }

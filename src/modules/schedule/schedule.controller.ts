@@ -47,7 +47,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data for a specific department' })
   async findByDepartment(
     @Param('department') department: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleData[]> {
     return this.scheduleService.findScheduleDataByDepartment(
       user.companyId,
@@ -59,7 +59,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data by work order ID' })
   async findByWoId(
     @Param('woId') woId: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleData | null> {
     return this.scheduleService.findScheduleDataByWoId(woId, user.companyId);
   }
@@ -68,7 +68,7 @@ export class ScheduleController {
   @ApiOperation({ summary: 'Get schedule data by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleData> {
     return this.scheduleService.findScheduleDataById(id, user.companyId);
   }
@@ -78,7 +78,7 @@ export class ScheduleController {
   async updateScheduleData(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateData: Partial<ScheduleData>,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleData> {
     return this.scheduleService.updateScheduleData(
       id,
@@ -89,14 +89,16 @@ export class ScheduleController {
 
   @Get('departments')
   @ApiOperation({ summary: 'Get available departments from schedule data' })
-  async getDepartments(@AuthUser() user: UserProfile): Promise<string[]> {
+  async getDepartments(
+    @AuthUser() user: UserProfileProfile,
+  ): Promise<string[]> {
     return this.scheduleService.getAvailableDepartments(user.companyId);
   }
 
   @Get('files')
   @ApiOperation({ summary: 'Get all schedule files' })
   async getScheduleFiles(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleFile[]> {
     return this.scheduleService.getScheduleFiles(user.companyId);
   }
@@ -104,7 +106,7 @@ export class ScheduleController {
   @Get('files/active')
   @ApiOperation({ summary: 'Get the active schedule file' })
   async getActiveScheduleFile(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: UserProfileProfile,
   ): Promise<ScheduleFile | null> {
     return this.scheduleService.getActiveScheduleFile(user.companyId);
   }

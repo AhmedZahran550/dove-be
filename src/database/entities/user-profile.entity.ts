@@ -1,9 +1,20 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Location } from './location.entity';
 import { TimeSegment } from './time-segment.entity';
 import { WorkOrderOperator } from './work-order-operator.entity';
+import * as argon from 'argon2';
+import { Exclude } from 'class-transformer';
 
 @Entity('user_profiles')
 @Index(['companyId'])
@@ -40,8 +51,14 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
 
+  @Exclude()
+  @Column({ select: false })
+  password: string;
+
   // Relations
-  @ManyToOne(() => Company, (company) => company.userProfiles, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.userProfiles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
@@ -54,4 +71,15 @@ export class UserProfile extends BaseEntity {
 
   @OneToMany(() => WorkOrderOperator, (wo) => wo.operator)
   workOrderOperators?: WorkOrderOperator[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async beforeChanges() {
+    if (this.password && this.password?.startsWith('$argon2')) {
+      return;
+    }
+    if (this.password) {
+      this.password = await argon.hash(this.password);
+    }
+  }
 }

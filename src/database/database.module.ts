@@ -2,7 +2,6 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import {
-  User,
   Company,
   Location,
   WorkOrder,
@@ -14,6 +13,7 @@ import {
   RejectionCategory,
   RejectionReason,
   Invitation,
+  UserProfile,
 } from './entities';
 
 @Global()
@@ -27,7 +27,7 @@ import {
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([
-      User,
+      UserProfile,
       Company,
       Location,
       WorkOrder,

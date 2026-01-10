@@ -14,7 +14,7 @@ export class LocationsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all locations for current company' })
-  async findAll(@AuthUser() user: User) {
+  async findAll(@AuthUser() user: UserProfile) {
     return this.locationsService.findByCompany(user.companyId);
   }
 }
