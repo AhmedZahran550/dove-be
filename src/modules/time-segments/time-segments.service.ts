@@ -24,16 +24,16 @@ export class TimeSegmentsService {
     dto: CreateTimeSegmentDto,
   ): Promise<TimeSegment> {
     const timeSegment = this.timeSegmentsRepository.create({
-      company_id: companyId,
-      work_order_id: dto.work_order_id,
-      operator_id: dto.operator_id,
-      operator_ass_id: dto.operator_ass_id,
-      start_time: dto.start_time ? new Date(dto.start_time) : new Date(),
-      segment_type: dto.segment_type || 'productive',
-      shift_id: dto.shift_id,
-      shift_date: dto.shift_date,
-      equipment_id: dto.equipment_id,
-      is_active: true,
+      companyId: companyId,
+      workOrderId: dto.work_order_id,
+      operatorId: dto.operator_id,
+      operatorAssId: dto.operator_ass_id,
+      startTime: dto.start_time ? new Date(dto.start_time) : new Date(),
+      segmentType: dto.segment_type || 'productive',
+      shiftId: dto.shift_id,
+      shiftDate: dto.shift_date,
+      equipmentId: dto.equipment_id,
+      isActive: true,
     });
 
     return this.timeSegmentsRepository.save(timeSegment);
@@ -44,9 +44,9 @@ export class TimeSegmentsService {
     companyId: string,
   ): Promise<TimeSegment[]> {
     return this.timeSegmentsRepository.find({
-      where: { work_order_id: workOrderId, company_id: companyId },
+      where: { workOrderId: workOrderId, companyId: companyId },
       relations: ['operator'],
-      order: { start_time: 'DESC' },
+      order: { startTime: 'DESC' },
     });
   }
 
@@ -56,10 +56,10 @@ export class TimeSegmentsService {
   ): Promise<TimeSegment | null> {
     return this.timeSegmentsRepository.findOne({
       where: {
-        operator_id: operatorId,
-        company_id: companyId,
-        end_time: IsNull(),
-        is_active: true,
+        operatorId: operatorId,
+        companyId: companyId,
+        endTime: IsNull(),
+        isActive: true,
       },
       relations: ['workOrder'],
     });
@@ -67,7 +67,7 @@ export class TimeSegmentsService {
 
   async findById(id: string, companyId: string): Promise<TimeSegment> {
     const timeSegment = await this.timeSegmentsRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
       relations: ['operator', 'workOrder'],
     });
 
@@ -87,7 +87,7 @@ export class TimeSegmentsService {
 
     await this.timeSegmentsRepository.update(id, {
       ...dto,
-      end_time: dto.end_time ? new Date(dto.end_time) : undefined,
+      endTime: dto.end_time ? new Date(dto.end_time) : undefined,
     });
 
     return this.findById(id, companyId);
@@ -100,20 +100,20 @@ export class TimeSegmentsService {
   ): Promise<TimeSegment> {
     const timeSegment = await this.findById(id, companyId);
 
-    if (timeSegment.end_time) {
+    if (timeSegment.endTime) {
       throw new BadRequestException('Time segment is already ended');
     }
 
     const endTime = dto.end_time ? new Date(dto.end_time) : new Date();
     const durationMinutes = Math.round(
-      (endTime.getTime() - timeSegment.start_time.getTime()) / (1000 * 60),
+      (endTime.getTime() - timeSegment.startTime.getTime()) / (1000 * 60),
     );
 
     await this.timeSegmentsRepository.update(id, {
-      end_time: endTime,
-      duration_minutes: durationMinutes,
-      qty_produced: dto.qty_produced,
-      qty_rejected: dto.qty_rejected,
+      endTime: endTime,
+      durationMinutes: durationMinutes,
+      qtyProduced: dto.qty_produced,
+      qtyRejected: dto.qty_rejected,
       notes: dto.notes,
     });
 
@@ -126,23 +126,22 @@ export class TimeSegmentsService {
   ): Promise<void> {
     const activeSegments = await this.timeSegmentsRepository.find({
       where: {
-        work_order_id: workOrderId,
-        company_id: companyId,
-        end_time: IsNull(),
-        is_active: true,
+        workOrderId: workOrderId,
+        companyId: companyId,
+        endTime: IsNull(),
+        isActive: true,
       },
     });
 
     const now = new Date();
     for (const segment of activeSegments) {
       const durationMinutes = Math.round(
-        (now.getTime() - segment.start_time.getTime()) / (1000 * 60),
+        (now.getTime() - segment.startTime.getTime()) / (1000 * 60),
       );
       await this.timeSegmentsRepository.update(segment.id, {
-        end_time: now,
-        duration_minutes: durationMinutes,
+        endTime: now,
+        durationMinutes: durationMinutes,
       });
     }
   }
 }
-

@@ -12,7 +12,7 @@ export class LocationsService {
 
   async findByCompany(companyId: string): Promise<Location[]> {
     return this.locationsRepository.find({
-      where: { company_id: companyId, is_active: true },
+      where: { companyId: companyId, isActive: true },
       order: { name: 'ASC' },
     });
   }
@@ -32,7 +32,7 @@ export class LocationsService {
   async create(companyId: string, data: Partial<Location>): Promise<Location> {
     const location = this.locationsRepository.create({
       ...data,
-      company_id: companyId,
+      companyId: companyId,
     });
     return this.locationsRepository.save(location);
   }
@@ -42,4 +42,3 @@ export class LocationsService {
     return this.findById(id);
   }
 }
-

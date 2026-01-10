@@ -17,8 +17,8 @@ export class InvitationsService {
   constructor(
     @InjectRepository(Invitation)
     private invitationsRepository: Repository<Invitation>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersRepository: Repository<UserProfile>,
   ) {}
 
   async create(
@@ -97,7 +97,7 @@ export class InvitationsService {
     return invitation;
   }
 
-  async accept(dto: AcceptInvitationDto): Promise<User> {
+  async accept(dto: AcceptInvitationDto): Promise<UserProfile> {
     const invitation = await this.findByToken(dto.token);
 
     // Hash password

@@ -26,7 +26,7 @@ export class ScheduleService {
     const limit = Math.min(query.limit || 50, 200);
     const skip = (page - 1) * limit;
 
-    const whereClause: any = { company_id: companyId };
+    const whereClause: any = { companyId: companyId };
 
     if (query.department) {
       whereClause.department = query.department;
@@ -35,12 +35,12 @@ export class ScheduleService {
       whereClause.status = query.status;
     }
     if (query.search) {
-      whereClause.wo_id = ILike(`%${query.search}%`);
+      whereClause.woId = ILike(`%${query.search}%`);
     }
 
     const [data, totalItems] = await this.scheduleDataRepository.findAndCount({
       where: whereClause,
-      order: { sequence: 'ASC', wo_id: 'ASC' },
+      order: { sequence: 'ASC', woId: 'ASC' },
       skip,
       take: limit,
     });
@@ -61,7 +61,7 @@ export class ScheduleService {
     department: string,
   ): Promise<ScheduleData[]> {
     return this.scheduleDataRepository.find({
-      where: { company_id: companyId, department },
+      where: { companyId: companyId, department },
       order: { sequence: 'ASC' },
     });
   }
@@ -71,7 +71,7 @@ export class ScheduleService {
     companyId: string,
   ): Promise<ScheduleData> {
     const scheduleData = await this.scheduleDataRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
     });
 
     if (!scheduleData) {
@@ -86,7 +86,7 @@ export class ScheduleService {
     companyId: string,
   ): Promise<ScheduleData | null> {
     return this.scheduleDataRepository.findOne({
-      where: { wo_id: woId, company_id: companyId },
+      where: { woId: woId, companyId: companyId },
     });
   }
 
@@ -94,7 +94,7 @@ export class ScheduleService {
     const result = await this.scheduleDataRepository
       .createQueryBuilder('sd')
       .select('DISTINCT sd.department', 'department')
-      .where('sd.company_id = :companyId', { companyId })
+      .where('sd.companyId = :companyId', { companyId })
       .andWhere('sd.department IS NOT NULL')
       .getRawMany();
 
@@ -103,14 +103,14 @@ export class ScheduleService {
 
   async getScheduleFiles(companyId: string): Promise<ScheduleFile[]> {
     return this.scheduleFileRepository.find({
-      where: { company_id: companyId },
+      where: { companyId: companyId },
       order: { createdAt: 'DESC' },
     });
   }
 
   async getActiveScheduleFile(companyId: string): Promise<ScheduleFile | null> {
     return this.scheduleFileRepository.findOne({
-      where: { company_id: companyId, is_active: true },
+      where: { companyId: companyId, isActive: true },
     });
   }
 

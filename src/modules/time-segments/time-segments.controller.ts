@@ -37,7 +37,7 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Create a new time segment' })
   async create(
     @Body() dto: CreateTimeSegmentDto,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment> {
     return this.timeSegmentsService.create(user.companyId, dto);
   }
@@ -46,7 +46,7 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Get time segments for a work order' })
   async findByWorkOrder(
     @Param('workOrderId', ParseUUIDPipe) workOrderId: string,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment[]> {
     return this.timeSegmentsService.findByWorkOrder(
       workOrderId,
@@ -58,7 +58,7 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Get active time segment for an operator' })
   async findActiveByOperator(
     @Param('operatorId', ParseUUIDPipe) operatorId: string,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment | null> {
     return this.timeSegmentsService.findActiveByOperator(
       operatorId,
@@ -70,7 +70,7 @@ export class TimeSegmentsController {
   @ApiOperation({ summary: 'Get a time segment by ID' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment> {
     return this.timeSegmentsService.findById(id, user.companyId);
   }
@@ -80,7 +80,7 @@ export class TimeSegmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTimeSegmentDto,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment> {
     return this.timeSegmentsService.update(id, user.companyId, dto);
   }
@@ -90,7 +90,7 @@ export class TimeSegmentsController {
   async endSegment(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: EndTimeSegmentDto,
-    @AuthUser() user: UserProfileProfile,
+    @AuthUser() user: UserProfile,
   ): Promise<TimeSegment> {
     return this.timeSegmentsService.endSegment(id, user.companyId, dto);
   }

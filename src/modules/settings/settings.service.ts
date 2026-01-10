@@ -18,14 +18,14 @@ export class SettingsService {
     companyId: string,
     departmentId?: string,
   ): Promise<RejectionCategory[]> {
-    const where: any = { company_id: companyId, is_active: true };
+    const where: any = { companyId: companyId, isActive: true };
     if (departmentId) {
-      where.department_id = departmentId;
+      where.departmentId = departmentId;
     }
     return this.categoriesRepository.find({
       where,
       relations: ['reasons'],
-      order: { display_order: 'ASC' },
+      order: { displayOrder: 'ASC' },
     });
   }
 
@@ -34,7 +34,7 @@ export class SettingsService {
     companyId: string,
   ): Promise<RejectionCategory> {
     const category = await this.categoriesRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
       relations: ['reasons'],
     });
     if (!category) {
@@ -49,7 +49,7 @@ export class SettingsService {
   ): Promise<RejectionCategory> {
     const category = this.categoriesRepository.create({
       ...data,
-      company_id: companyId,
+      companyId: companyId,
     });
     return this.categoriesRepository.save(category);
   }
@@ -66,7 +66,7 @@ export class SettingsService {
 
   async deleteCategory(id: string, companyId: string): Promise<void> {
     await this.findCategoryById(id, companyId);
-    await this.categoriesRepository.update(id, { is_active: false });
+    await this.categoriesRepository.update(id, { isActive: false });
   }
 
   // Rejection Reasons
@@ -74,14 +74,14 @@ export class SettingsService {
     companyId: string,
     categoryId?: string,
   ): Promise<RejectionReason[]> {
-    const where: any = { company_id: companyId, is_active: true };
+    const where: any = { companyId: companyId, isActive: true };
     if (categoryId) {
-      where.category_id = categoryId;
+      where.categoryId = categoryId;
     }
     return this.reasonsRepository.find({
       where,
       relations: ['category'],
-      order: { display_order: 'ASC' },
+      order: { displayOrder: 'ASC' },
     });
   }
 
@@ -90,7 +90,7 @@ export class SettingsService {
     companyId: string,
   ): Promise<RejectionReason> {
     const reason = await this.reasonsRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
       relations: ['category'],
     });
     if (!reason) {
@@ -105,7 +105,7 @@ export class SettingsService {
   ): Promise<RejectionReason> {
     const reason = this.reasonsRepository.create({
       ...data,
-      company_id: companyId,
+      companyId: companyId,
     });
     return this.reasonsRepository.save(reason);
   }
@@ -122,7 +122,6 @@ export class SettingsService {
 
   async deleteReason(id: string, companyId: string): Promise<void> {
     await this.findReasonById(id, companyId);
-    await this.reasonsRepository.update(id, { is_active: false });
+    await this.reasonsRepository.update(id, { isActive: false });
   }
 }
-

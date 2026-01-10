@@ -6,11 +6,11 @@ import { UserProfile } from '../../database/entities';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserProfile)
+    private usersRepository: Repository<UserProfile>,
   ) {}
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<UserProfile> {
     const user = await this.usersRepository.findOne({
       where: { id },
       relations: ['company'],
@@ -23,20 +23,23 @@ export class UsersService {
     return user;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserProfile | null> {
     return this.usersRepository.findOne({
       where: { email: email.toLowerCase() },
     });
   }
 
-  async findByCompany(companyId: string): Promise<User[]> {
+  async findByCompany(companyId: string): Promise<UserProfile[]> {
     return this.usersRepository.find({
       where: { companyId: companyId, isActive: true },
       order: { firstName: 'ASC' },
     });
   }
 
-  async update(id: string, updateData: Partial<User>): Promise<User> {
+  async update(
+    id: string,
+    updateData: Partial<UserProfile>,
+  ): Promise<UserProfile> {
     await this.usersRepository.update(id, updateData);
     return this.findById(id);
   }
