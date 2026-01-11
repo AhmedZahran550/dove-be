@@ -11,11 +11,11 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { InvitationsService } from './invitations.service';
 import { Invitation } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
+import { AuthUserDto } from '../auth/dto/auth-user.dto';
 
 @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiTags('invitations')
@@ -35,11 +35,11 @@ export class InvitationsController {
   @ApiOperation({ summary: 'Create a new invitation' })
   async create(
     @Body() dto: CreateInvitationDto,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: AuthUserDto,
   ): Promise<{ success: boolean; data: Invitation; message: string }> {
     const invitation = await this.invitationsService.create(
       user.companyId,
-      user.id,
+      user,
       dto,
     );
     return {
