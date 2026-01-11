@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { UserProfile } from './user-profile.entity';
+import { Role } from '@/modules/auth/role.model';
 
 @Entity('invitations')
 @Index('idx_invitations_company_id', ['company_id'])
@@ -14,8 +15,13 @@ export class Invitation extends BaseEntity {
   @Column({ length: 255 })
   email: string;
 
-  @Column({ length: 50 })
-  role: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    nullable: true,
+    default: [Role.OPERATOR],
+  })
+  role: Role;
 
   @Column({ type: 'uuid', nullable: true })
   location_id: string;

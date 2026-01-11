@@ -14,14 +14,16 @@ import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiTags('invitations')
 @Controller('invitations')
 export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all invitations for current company' })
   async findAll(@AuthUser() user: UserProfile): Promise<Invitation[]> {
@@ -29,7 +31,6 @@ export class InvitationsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create a new invitation' })
   async create(
@@ -70,19 +71,17 @@ export class InvitationsController {
   }
 
   @Post(':id/resend')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Resend an invitation' })
   async resend(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
-  ): Promise<{ success: boolean; data: Invitation }> {
-    const invitation = await this.invitationsService.resend(id, user.companyId);
-    return { success: true, data: invitation };
+  ): Promise<{ success: boolean }> {
+    await this.invitationsService.resend(id, user.companyId);
+    return { success: true };
   }
 
   @Post(':id/revoke')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Revoke an invitation' })
   async revoke(

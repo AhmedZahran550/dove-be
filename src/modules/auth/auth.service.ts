@@ -12,8 +12,8 @@ import { UserProfile } from '../../database/entities';
 import { Company } from '../../database/entities';
 import { Location } from '../../database/entities';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { ErrorCodes } from '@/common/error-codes';
+import { Role } from './role.model';
 
 @Injectable()
 export class AuthService {
@@ -77,7 +77,7 @@ export class AuthService {
       firstName: firstName,
       lastName: lastName,
       phone: dto.phone,
-      role: 'company_admin',
+      roles: [Role.COMPANY_ADMIN],
       password: dto.password,
       isActive: true,
     });
@@ -89,7 +89,7 @@ export class AuthService {
   async login(dto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.usersRepository.findOne({
       where: { email: dto.email.toLowerCase() },
-      select: ['password', 'id', 'email', 'role', 'companyId'],
+      select: ['password', 'id', 'email', 'roles', 'companyId'],
     });
 
     if (!user) {
@@ -150,7 +150,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: user.roles,
       company_id: user.companyId,
     };
 
@@ -170,10 +170,11 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        first_name: user.firstName || '',
-        last_name: user.lastName || '',
-        role: user.role,
-        company_id: user.companyId,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        roles: user.roles,
+        companyId: user.companyId,
+        locationId: user.locationId,
       },
     };
   }

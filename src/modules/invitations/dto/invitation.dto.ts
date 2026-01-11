@@ -1,3 +1,4 @@
+import { Role } from '@/modules/auth/role.model';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
@@ -5,6 +6,7 @@ import {
   IsEmail,
   IsOptional,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateInvitationDto {
@@ -14,8 +16,9 @@ export class CreateInvitationDto {
 
   @ApiProperty({ example: 'operator' })
   @IsString()
+  @IsEnum(Role)
   @IsNotEmpty()
-  role: string;
+  role: Role;
 
   @ApiPropertyOptional()
   @IsUUID()
@@ -44,4 +47,3 @@ export class AcceptInvitationDto {
   @IsNotEmpty()
   password: string;
 }
-

@@ -15,6 +15,7 @@ import { TimeSegment } from './time-segment.entity';
 import { WorkOrderOperator } from './work-order-operator.entity';
 import * as argon from 'argon2';
 import { Exclude } from 'class-transformer';
+import { Role } from '@/modules/auth/role.model';
 
 @Entity('user_profiles')
 @Index(['companyId'])
@@ -36,8 +37,14 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'varchar', length: 100, nullable: true })
   lastName?: string;
 
-  @Column({ type: 'varchar', length: 50, default: 'operator' })
-  role: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    nullable: true,
+    default: [Role.OPERATOR],
+  })
+  roles: Role[];
 
   @Column({ type: 'varchar', length: 50, nullable: true })
   phone?: string;

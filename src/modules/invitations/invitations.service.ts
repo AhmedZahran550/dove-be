@@ -11,6 +11,9 @@ import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
 import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class InvitationsService {
@@ -19,6 +22,8 @@ export class InvitationsService {
     private invitationsRepository: Repository<Invitation>,
     @InjectRepository(UserProfile)
     private usersRepository: Repository<UserProfile>,
+    private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async create(
@@ -62,7 +67,7 @@ export class InvitationsService {
       location_id: dto.location_id,
       token,
       status: 'pending',
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expires_at: addDays(new Date(), 7),
       invited_by: invitedBy,
     });
 
@@ -103,16 +108,13 @@ export class InvitationsService {
     // Hash password
     const passwordHash = await argon2.hash(dto.password);
 
-    // Create user
-    const userId = uuidv4();
     const user = this.usersRepository.create({
-      id: userId,
       companyId: invitation.company_id,
       locationId: invitation.location_id,
       email: invitation.email,
       firstName: dto.first_name,
       lastName: dto.last_name,
-      role: invitation.role,
+      roles: [invitation.role],
       password: passwordHash,
       isActive: true,
     });
@@ -128,7 +130,7 @@ export class InvitationsService {
     return savedUser;
   }
 
-  async resend(id: string, companyId: string): Promise<Invitation> {
+  async resend(id: string, companyId: string) {
     const invitation = await this.invitationsRepository.findOne({
       where: { id, company_id: companyId },
     });
@@ -136,19 +138,25 @@ export class InvitationsService {
     if (!invitation) {
       throw new NotFoundException('Invitation not found');
     }
-
     // Generate new token and extend expiry
-    const newToken = randomBytes(32).toString('hex');
+    const newToken = this.jwtService.sign(
+      {
+        id: invitation.id,
+        role: invitation.role,
+        company_id: invitation.company_id,
+        location_id: invitation.location_id,
+      },
+      {
+        secret: this.configService.get('jwt.invitationToken.secret'),
+        expiresIn: '7d',
+      },
+    );
 
     await this.invitationsRepository.update(id, {
       token: newToken,
       status: 'pending',
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expires_at: addDays(new Date(), 7),
     });
-
-    return this.invitationsRepository.findOne({
-      where: { id },
-    }) as Promise<Invitation>;
   }
 
   async revoke(id: string, companyId: string): Promise<void> {
