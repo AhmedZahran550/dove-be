@@ -13,6 +13,7 @@ import { Company } from '../../database/entities';
 import { Location } from '../../database/entities';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { ErrorCodes } from '@/common/error-codes';
 
 @Injectable()
 export class AuthService {
@@ -88,26 +89,31 @@ export class AuthService {
   async login(dto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.usersRepository.findOne({
       where: { email: dto.email.toLowerCase() },
+      select: ['password', 'id', 'email', 'role', 'companyId'],
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException({
+        code: ErrorCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
     }
 
     if (!user.password) {
-      throw new UnauthorizedException('Please reset your password');
+      throw new UnauthorizedException({
+        code: ErrorCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
     }
 
     const isPasswordValid = await argon2.verify(user.password, dto.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException({
+        code: ErrorCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
     }
-
-    if (!user.isActive) {
-      throw new UnauthorizedException('Account is deactivated');
-    }
-
     // Update last login
     await this.usersRepository.update(user.id, {
       lastLoginAt: new Date(),
@@ -149,13 +155,13 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('jwt.secret'),
-      expiresIn: this.configService.get('jwt.expiresIn'),
+      secret: this.configService.get('jwt.accessToken.secret'),
+      expiresIn: this.configService.get('jwt.accessToken.expiresIn'),
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('jwt.refreshSecret'),
-      expiresIn: this.configService.get('jwt.refreshExpiresIn'),
+      secret: this.configService.get('jwt.refreshToken.secret'),
+      expiresIn: this.configService.get('jwt.refreshToken.expiresIn'),
     });
 
     return {

@@ -6,6 +6,7 @@ import {
   MinLength,
   IsOptional,
 } from 'class-validator';
+import { AuthUserDto } from './auth-user.dto';
 
 export class RegisterDto {
   @ApiProperty({ example: 'John Doe' })
@@ -59,13 +60,5 @@ export class AuthResponseDto {
   refresh_token: string;
 
   @ApiProperty()
-  user: {
-    id: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    role: string;
-    company_id: string;
-  };
+  user: AuthUserDto;
 }
-

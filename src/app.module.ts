@@ -1,9 +1,7 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { LocationsModule } from './modules/locations/locations.module';
@@ -17,6 +15,14 @@ import { DatabaseModule } from './database/database.module';
 import { schemaValidator } from './config/schema-validator';
 import { baseConfig } from './config/base.config';
 import databaseConfig from './config/database.config';
+import { CacheInterceptor } from './common/interceptors/cache.interceptor';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { MetadataInterceptor } from './common/interceptors/metadata.interceptor';
+import { PostAuthorizeInterceptor } from './common/interceptors/post-authorize.interceptor';
+import { DBExceptionFilter } from './common/filters/db-exception.filter';
+import { GeneralExceptionFilter } from './common/filters/general-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/log.interceptor';
+import { AuthModule } from './modules/auth/auth.module';
 
 const envFolderPath = `${__dirname}/config/env`;
 const envFilePath = [
@@ -56,6 +62,35 @@ const envFilePath = [
     InvitationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GeneralExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DBExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PostAuthorizeInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetadataInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}

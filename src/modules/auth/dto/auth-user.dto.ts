@@ -7,19 +7,10 @@ export class AuthUserDto {
 
   id?: string;
   email: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  mobile: string;
-  familyId: string;
-  disabled?: boolean;
-  isFamilyManager?: boolean;
-  locked?: boolean;
-  lockedAt?: Date;
+  firstName?: string;
   roles: Role[];
-  branchId?: string;
-  providerId?: string;
-  customerId?: string;
-  mobileVerified?: boolean;
-  identityId?: string;
+  lastName?: string;
+  fullName?: string;
+  companyId?: string;
+  locationId?: string;
 }
