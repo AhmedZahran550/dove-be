@@ -2,173 +2,115 @@
   <head>
     <meta charset='utf-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <style>
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, sans-serif;
-        line-height: 1.6;
-        color: #1f2937;
-        margin: 0;
-        padding: 0;
-        background-color: #f3f4f6;
-      }
-      .container {
-        max-width: 600px;
-        margin: 40px auto;
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      }
-      .header {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 48px 40px;
-        text-align: center;
-      }
-      .header-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
-      }
-      .header h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-      }
-      .header p {
-        margin: 12px 0 0 0;
-        font-size: 16px;
-        opacity: 0.95;
-      }
-      .content {
-        padding: 48px 40px;
-        background: white;
-      }
-      .greeting {
-        font-size: 18px;
-        font-weight: 600;
-        color: #111827;
-        margin: 0 0 20px 0;
-      }
-      .content p {
-        margin: 0 0 16px 0;
-        color: #4b5563;
-        font-size: 15px;
-        line-height: 1.7;
-      }
-      .button-container {
-        text-align: center;
-        margin: 32px 0;
-      }
-      .button {
-        display: inline-block;
-        background: #10b981;
-        color: white !important;
-        padding: 16px 40px;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 16px;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      }
-      .expiry-notice {
-        background: #fef3c7;
-        border: 2px solid #fcd34d;
-        padding: 16px 20px;
-        margin: 24px 0;
-        border-radius: 8px;
-        text-align: center;
-      }
-      .expiry-notice p {
-        margin: 0;
-        color: #92400e;
-        font-size: 14px;
-        font-weight: 500;
-      }
-      .link-section {
-        background: #f9fafb;
-        padding: 16px;
-        border-radius: 8px;
-        margin: 24px 0;
-      }
-      .link-section p {
-        margin: 0 0 8px 0;
-        font-size: 13px;
-        color: #6b7280;
-      }
-      .link-url {
-        font-size: 12px;
-        color: #9ca3af;
-        word-break: break-all;
-        font-family: monospace;
-        background: white;
-        padding: 10px;
-        border-radius: 4px;
-        border: 1px solid #e5e7eb;
-      }
-      .footer {
-        text-align: center;
-        color: #9ca3af;
-        font-size: 12px;
-        padding: 24px 40px;
-        background: #f9fafb;
-        border-top: 1px solid #e5e7eb;
-      }
-      .footer p {
-        margin: 6px 0;
-      }
-      @media only screen and (max-width: 600px) {
-        .container {
-          margin: 0;
-          border-radius: 0;
-        }
-        .header,
-        .content,
-        .footer {
-          padding-left: 24px;
-          padding-right: 24px;
-        }
-      }
-    </style>
   </head>
-  <body>
-    <div class='container'>
-      <div class='header'>
-        <div class='header-icon'>✉️</div>
-        <h1>Verify Your Email</h1>
-        <p>One quick step to get started</p>
+  <body
+    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;"
+  >
+    <div
+      style='background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0;'
+    >
+      <div
+        style='display: inline-block; background: white; width: 60px; height: 60px; border-radius: 12px; line-height: 60px; font-size: 28px; font-weight: bold; color: #2563eb; margin-bottom: 20px;'
+      >
+        D
+      </div>
+      <h1
+        style='color: white; margin: 0; font-size: 28px; font-weight: bold;'
+      >DOVMFG</h1>
+    </div>
+
+    <div
+      style='background: white; padding: 40px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;'
+    >
+      <h2
+        style='color: #111827; margin-top: 0; margin-bottom: 20px; font-size: 24px;'
+      >
+        Welcome,
+        {{userName}}!
+      </h2>
+
+      <p style='color: #4b5563; font-size: 16px; margin-bottom: 20px;'>
+        Your account and organization
+        <strong>{{organizationName}}</strong>
+        have been successfully created!
+      </p>
+
+      <p style='color: #4b5563; font-size: 16px; margin-bottom: 20px;'>
+        <strong style='color: #dc2626;'>Important:</strong>
+        Before you can log in, please confirm your email address by clicking the
+        button below:
+      </p>
+
+      <div style='text-align: center; margin: 35px 0;'>
+        <a
+          href='{{verificationUrl}}'
+          style='display: inline-block; background: #2563eb; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);'
+        >
+          Confirm Email Address
+        </a>
       </div>
 
-      <div class='content'>
-        <p class='greeting'>Hi {{userName}},</p>
+      <p
+        style='color: #6b7280; font-size: 14px; text-align: center; margin-top: 20px;'
+      >
+        After confirming your email, you'll be able to log in and start using
+        DOVMFG.
+      </p>
 
-        <p>Thanks for signing up! Please verify your email address to complete
-          your registration and access all features.</p>
+      <p
+        style='color: #9ca3af; font-size: 12px; text-align: center; margin-top: 15px;'
+      >
+        If the button doesn't work, copy and paste this link into your browser:<br
+        />
+        <span
+          style='color: #2563eb; word-break: break-all; font-size: 11px;'
+        >{{verificationUrl}}</span>
+      </p>
 
-        <div class='button-container'>
-          <a href='{{verificationUrl}}' class='button'>Verify Email Address</a>
-        </div>
+      <p
+        style='color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 30px; border-top: 1px solid #e5e7eb;'
+      >
+        Your 3-month free trial has started! No credit card required.
+      </p>
 
-        <div class='expiry-notice'>
-          <p>⏰ This link expires in 24 hours</p>
-        </div>
-
-        <div class='link-section'>
-          <p><strong>Can't click the button?</strong>
-            Copy and paste this link:</p>
-          <div class='link-url'>{{verificationUrl}}</div>
-        </div>
-
-        <p style='font-size: 13px; color: #6b7280;'>
-          If you didn't create an account, you can safely ignore this email.
-        </p>
+      <div
+        style='background: #f3f4f6; padding: 20px; border-radius: 8px; margin-top: 30px;'
+      >
+        <h3
+          style='color: #111827; margin-top: 0; margin-bottom: 15px; font-size: 18px;'
+        >
+          What's Next?
+        </h3>
+        <ul style='color: #4b5563; margin: 0; padding-left: 20px;'>
+          <li style='margin-bottom: 10px;'>Log in to your account</li>
+          <li style='margin-bottom: 10px;'>Set up your locations and departments</li>
+          <li style='margin-bottom: 10px;'>Invite your team members</li>
+          <li>Start tracking production in real-time</li>
+        </ul>
       </div>
 
-      <div class='footer'>
-        <p><strong>{{appName}}</strong></p>
-        <p>&copy; {{year}} All rights reserved.</p>
-      </div>
+      <p
+        style='color: #9ca3af; font-size: 13px; margin-top: 30px; text-align: center;'
+      >
+        If you didn't create this account, you can safely ignore this email.
+      </p>
+    </div>
+
+    <div
+      style='text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;'
+    >
+      <p style='margin: 5px 0;'>© {{year}} DOVMFG. All rights reserved.</p>
+      <p style='margin: 5px 0;'>
+        <a
+          href='{{appUrl}}/terms'
+          style='color: #2563eb; text-decoration: none;'
+        >Terms of Use</a>
+        •
+        <a
+          href='{{appUrl}}/privacy'
+          style='color: #2563eb; text-decoration: none;'
+        >Privacy Policy</a>
+      </p>
     </div>
   </body>
 </html>

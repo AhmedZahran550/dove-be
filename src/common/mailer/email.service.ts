@@ -37,7 +37,7 @@ export class EmailService {
         subject: 'Password Reset Request',
         template: './password-reset',
         context: {
-          appName: this.configService.get('APP_NAME', 'DOVA Manufacturing'),
+          appName: this.configService.get('APP_NAME', 'DOVAMFG'),
           resetUrl: resetUrl,
           year: new Date().getFullYear(),
         },
@@ -59,18 +59,21 @@ export class EmailService {
     email: string,
     userName: string,
     verificationToken: string,
+    organizationName?: string,
   ) {
-    const verificationUrl = `${this.configService.get('FRONTEND_URL')}/email-verification?token=${verificationToken}`;
+    const frontendUrl = this.configService.get('FRONTEND_URL');
+    const verificationUrl = `${frontendUrl}/email-verification?token=${verificationToken}`;
 
     try {
       await this.mailerService.sendMail({
         to: email,
-        subject: 'Verify Your Email Address',
+        subject: `Welcome to DOVMFG${organizationName ? ` - ${organizationName}` : ''}`,
         template: './email-verification',
         context: {
           userName: userName,
+          organizationName: organizationName || 'your organization',
           verificationUrl: verificationUrl,
-          appName: this.configService.get('APP_NAME', 'DOVA Manufacturing'),
+          appUrl: frontendUrl,
           year: new Date().getFullYear(),
         },
       });

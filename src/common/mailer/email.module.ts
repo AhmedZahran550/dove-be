@@ -14,11 +14,14 @@ import { EmailService } from './email.service';
         // Transport configuration (your existing SMTP settings)
         transport: {
           host: config.get('SMTP_HOST'),
-          port: config.get('SMTP_PORT'),
-          secure: config.get('SMTP_SECURE', 'true') === 'true',
+          port: parseInt(config.get('SMTP_PORT', '587'), 10),
+          secure: config.get('SMTP_SECURE', 'false') === 'true', // true for 465, false for 587
           auth: {
             user: config.get('SMTP_USER'),
             pass: config.get('SMTP_PASS'),
+          },
+          tls: {
+            rejectUnauthorized: false, // Allow self-signed certs in dev
           },
         },
         // Default mail options

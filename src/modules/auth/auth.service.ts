@@ -90,7 +90,7 @@ export class AuthService {
     const savedUser = await this.usersRepository.save(user);
 
     // Send verification email
-    await this.sendVerificationEmail(savedUser);
+    this.sendVerificationEmail(savedUser, dto.organizationName);
 
     // Generate tokens (user can login but with limited access until verified)
     return {
@@ -102,7 +102,10 @@ export class AuthService {
   /**
    * Generate and send email verification token
    */
-  private async sendVerificationEmail(user: UserProfile): Promise<void> {
+  private async sendVerificationEmail(
+    user: UserProfile,
+    organizationName?: string,
+  ): Promise<void> {
     try {
       const verificationToken = this.jwtService.sign(
         {
@@ -121,6 +124,7 @@ export class AuthService {
         user.email,
         userName,
         verificationToken,
+        organizationName,
       );
       this.logger.log(`Verification email sent to ${user.email}`);
     } catch (error) {
