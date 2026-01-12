@@ -33,7 +33,7 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  async register(dto: RegisterDto): Promise<AuthResponseDto> {
+  async register(dto: RegisterDto): Promise<{ message: string }> {
     // Check if user already exists
     const existingUser = await this.usersRepository.findOne({
       where: { email: dto.email.toLowerCase() },
@@ -93,7 +93,10 @@ export class AuthService {
     await this.sendVerificationEmail(savedUser);
 
     // Generate tokens (user can login but with limited access until verified)
-    return this.generateTokens(savedUser);
+    return {
+      message:
+        'User registered successfully, check your email for verification',
+    };
   }
 
   /**

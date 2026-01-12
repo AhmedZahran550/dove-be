@@ -41,7 +41,7 @@ export class AuthController {
     status: 400,
     description: 'Validation error or user already exists',
   })
-  async register(@Body() dto: RegisterDto): Promise<AuthResponseDto> {
+  async register(@Body() dto: RegisterDto): Promise<{ message: string }> {
     return this.authService.register(dto);
   }
 
