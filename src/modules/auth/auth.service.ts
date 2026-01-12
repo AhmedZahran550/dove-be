@@ -66,18 +66,8 @@ export class AuthService {
 
     const savedCompany = await this.companiesRepository.save(company);
 
-    // Create default location
-    const location = this.locationsRepository.create({
-      companyId: savedCompany.id,
-      name: 'Main Location',
-      code: 'MAIN',
-      isActive: true,
-    });
-
-    const savedLocation = await this.locationsRepository.save(location);
     const user = this.usersRepository.create({
       companyId: savedCompany.id,
-      locationId: savedLocation.id,
       email: dto.email.toLowerCase(),
       firstName: firstName,
       lastName: lastName,
