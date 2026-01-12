@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -14,9 +15,12 @@ import { Location } from '../../database/entities';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
 import { ErrorCodes } from '@/common/error-codes';
 import { Role } from './role.model';
+import { EmailService } from '../../common/mailer/email.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(UserProfile)
     private usersRepository: Repository<UserProfile>,
@@ -26,6 +30,7 @@ export class AuthService {
     private locationsRepository: Repository<Location>,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
@@ -80,16 +85,116 @@ export class AuthService {
       roles: [Role.COMPANY_ADMIN],
       password: dto.password,
       isActive: true,
+      isVerified: false, // User needs to verify email
     });
     const savedUser = await this.usersRepository.save(user);
-    // Generate tokens
+
+    // Send verification email
+    await this.sendVerificationEmail(savedUser);
+
+    // Generate tokens (user can login but with limited access until verified)
     return this.generateTokens(savedUser);
+  }
+
+  /**
+   * Generate and send email verification token
+   */
+  private async sendVerificationEmail(user: UserProfile): Promise<void> {
+    try {
+      const verificationToken = this.jwtService.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          type: 'email_verification',
+        },
+        {
+          secret: this.configService.get('jwt.verificationToken.secret'),
+          expiresIn: '24h',
+        },
+      );
+
+      const userName = user.firstName || user.email.split('@')[0];
+      await this.emailService.sendEmailVerification(
+        user.email,
+        userName,
+        verificationToken,
+      );
+      this.logger.log(`Verification email sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send verification email to ${user.email}`,
+        error,
+      );
+      // Don't throw - registration should still succeed
+    }
+  }
+
+  /**
+   * Verify email with token and return auth tokens
+   */
+  async verifyEmail(token: string): Promise<AuthResponseDto> {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: this.configService.get('jwt.verificationToken.secret'),
+      });
+
+      if (payload.type !== 'email_verification') {
+        throw new BadRequestException('Invalid verification token');
+      }
+
+      const user = await this.usersRepository.findOne({
+        where: { id: payload.sub },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      if (user.isVerified) {
+        throw new BadRequestException('Email already verified');
+      }
+
+      // Update user as verified
+      await this.usersRepository.update(user.id, { isVerified: true });
+      user.isVerified = true;
+
+      this.logger.log(`Email verified for user ${user.email}`);
+
+      return this.generateTokens(user);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Invalid or expired verification token');
+    }
+  }
+
+  /**
+   * Resend verification email
+   */
+  async resendVerificationEmail(email: string): Promise<void> {
+    const user = await this.usersRepository.findOne({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      // Don't reveal if user exists or not
+      throw new BadRequestException(
+        'If an account exists with this email, a verification email will be sent',
+      );
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException('Email is already verified');
+    }
+
+    await this.sendVerificationEmail(user);
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.usersRepository.findOne({
       where: { email: dto.email.toLowerCase() },
-      select: ['password', 'id', 'email', 'roles', 'companyId'],
+      select: ['password', 'id', 'email', 'roles', 'companyId', 'isVerified'],
     });
 
     if (!user) {

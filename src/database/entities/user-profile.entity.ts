@@ -31,6 +31,9 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
+
   @Column({ type: 'varchar', length: 100, nullable: true })
   firstName?: string;
 

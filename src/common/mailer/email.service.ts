@@ -52,7 +52,14 @@ export class EmailService {
     }
   }
 
-  async sendWelcomeEmail(email: string, verificationToken: string) {
+  /**
+   * Send email verification email to new users
+   */
+  async sendEmailVerification(
+    email: string,
+    userName: string,
+    verificationToken: string,
+  ) {
     const verificationUrl = `${this.configService.get('FRONTEND_URL')}/email-verification?token=${verificationToken}`;
 
     try {
@@ -61,7 +68,9 @@ export class EmailService {
         subject: 'Verify Your Email Address',
         template: './email-verification',
         context: {
+          userName: userName,
           verificationUrl: verificationUrl,
+          appName: this.configService.get('APP_NAME', 'DOVA Manufacturing'),
           year: new Date().getFullYear(),
         },
       });

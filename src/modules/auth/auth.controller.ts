@@ -18,6 +18,8 @@ import {
   LoginDto,
   RefreshTokenDto,
   AuthResponseDto,
+  VerifyEmailDto,
+  ResendVerificationDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthUser } from './decorators/auth-user.decorator';
@@ -78,5 +80,33 @@ export class AuthController {
   async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);
     return { message: 'Logged out successfully' };
+  }
+
+  @Post('email/verify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify email address with token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verified successfully, returns auth tokens',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async verifyEmail(@Body() dto: VerifyEmailDto): Promise<AuthResponseDto> {
+    return this.authService.verifyEmail(dto.token);
+  }
+
+  @Post('email/resend')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend verification email' })
+  @ApiResponse({
+    status: 200,
+    description: 'Verification email sent if account exists',
+  })
+  @ApiResponse({ status: 400, description: 'Email already verified' })
+  async resendVerification(
+    @Body() dto: ResendVerificationDto,
+  ): Promise<{ message: string }> {
+    await this.authService.resendVerificationEmail(dto.email);
+    return { message: 'Verification email sent' };
   }
 }
