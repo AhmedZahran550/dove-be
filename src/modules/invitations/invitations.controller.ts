@@ -37,7 +37,7 @@ export class InvitationsController {
     @Body() dto: CreateInvitationDto,
     @AuthUser() user: AuthUserDto,
   ): Promise<{ success: boolean; data: Invitation; message: string }> {
-    const invitation = await this.invitationsService.create(
+    const invitation = await this.invitationsService.createInvitation(
       user.companyId,
       user,
       dto,

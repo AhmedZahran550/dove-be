@@ -21,7 +21,7 @@ export default registerAs('database', () => {
     database: !process.env.DATABASE_URL ? process.env.DATABASE_NAME : undefined,
 
     entities: [`${__dirname}/../database/entities/*.entity{.ts,.js}`],
-    synchronize: !isProduction, // Auto-sync only in dev (Local Docker)
+    synchronize: true, // Auto-sync only in dev (Local Docker)
     logging: process.env.DB_LOGGING === 'true',
     namingStrategy: new CustomNamingStrategy(),
     migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],

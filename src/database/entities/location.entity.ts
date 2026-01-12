@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+  Unique,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
@@ -7,9 +15,6 @@ import { WorkOrder } from './work-order.entity';
 @Unique(['companyId', 'code'])
 @Index(['companyId'])
 export class Location extends BaseEntity {
-  @Column({ type: 'uuid' })
-  companyId: string;
-
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
@@ -44,9 +49,14 @@ export class Location extends BaseEntity {
   isActive: boolean;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.locations, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'companyId' })
+  @ManyToOne(() => Company, (company) => company.locations, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'company_id' })
   company?: Company;
+
+  @Column({ type: 'uuid' })
+  companyId: string;
 
   @OneToMany(() => WorkOrder, (workOrder) => workOrder.location)
   workOrders?: WorkOrder[];

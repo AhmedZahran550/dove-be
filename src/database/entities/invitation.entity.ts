@@ -5,13 +5,10 @@ import { UserProfile } from './user-profile.entity';
 import { Role } from '@/modules/auth/role.model';
 
 @Entity('invitations')
-@Index('idx_invitations_company_id', ['company_id'])
+@Index('idx_invitations_company_id', ['company'])
 @Index('idx_invitations_email', ['email'])
 @Index('idx_invitations_token', ['token'])
 export class Invitation extends BaseEntity {
-  @Column({ type: 'uuid' })
-  company_id: string;
-
   @Column({ length: 255 })
   email: string;
 
@@ -22,6 +19,12 @@ export class Invitation extends BaseEntity {
     default: [Role.OPERATOR],
   })
   role: Role;
+
+  @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  customMessage: string;
 
   @Column({ type: 'uuid', nullable: true })
   location_id: string;
@@ -41,10 +44,13 @@ export class Invitation extends BaseEntity {
   @Column({ type: 'timestamptz', nullable: true })
   accepted_at: Date;
 
-  // Relations
+  // Relations`
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  @Column({ type: 'uuid' })
+  companyId: string;
 
   @ManyToOne(() => UserProfile, { nullable: true })
   @JoinColumn({ name: 'invited_by' })

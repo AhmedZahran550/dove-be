@@ -2,13 +2,22 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Location } from '../../database/entities';
+import { DBService } from '@/database/db.service';
+import { CreateLocationDto } from './dto/location.dto';
+import { UpdateLocationDto } from './dto/location.dto';
 
 @Injectable()
-export class LocationsService {
+export class LocationsService extends DBService<
+  Location,
+  CreateLocationDto,
+  UpdateLocationDto
+> {
   constructor(
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
-  ) {}
+  ) {
+    super(locationsRepository);
+  }
 
   async findByCompany(companyId: string): Promise<Location[]> {
     return this.locationsRepository.find({
@@ -27,14 +36,6 @@ export class LocationsService {
     }
 
     return location;
-  }
-
-  async create(companyId: string, data: Partial<Location>): Promise<Location> {
-    const location = this.locationsRepository.create({
-      ...data,
-      companyId: companyId,
-    });
-    return this.locationsRepository.save(location);
   }
 
   async update(id: string, data: Partial<Location>): Promise<Location> {

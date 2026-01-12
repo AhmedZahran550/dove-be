@@ -44,7 +44,6 @@ export class UserProfile extends BaseEntity {
     type: 'enum',
     enum: Role,
     array: true,
-    nullable: true,
     default: [Role.OPERATOR],
   })
   roles: Role[];

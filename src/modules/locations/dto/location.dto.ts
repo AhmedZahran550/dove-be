@@ -7,6 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { UUIDObject } from '@/common/decorators/isObjId.decorator';
 
 /**
  * DTO for creating a new location
@@ -68,6 +69,8 @@ export class CreateLocationDto {
   @IsOptional()
   @IsEmail()
   email?: string;
+
+  company: UUIDObject;
 }
 
 /**

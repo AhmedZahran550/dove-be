@@ -16,11 +16,10 @@ import { addDays } from 'date-fns';
 import { EmailService } from '../../common/mailer/email.service';
 import { Role } from '../auth/role.model';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
+import { DBService } from '@/database/db.service';
 
 @Injectable()
-export class InvitationsService {
-  private readonly logger = new Logger(InvitationsService.name);
-
+export class InvitationsService extends DBService<Invitation> {
   constructor(
     @InjectRepository(Invitation)
     private invitationsRepository: Repository<Invitation>,
@@ -33,9 +32,11 @@ export class InvitationsService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private emailService: EmailService,
-  ) {}
+  ) {
+    super(invitationsRepository);
+  }
 
-  async create(
+  async createInvitation(
     companyId: string,
     invitedBy: AuthUserDto,
     dto: CreateInvitationDto,
@@ -53,7 +54,7 @@ export class InvitationsService {
     const existingInvitation = await this.invitationsRepository.findOne({
       where: {
         email: dto.email.toLowerCase(),
-        company_id: companyId,
+        companyId: companyId,
         status: 'pending',
         expires_at: MoreThan(new Date()),
       },
@@ -80,8 +81,10 @@ export class InvitationsService {
 
     // Create invitation (expires in 7 days)
     const invitation = this.invitationsRepository.create({
-      company_id: companyId,
+      companyId: companyId,
       email: dto.email.toLowerCase(),
+      fullName: dto.firstName + ' ' + dto.lastName,
+      customMessage: dto.customMessage,
       role: dto.role,
       location_id: dto.location_id,
       token,
@@ -167,7 +170,7 @@ export class InvitationsService {
 
   async findByCompany(companyId: string): Promise<Invitation[]> {
     return this.invitationsRepository.find({
-      where: { company_id: companyId },
+      where: { companyId: companyId },
       order: { createdAt: 'DESC' },
     });
   }
@@ -200,11 +203,11 @@ export class InvitationsService {
     const passwordHash = await argon2.hash(dto.password);
 
     const user = this.usersRepository.create({
-      companyId: invitation.company_id,
+      companyId: invitation.companyId,
       locationId: invitation.location_id,
       email: invitation.email,
-      firstName: dto.first_name,
-      lastName: dto.last_name,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
       roles: [invitation.role],
       password: passwordHash,
       isActive: true,
@@ -223,7 +226,7 @@ export class InvitationsService {
 
   async resend(id: string, companyId: string) {
     const invitation = await this.invitationsRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
       relations: ['company', 'invitedByUser'],
     });
 
@@ -236,7 +239,7 @@ export class InvitationsService {
       {
         id: invitation.id,
         role: invitation.role,
-        company_id: invitation.company_id,
+        companyId: invitation.companyId,
         location_id: invitation.location_id,
       },
       {
@@ -261,7 +264,7 @@ export class InvitationsService {
 
   async revoke(id: string, companyId: string): Promise<void> {
     const invitation = await this.invitationsRepository.findOne({
-      where: { id, company_id: companyId },
+      where: { id, companyId: companyId },
     });
 
     if (!invitation) {

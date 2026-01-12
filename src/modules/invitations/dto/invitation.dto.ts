@@ -20,6 +20,26 @@ export class CreateInvitationDto {
   @IsNotEmpty()
   role: Role;
 
+  @ApiProperty({ example: 'John' })
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @ApiProperty({ example: '1234567890' })
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+
+  @ApiProperty({ example: 'personal message' })
+  @IsString()
+  @IsOptional()
+  customMessage?: string;
+
+  @ApiProperty({ example: 'Doe' })
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
@@ -34,13 +54,13 @@ export class AcceptInvitationDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  first_name: string;
+  @IsOptional()
+  firstName: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @ApiProperty()
   @IsString()
