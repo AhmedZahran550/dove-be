@@ -9,7 +9,6 @@ import { Repository, MoreThan } from 'typeorm';
 import { Invitation, Company, Location } from '../../database/entities';
 import { UserProfile } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
-import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { addDays } from 'date-fns';
@@ -17,6 +16,8 @@ import { EmailService } from '../../common/mailer/email.service';
 import { Role } from '../auth/role.model';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
 import { DBService } from '@/database/db.service';
+import { AuthService } from '../auth/auth.service';
+import { InvitationStatus } from '@/database/entities/invitation.entity';
 
 @Injectable()
 export class InvitationsService extends DBService<Invitation> {
@@ -30,6 +31,7 @@ export class InvitationsService extends DBService<Invitation> {
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
     private jwtService: JwtService,
+    private authService: AuthService,
     private configService: ConfigService,
     private emailService: EmailService,
   ) {
@@ -55,7 +57,7 @@ export class InvitationsService extends DBService<Invitation> {
       where: {
         email: dto.email.toLowerCase(),
         companyId: companyId,
-        status: 'pending',
+        status: InvitationStatus.PENDING,
         expires_at: MoreThan(new Date()),
       },
     });
@@ -83,12 +85,11 @@ export class InvitationsService extends DBService<Invitation> {
     const invitation = this.invitationsRepository.create({
       companyId: companyId,
       email: dto.email.toLowerCase(),
-      fullName: dto.firstName + ' ' + dto.lastName,
+      fullName: (dto.firstName || '') + ' ' + (dto.lastName || ''),
       customMessage: dto.customMessage,
       role: dto.role,
       location_id: dto.location_id,
       token,
-      status: 'pending',
       expires_at: addDays(new Date(), 7),
       invited_by: invitedBy.id, // Use the user ID, not the full object
     });
@@ -136,11 +137,13 @@ export class InvitationsService extends DBService<Invitation> {
         senderName = `${firstName} ${lastName}`.trim() || 'Administrator';
       }
 
-      // Extract recipient name from email (before @)
-      const recipientName = invitation.email
-        .split('@')[0]
-        .replace(/[._-]/g, ' ')
-        .replace(/\b\w/g, (l) => l.toUpperCase());
+      // Use fullName from invitation if available, otherwise extract from email
+      const recipientName =
+        invitation.fullName ||
+        invitation.email
+          .split('@')[0]
+          .replace(/[._-]/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase());
 
       // Determine organization name
       const organizationName =
@@ -156,6 +159,7 @@ export class InvitationsService extends DBService<Invitation> {
         invitationToken: invitation.token,
         locationName: locationName,
         role: invitation.role,
+        customMessage: invitation.customMessage,
       });
 
       this.logger.log(`Invitation email sent to ${invitation.email}`);
@@ -176,8 +180,11 @@ export class InvitationsService extends DBService<Invitation> {
   }
 
   async findByToken(token: string): Promise<Invitation> {
+    const { email } = this.jwtService.verify(token, {
+      secret: this.configService.get('jwt.invitationToken.secret'),
+    });
     const invitation = await this.invitationsRepository.findOne({
-      where: { token },
+      where: { email },
       relations: ['company'],
     });
 
@@ -196,12 +203,8 @@ export class InvitationsService extends DBService<Invitation> {
     return invitation;
   }
 
-  async accept(dto: AcceptInvitationDto): Promise<UserProfile> {
+  async accept(dto: AcceptInvitationDto) {
     const invitation = await this.findByToken(dto.token);
-
-    // Hash password
-    const passwordHash = await argon2.hash(dto.password);
-
     const user = this.usersRepository.create({
       companyId: invitation.companyId,
       locationId: invitation.location_id,
@@ -209,19 +212,19 @@ export class InvitationsService extends DBService<Invitation> {
       firstName: dto.firstName,
       lastName: dto.lastName,
       roles: [invitation.role],
-      password: passwordHash,
+      password: dto.password,
+      isVerified: true,
       isActive: true,
     });
-
     const savedUser = await this.usersRepository.save(user);
-
-    // Update invitation status
     await this.invitationsRepository.update(invitation.id, {
-      status: 'accepted',
+      status: InvitationStatus.ACCEPTED,
       accepted_at: new Date(),
     });
-
-    return savedUser;
+    return this.authService.login({
+      email: invitation.email,
+      password: dto.password,
+    });
   }
 
   async resend(id: string, companyId: string) {
@@ -250,7 +253,7 @@ export class InvitationsService extends DBService<Invitation> {
 
     await this.invitationsRepository.update(id, {
       token: newToken,
-      status: 'pending',
+      status: InvitationStatus.PENDING,
       expires_at: addDays(new Date(), 7),
     });
 
@@ -272,7 +275,7 @@ export class InvitationsService extends DBService<Invitation> {
     }
 
     await this.invitationsRepository.update(id, {
-      status: 'revoked',
+      status: InvitationStatus.REJECTED,
     });
   }
 }

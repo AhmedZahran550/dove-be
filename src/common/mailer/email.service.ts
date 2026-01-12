@@ -12,6 +12,7 @@ export interface InvitationEmailData {
   invitationToken: string;
   locationName?: string;
   role?: string;
+  customMessage?: string;
 }
 
 interface RoleInfo {
@@ -213,6 +214,7 @@ export class EmailService {
           currentYear: new Date().getFullYear(),
           showLocationBox: showLocationBox,
           locationName: data.locationName,
+          customMessage: data.customMessage,
         },
       });
 

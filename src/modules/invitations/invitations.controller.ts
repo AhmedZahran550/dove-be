@@ -16,6 +16,7 @@ import { UserProfile } from '../../database/entities';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiTags('invitations')
@@ -58,16 +59,11 @@ export class InvitationsController {
     return { valid: true, invitation };
   }
 
+  @Public()
   @Post('accept')
   @ApiOperation({ summary: 'Accept an invitation and create user account' })
-  async accept(
-    @Body() dto: AcceptInvitationDto,
-  ): Promise<{ success: boolean; message: string }> {
-    await this.invitationsService.accept(dto);
-    return {
-      success: true,
-      message: 'Invitation accepted successfully',
-    };
+  async accept(@Body() dto: AcceptInvitationDto) {
+    return await this.invitationsService.accept(dto);
   }
 
   @Post(':id/resend')

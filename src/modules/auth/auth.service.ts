@@ -189,10 +189,11 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.usersRepository.findOne({
-      where: { email: dto.email.toLowerCase() },
-      select: ['password', 'id', 'email', 'roles', 'companyId', 'isVerified'],
-    });
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: dto.email.toLowerCase() })
+      .addSelect('user.password')
+      .getOne();
 
     if (!user) {
       throw new UnauthorizedException({

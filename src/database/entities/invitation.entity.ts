@@ -4,6 +4,12 @@ import { Company } from './company.entity';
 import { UserProfile } from './user-profile.entity';
 import { Role } from '@/modules/auth/role.model';
 
+export enum InvitationStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
+}
+
 @Entity('invitations')
 @Index('idx_invitations_company_id', ['company'])
 @Index('idx_invitations_email', ['email'])
@@ -32,8 +38,12 @@ export class Invitation extends BaseEntity {
   @Column({ type: 'text', unique: true })
   token: string;
 
-  @Column({ length: 50, default: 'pending' })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: InvitationStatus,
+    default: InvitationStatus.PENDING,
+  })
+  status: InvitationStatus;
 
   @Column({ type: 'timestamptz' })
   expires_at: Date;

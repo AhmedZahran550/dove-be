@@ -274,6 +274,19 @@
             on DOVA Manufacturing.</p>
         </div>
 
+        {{#if customMessage}}
+          <div
+            class='inviter-box'
+            style='background: #fef3c7; border-left-color: #f59e0b;'
+          >
+            <p
+              style='color: #92400e; font-style: italic;'
+            >"{{customMessage}}"</p>
+            <p style='margin-top: 8px; font-size: 13px; color: #78350f;'>—
+              {{senderName}}</p>
+          </div>
+        {{/if}}
+
         {{#if showLocationBox}}
           <div class='location-box'>
             <p>
