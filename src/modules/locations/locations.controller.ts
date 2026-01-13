@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { LocationsService } from './locations.service';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { CreateLocationDto } from './dto/location.dto';
@@ -16,6 +21,13 @@ export class LocationsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new location' })
+  @ApiResponse({ status: 201, description: 'Location created successfully' })
+  @ApiResponse({ status: 400, description: 'Validation error' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   async create(
     @AuthUser() user: AuthUserDto,
     @Body() createLocationDto: CreateLocationDto,
@@ -28,6 +40,12 @@ export class LocationsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all locations for current company' })
+  @ApiResponse({ status: 200, description: 'Locations retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   async findAll(@AuthUser() user: AuthUserDto) {
     return this.locationsService.findByCompany(user.companyId);
   }

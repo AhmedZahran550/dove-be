@@ -7,7 +7,6 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import {
@@ -24,13 +23,11 @@ import {
   UpdateWorkOrderDto,
   CloseWorkOrderDto,
 } from './dto/work-order.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { QueryOptions, Paginate } from '../../common/query-options';
 
 @ApiTags('work-orders')
 @Controller('work-orders')
-@UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JWT-auth')
 export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
@@ -56,6 +53,11 @@ export class WorkOrdersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all work orders with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Work orders retrieved successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(
     @Paginate() query: QueryOptions,
     @AuthUser() user: UserProfile,
@@ -65,6 +67,8 @@ export class WorkOrdersController {
 
   @Get('active')
   @ApiOperation({ summary: 'Get all active (unclosed) work orders' })
+  @ApiResponse({ status: 200, description: 'Active work orders retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findActive(@AuthUser() user: UserProfile): Promise<WorkOrder[]> {
     return this.workOrdersService.findActive(user.companyId);
   }
@@ -82,6 +86,9 @@ export class WorkOrdersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a work order' })
+  @ApiResponse({ status: 200, description: 'Work order updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Work order not found' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateWorkOrderDto,
@@ -92,6 +99,9 @@ export class WorkOrdersController {
 
   @Post(':id/close')
   @ApiOperation({ summary: 'Close a work order' })
+  @ApiResponse({ status: 200, description: 'Work order closed successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Work order not found' })
   async close(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CloseWorkOrderDto,

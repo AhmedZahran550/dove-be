@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import {
@@ -18,19 +17,22 @@ import {
 import { DepartmentsService } from './departments.service';
 import { Department } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
 
 @ApiTags('departments')
 @Controller('departments')
-@UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JWT-auth')
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all departments for current company' })
+  @ApiResponse({
+    status: 200,
+    description: 'Departments retrieved successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(@AuthUser() user: UserProfile): Promise<{
     success: boolean;
     data: Department[];
@@ -48,12 +50,20 @@ export class DepartmentsController {
 
   @Get('filter-options')
   @ApiOperation({ summary: 'Get available filter options for departments' })
+  @ApiResponse({
+    status: 200,
+    description: 'Filter options retrieved successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getFilterOptions(@AuthUser() user: UserProfile) {
     return this.departmentsService.getFilterOptions(user.companyId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a department by ID' })
+  @ApiResponse({ status: 200, description: 'Department found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Department not found' })
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -81,6 +91,9 @@ export class DepartmentsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a department' })
+  @ApiResponse({ status: 200, description: 'Department updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Department not found' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateDepartmentDto,
