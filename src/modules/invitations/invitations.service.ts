@@ -107,7 +107,7 @@ export class InvitationsService extends DBService<Invitation> {
       invitedBy,
       company?.name,
     );
-
+    delete savedInvitation.token;
     return savedInvitation;
   }
 

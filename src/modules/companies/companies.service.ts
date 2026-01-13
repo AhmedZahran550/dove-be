@@ -2,24 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from '../../database/entities';
+import { DBService } from '@/database/db.service';
 
 @Injectable()
-export class CompaniesService {
+export class CompaniesService extends DBService<Company> {
   constructor(
     @InjectRepository(Company)
     private companiesRepository: Repository<Company>,
-  ) {}
-
-  async findById(id: string): Promise<Company> {
-    const company = await this.companiesRepository.findOne({
-      where: { id },
-    });
-
-    if (!company) {
-      throw new NotFoundException(`Company with ID ${id} not found`);
-    }
-
-    return company;
+  ) {
+    super(companiesRepository);
   }
 
   async findBySlug(slug: string): Promise<Company | null> {
@@ -27,10 +18,4 @@ export class CompaniesService {
       where: { slug },
     });
   }
-
-  async update(id: string, updateData: Partial<Company>): Promise<Company> {
-    await this.companiesRepository.update(id, updateData);
-    return this.findById(id);
-  }
 }
-

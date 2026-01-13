@@ -8,6 +8,8 @@ import {
 import { CompaniesService } from './companies.service';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -15,6 +17,7 @@ import { UserProfile } from '../../database/entities';
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
+  @Roles(Role.COMPANY_ADMIN)
   @Get('current')
   @ApiOperation({ summary: 'Get current user company' })
   @ApiResponse({ status: 200, description: 'Company retrieved successfully' })
