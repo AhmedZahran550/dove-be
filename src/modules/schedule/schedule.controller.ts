@@ -1,12 +1,17 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Query,
   Body,
   ParseUUIDPipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -14,6 +19,8 @@ import {
   ApiQuery,
   ApiResponse,
   ApiParam,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { ScheduleService } from './schedule.service';
 import { ScheduleData } from '../../database/entities';
@@ -21,12 +28,98 @@ import { ScheduleFile } from '../../database/entities';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { QueryOptions, Paginate } from '../../common/query-options';
 import { UserProfile } from '@/database/entities/user-profile.entity';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
+import { multerMemoryConfig } from './multer.config';
+import {
+  SaveScheduleConfigDto,
+  ImportScheduleDto,
+  ImportResultDto,
+} from './dto/schedule-import.dto';
 
 @ApiTags('schedule')
 @Controller('schedule')
 @ApiBearerAuth('JWT-auth')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
+
+  // ===== IMPORT ENDPOINTS =====
+
+  @Post('config')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
+  @ApiOperation({ summary: 'Save schedule file configuration' })
+  @ApiResponse({ status: 201, description: 'Configuration saved successfully' })
+  @ApiResponse({ status: 400, description: 'Validation error' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
+  async saveConfig(
+    @AuthUser() user: UserProfile,
+    @Body() dto: SaveScheduleConfigDto,
+  ): Promise<{ success: boolean; data: ScheduleFile }> {
+    const scheduleFile = await this.scheduleService.saveConfig(
+      user.companyId,
+      user.id,
+      dto,
+    );
+    return { success: true, data: scheduleFile };
+  }
+
+  @Post('import')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
+  @UseInterceptors(FileInterceptor('file', multerMemoryConfig))
+  @ApiOperation({ summary: 'Upload and import schedule file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Excel or CSV file to import',
+        },
+        scheduleFileId: {
+          type: 'string',
+          format: 'uuid',
+          description: 'Optional schedule file ID to associate with',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Import completed successfully',
+    type: ImportResultDto,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid file or no data found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
+  async importFile(
+    @AuthUser() user: UserProfile,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: ImportScheduleDto,
+  ): Promise<ImportResultDto> {
+    if (!file && !body.fileData) {
+      throw new BadRequestException('File or fileData is required');
+    }
+
+    return this.scheduleService.importSchedule(
+      user.companyId,
+      user.id,
+      file,
+      body.fileData,
+      body.scheduleFileId,
+    );
+  }
+
+  // ===== QUERY ENDPOINTS =====
 
   @Get('data')
   @ApiOperation({ summary: 'Get schedule data with pagination and filters' })

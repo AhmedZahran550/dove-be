@@ -12,3 +12,4 @@ export { ScheduleData } from './schedule-data.entity';
 export { RejectionCategory } from './rejection-category.entity';
 export { RejectionReason } from './rejection-reason.entity';
 export { Invitation } from './invitation.entity';
+export { CompanyColumnMapping } from './company-column-mapping.entity';
