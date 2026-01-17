@@ -11,6 +11,8 @@ import { TimeSegmentsModule } from './modules/time-segments/time-segments.module
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
+import { PlansModule } from './modules/plans/plans.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { DatabaseModule } from './database/database.module';
 import { schemaValidator } from './config/schema-validator';
 import { baseConfig } from './config/base.config';
@@ -60,6 +62,8 @@ const envFilePath = [
     ScheduleModule,
     SettingsModule,
     InvitationsModule,
+    PlansModule,
+    SubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [

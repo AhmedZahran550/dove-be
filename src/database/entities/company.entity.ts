@@ -11,6 +11,8 @@ import { QCRejection } from './qc-rejection.entity';
 import { SystemConfiguration } from './system-configuration.entity';
 import { ScheduleFile } from './schedule-file.entity';
 import { ScheduleData } from './schedule-data.entity';
+import { Subscription } from './subscription.entity';
+import { Transaction } from './transaction.entity';
 
 @Entity('companies')
 @Index(['slug'])
@@ -69,6 +71,12 @@ export class Company extends BaseEntity {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  hasUsedFreeTrial: boolean;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  stripeCustomerId?: string;
+
   // Relations
   @OneToMany(() => Location, (location) => location.company)
   locations?: Location[];
@@ -102,4 +110,10 @@ export class Company extends BaseEntity {
 
   @OneToMany(() => ScheduleData, (data) => data.company)
   scheduleData?: ScheduleData[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.company)
+  subscriptions?: Subscription[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.company)
+  transactions?: Transaction[];
 }

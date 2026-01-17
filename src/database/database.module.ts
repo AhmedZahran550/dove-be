@@ -14,6 +14,10 @@ import {
   RejectionReason,
   Invitation,
   UserProfile,
+  Plan,
+  Subscription,
+  Transaction,
+  WebhookEvent,
 } from './entities';
 
 @Global()
@@ -39,6 +43,10 @@ import {
       RejectionCategory,
       RejectionReason,
       Invitation,
+      Plan,
+      Subscription,
+      Transaction,
+      WebhookEvent,
     ]),
   ],
   providers: [],

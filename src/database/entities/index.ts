@@ -13,3 +13,7 @@ export { RejectionCategory } from './rejection-category.entity';
 export { RejectionReason } from './rejection-reason.entity';
 export { Invitation } from './invitation.entity';
 export { CompanyColumnMapping } from './company-column-mapping.entity';
+export { Plan } from './plan.entity';
+export { Subscription } from './subscription.entity';
+export { Transaction } from './transaction.entity';
+export { WebhookEvent } from './webhook-event.entity';
