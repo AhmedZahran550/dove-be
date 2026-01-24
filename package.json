@@ -19,7 +19,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test DATABASE_HOST=localhost DATABASE_PORT=5433 DATABASE_USERNAME=postgres DATABASE_PASSWORD=postgres123 DATABASE_NAME=dova_test JWT_SECRET=test-e2e-jwt REFRESH_TOKEN_SECRET=test-e2e-refresh jest --config ./test/jest-e2e.json --runInBand",
-    "test:db": "cross-env DATABASE_HOST=localhost DATABASE_PORT=5433 DATABASE_USERNAME=postgres DATABASE_PASSWORD=postgres123 DATABASE_NAME=dova_test ts-node test/test-db-connection.ts"
+    "test:db": "cross-env DATABASE_HOST=localhost DATABASE_PORT=5433 DATABASE_USERNAME=postgres DATABASE_PASSWORD=postgres123 DATABASE_NAME=dova_test ts-node test/test-db-connection.ts",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./db/typeorm.config.ts",
+    "typeorm:migrate": "yarn typeorm migration:run",
+    "typeorm:generate": "yarn typeorm migration:generate ",
+    "typeorm:revert": "yarn typeorm migration:revert"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

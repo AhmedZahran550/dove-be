@@ -456,7 +456,9 @@ export class SubscriptionsService {
           ? Number(plan.yearlyPrice)
           : Number(plan.monthlyPrice),
       stripeSubscriptionId,
-      nextBillingDate: new Date(stripeSubscription.current_period_end * 1000),
+      nextBillingDate: new Date(
+        (stripeSubscription as any).current_period_end * 1000,
+      ),
       createdBy: userId,
     });
 
@@ -509,7 +511,7 @@ export class SubscriptionsService {
     const stripeSubData: Stripe.Subscription =
       await this.stripeService.getSubscription(stripeSubscriptionId);
     subscription.nextBillingDate = new Date(
-      stripeSubData.current_period_end * 1000,
+      (stripeSubData as any).current_period_end * 1000,
     );
     await this.subscriptionsRepository.save(subscription);
 
