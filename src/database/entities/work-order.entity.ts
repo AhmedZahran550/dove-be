@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+  Unique,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Location } from './location.entity';
@@ -137,12 +145,31 @@ export class WorkOrder extends BaseEntity {
   @Column({ type: 'uuid', nullable: true })
   statusUpdatedBy?: string;
 
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  availabilityGoal: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  performanceGoal: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  qualityGoal: number;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  oeeGoal: number;
+
+  @Column({ type: 'date', nullable: true })
+  releaseDate: Date;
+
   // Relations
-  @ManyToOne(() => Company, (company) => company.workOrders, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.workOrders, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => Location, (location) => location.workOrders, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Location, (location) => location.workOrders, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'locationId' })
   location?: Location;
 

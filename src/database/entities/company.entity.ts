@@ -59,6 +59,51 @@ export class Company extends BaseEntity {
   @Column({ type: 'varchar', length: 50, default: 'active' })
   subscriptionStatus: string;
 
+  @Column({ type: 'varchar', length: 50, default: 'free' })
+  planType: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  addressLine1: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  addressLine2: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  stateProvince: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  subscriptionStartsAt: Date;
+
+  @Column({ type: 'varchar', default: 'USD' })
+  currency: string;
+
+  @Column({ type: 'varchar', default: 'MM/DD/YYYY' })
+  dateFormat: string;
+
+  @Column({ type: 'varchar', default: '12h' })
+  timeFormat: string;
+
+  @Column({ type: 'varchar', default: 'en' })
+  language: string;
+
+  @Column({ type: 'text', nullable: true })
+  employeeCount: string;
+
+  @Column({ type: 'boolean', default: false })
+  onboardingCompleted: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  stripeSubscriptionId: string;
+
+  @Column({ type: 'text', nullable: true })
+  stripePriceId: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  subscriptionCurrentPeriodEnd: Date;
+
+  @Column({ type: 'boolean', default: false })
+  subscriptionCancelAtPeriodEnd: boolean;
+
   @Column({ type: 'timestamptz', nullable: true })
   trialEndsAt?: Date;
 

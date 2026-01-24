@@ -60,6 +60,33 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'timestamptz', nullable: true })
   lastLoginAt?: Date;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  displayName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  employeeId: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  role: string;
+
+  @Column({ type: 'jsonb', nullable: true, default: [] })
+  permissions: Record<string, any>[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  emergencyContact: Record<string, any>;
+
+  @Column({ type: 'date', nullable: true })
+  hireDate: Date;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  jobTitle: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  shiftPreference: string;
+
+  @Column({ type: 'jsonb', nullable: true, default: {} })
+  preferences: Record<string, any>;
+
   @Exclude()
   @Column({ select: false })
   password: string;

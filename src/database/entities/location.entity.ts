@@ -24,17 +24,42 @@ export class Location extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column({ type: 'text', nullable: true })
-  address?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  addressLine1: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  addressLine2: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   city?: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  state?: string;
+  stateProvince: string;
 
   @Column({ type: 'varchar', length: 20, nullable: true })
-  postalCode?: string;
+  postalCode: string;
+
+  // location_type CHECK ... default manufacturing
+  @Column({ type: 'varchar', default: 'manufacturing' })
+  locationType: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  managerName: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  managerEmail: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  operatingHours: Record<string, any>;
+
+  @Column({ type: 'int', nullable: true })
+  totalAreaSqft: number;
+
+  @Column({ type: 'int', default: 1 })
+  productionLines: number;
+
+  @Column({ type: 'int', nullable: true })
+  maxOperators: number;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   country?: string;

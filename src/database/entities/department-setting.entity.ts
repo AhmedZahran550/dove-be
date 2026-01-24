@@ -31,6 +31,18 @@ export class DepartmentSetting extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   filter_value: string;
 
+  @Column({ type: 'text', nullable: true })
+  filter_rules: string;
+
+  @Column({ type: 'text', nullable: true })
+  exclusion_rules: string;
+
+  @Column({ type: 'int', default: 0 })
+  sort_order: number;
+
+  @Column({ type: 'boolean', default: false })
+  enable_process_steps: boolean;
+
   @Column({ default: true })
   is_active: boolean;
 
