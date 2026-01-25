@@ -37,7 +37,7 @@ export class LocationStatus extends BaseEntity {
   status: WorkOrderStatus;
 
   @ManyToOne(() => UserProfile)
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   createdByUser: UserProfile;
 
   @ManyToOne(() => UserProfile)

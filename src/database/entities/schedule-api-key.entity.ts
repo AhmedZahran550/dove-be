@@ -20,15 +20,12 @@ export class ScheduleApiKey extends BaseEntity {
   @Column({ type: 'timestamptz', nullable: true })
   last_used_at: Date;
 
-  @Column({ type: 'uuid', nullable: true })
-  created_by: string;
-
   // Relations
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
   @ManyToOne(() => UserProfile)
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   createdByUser: UserProfile;
 }

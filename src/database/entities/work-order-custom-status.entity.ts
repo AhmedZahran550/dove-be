@@ -37,6 +37,6 @@ export class WorkOrderCustomStatus extends BaseEntity {
   department: Department;
 
   @ManyToOne(() => UserProfile)
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   createdByUser: UserProfile;
 }

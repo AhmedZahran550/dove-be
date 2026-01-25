@@ -61,6 +61,6 @@ export class ConditionalStatusRule extends BaseEntity {
   status: WorkOrderStatus;
 
   @ManyToOne(() => UserProfile)
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   createdByUser: UserProfile;
 }
