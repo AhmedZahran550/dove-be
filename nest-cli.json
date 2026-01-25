@@ -12,7 +12,8 @@
       },
       {
         "include": "config/env/**/*.env",
-        "outDir": "dist"
+        "watchAssets": true,
+        "outDir": "dist/src"
       }
     ]
   }
