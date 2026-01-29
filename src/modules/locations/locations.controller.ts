@@ -11,11 +11,12 @@ import { CreateLocationDto } from './dto/location.dto';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
+import { Paginate, QueryOptions } from '@/common/query-options';
 
 @ApiTags('locations')
 @Controller('locations')
 @ApiBearerAuth('JWT-auth')
-@Roles(Role.COMPANY_ADMIN)
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
@@ -46,7 +47,10 @@ export class LocationsController {
     status: 403,
     description: 'Forbidden - Admin access required',
   })
-  async findAll(@AuthUser() user: AuthUserDto) {
-    return this.locationsService.findByCompany(user.companyId);
+  async findAll(
+    @AuthUser() user: AuthUserDto,
+    @Paginate() query: QueryOptions,
+  ) {
+    return this.locationsService.findByCompany(user.companyId, query);
   }
 }

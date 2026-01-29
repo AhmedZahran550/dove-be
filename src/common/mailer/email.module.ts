@@ -26,7 +26,9 @@ import { EmailService } from './email.service';
         },
         // Default mail options
         defaults: {
-          from: `"${config.get('APP_NAME', 'DOVA Manufacturing')}" <${config.get('SMTP_FROM')}>`,
+          from:
+            config.get('EMAIL_FROM') ||
+            `"${config.get('APP_NAME', 'DOVA Manufacturing')}" <${config.get('SMTP_FROM')}>`,
         },
         // Template engine configuration
         template: {

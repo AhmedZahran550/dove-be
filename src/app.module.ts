@@ -1,5 +1,11 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { UsersModule } from './modules/users/users.module';
@@ -25,6 +31,7 @@ import { DBExceptionFilter } from './common/filters/db-exception.filter';
 import { GeneralExceptionFilter } from './common/filters/general-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/log.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
+import { LoggerMiddleware } from './common/logger.middleware';
 
 const envFolderPath = `${__dirname}/config/env`;
 const envFilePath = [
@@ -97,4 +104,28 @@ const envFilePath = [
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  constructor(private configService: ConfigService) {}
+  configure(consumer: MiddlewareConsumer) {
+    // if (this.configService.get<string>('NODE_ENV') === 'production')
+    if (true) {
+      consumer
+        .apply(LoggerMiddleware)
+        .exclude(
+          {
+            path: 'api/logs',
+            method: RequestMethod.POST,
+          },
+          {
+            path: 'api/logs',
+            method: RequestMethod.GET,
+          },
+          {
+            path: 'api/logs',
+            method: RequestMethod.DELETE,
+          },
+        )
+        .forRoutes('*');
+    }
+  }
+}
