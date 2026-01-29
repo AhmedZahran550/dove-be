@@ -8,8 +8,11 @@ import {
 import { UsersService } from './users.service';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
 @ApiTags('users')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @Controller('users')
 @ApiBearerAuth('JWT-auth')
 export class UsersController {
