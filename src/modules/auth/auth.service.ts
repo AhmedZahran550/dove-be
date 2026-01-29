@@ -159,7 +159,7 @@ export class AuthService {
 
       this.logger.log(`Email verified for user ${user.email}`);
 
-      return this.generateTokens(user);
+      return this.generateTokens(user, true);
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -219,12 +219,15 @@ export class AuthService {
         message: 'Invalid credentials',
       });
     }
+    // Check for first login
+    const isFirstLogin = !user.lastLoginAt;
+
     // Update last login
     await this.usersRepository.update(user.id, {
       lastLoginAt: new Date(),
     });
 
-    return this.generateTokens(user);
+    return this.generateTokens(user, isFirstLogin);
   }
 
   async refreshTokens(refreshToken: string): Promise<AuthResponseDto> {
@@ -251,7 +254,10 @@ export class AuthService {
     });
   }
 
-  private async generateTokens(user: UserProfile): Promise<AuthResponseDto> {
+  private async generateTokens(
+    user: UserProfile,
+    isFirstLogin?: boolean,
+  ): Promise<AuthResponseDto> {
     const payload = {
       sub: user.id,
       email: user.email,
@@ -280,6 +286,7 @@ export class AuthService {
         roles: user.roles,
         companyId: user.companyId,
         locationId: user.locationId,
+        isFirstLogin,
       },
     };
   }
