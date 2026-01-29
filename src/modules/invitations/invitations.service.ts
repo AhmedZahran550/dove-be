@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
@@ -13,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { addDays } from 'date-fns';
 import { EmailService } from '../../common/mailer/email.service';
+import { EMAIL_SERVICE } from '../../common/mailer/email.module';
 import { Role } from '../auth/role.model';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
 import { DBService } from '@/database/db.service';
@@ -33,7 +35,7 @@ export class InvitationsService extends DBService<Invitation> {
     private jwtService: JwtService,
     private authService: AuthService,
     private configService: ConfigService,
-    private emailService: EmailService,
+    @Inject(EMAIL_SERVICE) private emailService: EmailService,
   ) {
     super(invitationsRepository);
   }

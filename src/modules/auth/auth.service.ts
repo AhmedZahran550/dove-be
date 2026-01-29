@@ -16,6 +16,8 @@ import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
 import { ErrorCodes } from '@/common/error-codes';
 import { Role } from './role.model';
 import { EmailService } from '../../common/mailer/email.service';
+import { EMAIL_SERVICE } from '../../common/mailer/email.module';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +32,7 @@ export class AuthService {
     private locationsRepository: Repository<Location>,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private emailService: EmailService,
+    @Inject(EMAIL_SERVICE) private emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto): Promise<{ message: string }> {
@@ -185,7 +187,7 @@ export class AuthService {
       throw new BadRequestException('Email is already verified');
     }
 
-    await this.sendVerificationEmail(user);
+    this.sendVerificationEmail(user);
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {

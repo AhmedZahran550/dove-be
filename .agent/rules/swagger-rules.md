@@ -2,9 +2,7 @@
 trigger: always_on
 ---
 
-# Swagger Documentation Rules
-
-## 📁 File and Folder Structure
+when create new recourse or update any api follow this swagger doc
 
 ```
 src/

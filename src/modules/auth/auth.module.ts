@@ -9,7 +9,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmailModule } from '../../common/mailer/email.module';
 import { UserProfile, Company, Location } from '../../database/entities';
 import { SMSService } from './sms.service';
-import { EmailService } from '@/common/mailer/email.service';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
@@ -34,10 +33,7 @@ import { RolesGuard } from './guards/roles.guard';
   providers: [
     AuthService,
     JwtStrategy,
-    AuthService,
     SMSService,
-    EmailService,
-    JwtStrategy,
     {
       provide: APP_GUARD,
       useExisting: JwtAuthGuard,
