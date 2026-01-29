@@ -32,7 +32,7 @@ import { EmailService } from './email.service';
         },
         // Template engine configuration
         template: {
-          dir: join(__dirname, '../..', 'templates'), // Path to your templates folder
+          dir: join(__dirname, '../../..', 'templates'), // Path to your templates folder
           adapter: new HandlebarsAdapter(), // Use Handlebars
           options: {
             strict: true,
