@@ -159,7 +159,7 @@ export class AuthService {
 
       this.logger.log(`Email verified for user ${user.email}`);
 
-      return this.generateTokens(user, true);
+      return this.generateTokens(user);
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -219,15 +219,12 @@ export class AuthService {
         message: 'Invalid credentials',
       });
     }
-    // Check for first login
-    const isFirstLogin = !user.lastLoginAt;
-
     // Update last login
     await this.usersRepository.update(user.id, {
       lastLoginAt: new Date(),
     });
 
-    return this.generateTokens(user, isFirstLogin);
+    return this.generateTokens(user);
   }
 
   async refreshTokens(refreshToken: string): Promise<AuthResponseDto> {
@@ -254,10 +251,7 @@ export class AuthService {
     });
   }
 
-  private async generateTokens(
-    user: UserProfile,
-    isFirstLogin?: boolean,
-  ): Promise<AuthResponseDto> {
+  private async generateTokens(user: UserProfile): Promise<AuthResponseDto> {
     const payload = {
       sub: user.id,
       email: user.email,
@@ -275,6 +269,27 @@ export class AuthService {
       expiresIn: this.configService.get('jwt.refreshToken.expiresIn'),
     });
 
+    // Compute needsProfileSetup - check if user has minimal profile data
+    const needsProfileSetup = !user.firstName || !user.lastName;
+
+    // Compute needsCompanyOnboarding - only for company_admin role
+    let needsCompanyOnboarding = false;
+    if (user.roles?.includes(Role.COMPANY_ADMIN) && user.companyId) {
+      const company = await this.companiesRepository.findOne({
+        where: { id: user.companyId },
+      });
+
+      const hasIndustry = !!company?.industry;
+
+      const locationCount = await this.locationsRepository.count({
+        where: { companyId: user.companyId },
+      });
+      const hasLocations = locationCount > 0;
+
+      // Needs onboarding if missing industry OR no locations
+      needsCompanyOnboarding = !hasIndustry || !hasLocations;
+    }
+
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
@@ -286,7 +301,8 @@ export class AuthService {
         roles: user.roles,
         companyId: user.companyId,
         locationId: user.locationId,
-        isFirstLogin,
+        needsProfileSetup,
+        needsCompanyOnboarding,
       },
     };
   }

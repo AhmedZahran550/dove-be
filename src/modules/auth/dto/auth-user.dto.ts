@@ -13,5 +13,6 @@ export class AuthUserDto {
   fullName?: string;
   companyId?: string;
   locationId?: string;
-  isFirstLogin?: boolean;
+  needsProfileSetup?: boolean;
+  needsCompanyOnboarding?: boolean;
 }

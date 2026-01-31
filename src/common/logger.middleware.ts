@@ -5,7 +5,7 @@ import * as requestIp from 'request-ip';
 import { v4 as uuid } from 'uuid';
 import { LogsService } from '@/modules/logs/logs.service';
 import { AuthUserDto } from '@/modules/auth/dto/auth-user.dto';
-
+//TODO: REMOVE  password from log
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(private logService: LogsService) {}
