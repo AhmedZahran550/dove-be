@@ -33,7 +33,7 @@ export class CreateInvitationDto {
   @ApiProperty({ example: 'personal message' })
   @IsString()
   @IsOptional()
-  customMessage?: string;
+  message?: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsString()

@@ -88,7 +88,7 @@ export class InvitationsService extends DBService<Invitation> {
       companyId: companyId,
       email: dto.email.toLowerCase(),
       fullName: (dto.firstName || '') + ' ' + (dto.lastName || ''),
-      customMessage: dto.customMessage,
+      customMessage: dto.message,
       role: dto.role,
       location_id: dto.location_id,
       token,

@@ -20,33 +20,33 @@ src/
 └── main.ts
 ```
 
-## 🎯 Core Rules
+🎯 Core Rule
 
-### Rule 1: One Swagger File Per Resource
+Rule 1: One Swagger File Per Resource
 
 - **ALWAYS** create a `[resource].swagger.ts` file in `src/swagger/` when creating a new resource/module
 - **File naming convention:** `{resource-name}.swagger.ts` (lowercase, kebab-case)
 - **Example:** `branches.swagger.ts`, `user-profiles.swagger.ts`
 
-### Rule 2: Swagger File Must Be Created With Resource
+Rule 2: Swagger File Must Be Created With Resource
 
 - When generating a new resource: `nest g resource branches`
 - **IMMEDIATELY** create `src/swagger/branches.swagger.ts`
 - Add the export to `src/swagger/index.ts`
 
-### Rule 3: Swagger File Must Be Updated With Controller Changes
+Rule 3: Swagger File Must Be Updated With Controller Changes
 
 - **BEFORE** adding a new endpoint → Update swagger file
 - **BEFORE** modifying an endpoint → Update corresponding swagger decorator
 - **BEFORE** deleting an endpoint → Remove corresponding swagger decorator
 
-### Rule 4: No Swagger Decorators in Controllers
+Rule 4: No Swagger Decorators in Controllers
 
 - **NEVER** use `@ApiOperation()`, `@ApiResponse()`, `@ApiParam()`, `@ApiQuery()` directly in controllers
 - **ONLY** use `@ApiTags()` at the controller class level
 - **ALL** other swagger documentation goes in `src/swagger/[resource].swagger.ts`
 
-## 📝 Swagger File Template
+📝 Swagger File Template
 
 ```typescript
 // src/swagger/[resource].swagger.ts
@@ -92,7 +92,7 @@ export const [Resource]Swagger = {
 };
 ```
 
-## 🎨 Example: Branches Resource
+🎨 Example: Branches Resource
 
 **File:** `src/swagger/branches.swagger.ts`
 
@@ -216,7 +216,7 @@ export class BranchesController {
 }
 ```
 
-## 📦 Index File
+📦 Index File
 
 **File:** `src/swagger/index.ts`
 
@@ -264,7 +264,7 @@ export { ProductsSwagger } from './products.swagger';
 - **Standard CRUD:** `findAll`, `findOne`, `create`, `update`, `remove`
 - **Custom actions:** `findNearby`, `rateBranch`, `approve`, `activate`
 
-## 📚 Common Decorators
+📚 Common Decorators
 
 ```typescript
 // Operation
@@ -298,7 +298,7 @@ ApiBearerAuth(); // JWT
 ApiBasicAuth(); // Basic auth
 ```
 
-## 🚫 Common Mistakes
+Common Mistakes
 
 **❌ DON'T put decorators in controller:**
 
@@ -308,7 +308,7 @@ ApiBasicAuth(); // Basic auth
 findAll() { ... }
 ```
 
-**✅ DO use swagger file:**
+✅ DO use swagger file:\*\*
 
 ```typescript
 @Get()
@@ -322,7 +322,7 @@ findAll() { ... }
 **❌ DON'T use generic names:** `Swagger.get()`, `Swagger.post()`
 **✅ DO use descriptive names:** `BranchesSwagger.findAll()`, `BranchesSwagger.create()`
 
-## 🔍 Code Review Checklist
+🔍 Code Review Checklist
 
 - [ ] Swagger file exists for new resources
 - [ ] Swagger file updated for modified endpoints
