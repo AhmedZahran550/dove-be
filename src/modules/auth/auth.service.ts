@@ -252,23 +252,6 @@ export class AuthService {
   }
 
   private async generateTokens(user: UserProfile): Promise<AuthResponseDto> {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      roles: user.roles,
-      companyId: user.companyId,
-    };
-
-    const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('jwt.accessToken.secret'),
-      expiresIn: this.configService.get('jwt.accessToken.expiresIn'),
-    });
-
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('jwt.refreshToken.secret'),
-      expiresIn: this.configService.get('jwt.refreshToken.expiresIn'),
-    });
-
     // Compute needsProfileSetup - check if user has minimal profile data
     const needsProfileSetup = !user.firstName || !user.lastName;
 
@@ -289,6 +272,25 @@ export class AuthService {
       // Needs onboarding if missing industry OR no locations
       needsCompanyOnboarding = !hasIndustry || !hasLocations;
     }
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      roles: user.roles,
+      companyId: user.companyId,
+      needsProfileSetup,
+      needsCompanyOnboarding,
+      locationId: user.locationId,
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('jwt.accessToken.secret'),
+      expiresIn: this.configService.get('jwt.accessToken.expiresIn'),
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('jwt.refreshToken.secret'),
+      expiresIn: this.configService.get('jwt.refreshToken.expiresIn'),
+    });
 
     return {
       access_token: accessToken,
