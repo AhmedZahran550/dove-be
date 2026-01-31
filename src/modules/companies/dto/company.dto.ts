@@ -70,7 +70,7 @@ export class CreateCompanyDto {
   @IsOptional()
   @IsString()
   @MaxLength(20)
-  postal_code?: string;
+  postalCode?: string;
 
   @ApiPropertyOptional({ description: 'Country' })
   @IsOptional()
@@ -83,6 +83,11 @@ export class CreateCompanyDto {
   @IsString()
   @MaxLength(50)
   timezone?: string;
+
+  @ApiPropertyOptional({ description: 'Number of employees' })
+  @IsOptional()
+  @IsString()
+  employeeCount?: string;
 }
 
 /**
@@ -92,19 +97,19 @@ export class UpdateCompanyDto extends PartialType(CreateCompanyDto) {
   @ApiPropertyOptional({ description: 'Is company active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 
   @ApiPropertyOptional({ description: 'Maximum users allowed' })
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_users?: number;
+  maxUsers?: number;
 
   @ApiPropertyOptional({ description: 'Maximum locations allowed' })
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_locations?: number;
+  maxLocations?: number;
 }
 
 /**
@@ -148,23 +153,26 @@ export class CompanyResponseDto {
   timezone: string;
 
   @ApiProperty()
-  subscription_tier: string;
+  subscriptionTier: string;
 
   @ApiProperty()
-  subscription_status: string;
+  subscriptionStatus: string;
 
   @ApiProperty()
-  max_users: number;
+  maxUsers: number;
 
   @ApiProperty()
-  max_locations: number;
+  maxLocations: number;
 
   @ApiProperty()
-  is_active: boolean;
+  isActive: boolean;
 
   @ApiProperty()
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty()
-  updated_at: Date;
+  updatedAt: Date;
+
+  @ApiPropertyOptional()
+  employeeCount?: string;
 }
