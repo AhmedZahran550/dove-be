@@ -6,7 +6,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository, MoreThan, DataSource } from 'typeorm';
 import { Invitation, Company, Location } from '../../database/entities';
 import { UserProfile } from '../../database/entities';
 import { CreateInvitationDto, AcceptInvitationDto } from './dto/invitation.dto';
@@ -33,7 +33,7 @@ export class InvitationsService extends DBService<Invitation> {
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
     private jwtService: JwtService,
-    private authService: AuthService,
+    private dataSource: DataSource,
     private configService: ConfigService,
     @Inject(EMAIL_SERVICE) private emailService: EmailService,
   ) {
@@ -206,27 +206,37 @@ export class InvitationsService extends DBService<Invitation> {
   }
 
   async accept(dto: AcceptInvitationDto) {
-    const invitation = await this.findByToken(dto.token);
-    const user = this.usersRepository.create({
-      companyId: invitation.companyId,
-      locationId: invitation.location_id,
-      email: invitation.email,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      roles: [invitation.role],
-      password: dto.password,
-      isVerified: true,
-      isActive: true,
-    });
-    const savedUser = await this.usersRepository.save(user);
-    await this.invitationsRepository.update(invitation.id, {
-      status: InvitationStatus.ACCEPTED,
-      accepted_at: new Date(),
-    });
-    return this.authService.login({
-      email: invitation.email,
-      password: dto.password,
-    });
+    const queryRunner = await this.startTransaction(this.dataSource);
+    try {
+      const invitation = await this.findByToken(dto.token);
+      const user = queryRunner.manager.create(UserProfile, {
+        companyId: invitation.companyId,
+        locationId: invitation.location_id,
+        email: invitation.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        roles: [invitation.role],
+        password: dto.password,
+        isVerified: true,
+        isActive: true,
+      });
+      await queryRunner.manager.save(user);
+      await this.update(
+        invitation.id,
+        {
+          status: InvitationStatus.ACCEPTED,
+          accepted_at: new Date(),
+        },
+        { manager: queryRunner.manager },
+      );
+      await queryRunner.commitTransaction();
+      return { message: 'Invitation accepted successfully' };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async resend(id: string, companyId: string) {

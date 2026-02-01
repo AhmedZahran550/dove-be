@@ -14,7 +14,7 @@ import { ValidateCompanyAccess } from '../auth/decorators/validate-company-acces
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
-  @Roles(Role.COMPANY_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @Get('current')
   @CompaniesSwagger.getCurrent()
   async getCurrentCompany(@AuthUser() user: UserProfile) {

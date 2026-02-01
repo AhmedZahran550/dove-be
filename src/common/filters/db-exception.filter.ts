@@ -30,6 +30,9 @@ export class DBExceptionFilter implements ExceptionFilter {
       }
       switch (code) {
         case DBErrorCode.UNIQUE_VOILATION:
+          if ((exception as any).constraint === 'user_profiles_email_unique') {
+            throw new ConflictException('User with this email already exists');
+          }
           message = [
             {
               property: property ?? undefined,
