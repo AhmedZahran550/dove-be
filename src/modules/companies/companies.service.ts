@@ -9,7 +9,7 @@ import { QueryConfig } from '@/common/query-options';
 export const COMPANIES_PAGINATION_CONFIG: QueryConfig<Company> = {
   sortableColumns: ['createdAt', 'updatedAt', 'name'],
   defaultSortBy: [['createdAt', 'DESC']],
-  searchableColumns: ['name', 'slug', 'contactEmail', 'contactPhone'],
+  searchableColumns: ['name', 'slug', 'email', 'phone'],
   select: undefined,
   filterableColumns: {
     isActive: [FilterOperator.EQ],
