@@ -11,15 +11,35 @@ import {
   UpdateTimeSegmentDto,
   EndTimeSegmentDto,
 } from './dto/time-segment.dto';
+import { DBService } from '@/database/db.service';
+import { Paginated, FilterOperator, FilterSuffix } from 'nestjs-paginate';
+import { QueryConfig, QueryOptions } from '@/common/query-options';
+
+export const TIME_SEGMENTS_PAGINATION_CONFIG: QueryConfig<TimeSegment> = {
+  sortableColumns: ['createdAt', 'updatedAt', 'startTime', 'endTime'],
+  defaultSortBy: [['startTime', 'DESC']],
+  searchableColumns: ['notes'],
+  select: undefined,
+  filterableColumns: {
+    isActive: [FilterOperator.EQ],
+    segmentType: [FilterOperator.EQ],
+    workOrderId: [FilterOperator.EQ],
+    operatorId: [FilterOperator.EQ],
+    companyId: [FilterOperator.EQ],
+  },
+  relations: ['operator', 'workOrder'],
+};
 
 @Injectable()
-export class TimeSegmentsService {
+export class TimeSegmentsService extends DBService<TimeSegment> {
   constructor(
     @InjectRepository(TimeSegment)
     private timeSegmentsRepository: Repository<TimeSegment>,
-  ) {}
+  ) {
+    super(timeSegmentsRepository, TIME_SEGMENTS_PAGINATION_CONFIG);
+  }
 
-  async create(
+  async createTimeSegment(
     companyId: string,
     dto: CreateTimeSegmentDto,
   ): Promise<TimeSegment> {
@@ -42,12 +62,13 @@ export class TimeSegmentsService {
   async findByWorkOrder(
     workOrderId: string,
     companyId: string,
-  ): Promise<TimeSegment[]> {
-    return this.timeSegmentsRepository.find({
-      where: { workOrderId: workOrderId, companyId: companyId },
-      relations: ['operator'],
-      order: { startTime: 'DESC' },
-    });
+    query: QueryOptions,
+  ): Promise<Paginated<TimeSegment>> {
+    const qb = this.timeSegmentsRepository.createQueryBuilder('timeSegment');
+    qb.where('timeSegment.workOrderId = :workOrderId', { workOrderId });
+    qb.andWhere('timeSegment.companyId = :companyId', { companyId });
+
+    return super.findAll(query, qb);
   }
 
   async findActiveByOperator(
@@ -65,7 +86,10 @@ export class TimeSegmentsService {
     });
   }
 
-  async findById(id: string, companyId: string): Promise<TimeSegment> {
+  async findTimeSegmentById(
+    id: string,
+    companyId: string,
+  ): Promise<TimeSegment> {
     const timeSegment = await this.timeSegmentsRepository.findOne({
       where: { id, companyId: companyId },
       relations: ['operator', 'workOrder'],
@@ -78,19 +102,19 @@ export class TimeSegmentsService {
     return timeSegment;
   }
 
-  async update(
+  async updateTimeSegment(
     id: string,
     companyId: string,
     dto: UpdateTimeSegmentDto,
   ): Promise<TimeSegment> {
-    await this.findById(id, companyId);
+    await this.findTimeSegmentById(id, companyId);
 
     await this.timeSegmentsRepository.update(id, {
       ...dto,
       endTime: dto.end_time ? new Date(dto.end_time) : undefined,
     });
 
-    return this.findById(id, companyId);
+    return this.findTimeSegmentById(id, companyId);
   }
 
   async endSegment(
@@ -98,7 +122,7 @@ export class TimeSegmentsService {
     companyId: string,
     dto: EndTimeSegmentDto,
   ): Promise<TimeSegment> {
-    const timeSegment = await this.findById(id, companyId);
+    const timeSegment = await this.findTimeSegmentById(id, companyId);
 
     if (timeSegment.endTime) {
       throw new BadRequestException('Time segment is already ended');
@@ -117,7 +141,7 @@ export class TimeSegmentsService {
       notes: dto.notes,
     });
 
-    return this.findById(id, companyId);
+    return this.findTimeSegmentById(id, companyId);
   }
 
   async endAllActiveForWorkOrder(

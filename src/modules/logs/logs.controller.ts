@@ -1,11 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { LogsSwagger } from '@/swagger/logs.swagger';
 import { Paginate, QueryOptions } from '../../common/query-options';
 import { LogsService } from './logs.service';
 
@@ -16,19 +11,13 @@ export class LogsController {
   constructor(private readonly logsService: LogsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all logs with pagination' })
-  @ApiResponse({ status: 200, description: 'Logs retrieved successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @LogsSwagger.findAll()
   findAll(@Paginate() query: QueryOptions) {
     return this.logsService.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a log by ID' })
-  @ApiParam({ name: 'id', description: 'Log ID' })
-  @ApiResponse({ status: 200, description: 'Log found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Log not found' })
+  @LogsSwagger.findOne()
   findOne(@Param('id') id: string) {
     return this.logsService.findById(id);
   }

@@ -8,17 +8,18 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { DepartmentsSwagger } from '@/swagger/departments.swagger';
 import { DepartmentsService } from './departments.service';
 import { Department } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
+
+import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
+import { Paginate, QueryOptions } from '@/common/query-options';
+
+// ...
 
 @ApiTags('departments')
 @Controller('departments')
@@ -27,58 +28,40 @@ export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all departments for current company' })
-  @ApiResponse({
-    status: 200,
-    description: 'Departments retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(@AuthUser() user: UserProfile): Promise<{
-    success: boolean;
-    data: Department[];
-    count: number;
-  }> {
-    const departments = await this.departmentsService.findByCompany(
-      user.companyId,
-    );
-    return {
-      success: true,
-      data: departments,
-      count: departments.length,
-    };
+  @Cacheable({ key: 'departments:all', ttl: 60 })
+  @DepartmentsSwagger.findAll()
+  async findAll(
+    @AuthUser() user: UserProfile,
+    @Paginate() query: QueryOptions,
+  ) {
+    return this.departmentsService.findByCompany(user.companyId, query);
   }
 
   @Get('filter-options')
-  @ApiOperation({ summary: 'Get available filter options for departments' })
-  @ApiResponse({
-    status: 200,
-    description: 'Filter options retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @Cacheable({ key: 'departments:filter-options', ttl: 3600 })
+  @DepartmentsSwagger.getFilterOptions()
   async getFilterOptions(@AuthUser() user: UserProfile) {
     return this.departmentsService.getFilterOptions(user.companyId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a department by ID' })
-  @ApiResponse({ status: 200, description: 'Department found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Department not found' })
+  @Cacheable({ key: 'departments:{{id}}', ttl: 2592000 })
+  @DepartmentsSwagger.findById()
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
   ): Promise<Department> {
-    return this.departmentsService.findById(id, user.companyId);
+    return this.departmentsService.findDepartmentById(id, user.companyId);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new department' })
-  @ApiResponse({ status: 201, description: 'Department created successfully' })
+  @CacheEvict('departments:all')
+  @DepartmentsSwagger.create()
   async create(
     @Body() dto: CreateDepartmentDto,
     @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; data: Department; message: string }> {
-    const department = await this.departmentsService.create(
+    const department = await this.departmentsService.createDepartment(
       user.companyId,
       dto,
     );
@@ -90,25 +73,24 @@ export class DepartmentsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a department' })
-  @ApiResponse({ status: 200, description: 'Department updated successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Department not found' })
+  @CacheEvict('departments:all', 'departments:{{id}}')
+  @DepartmentsSwagger.update()
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateDepartmentDto,
     @AuthUser() user: UserProfile,
   ): Promise<Department> {
-    return this.departmentsService.update(id, user.companyId, dto);
+    return this.departmentsService.updateDepartment(id, user.companyId, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a department (soft delete)' })
+  @CacheEvict('departments:all', 'departments:{{id}}')
+  @DepartmentsSwagger.delete()
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
   ): Promise<{ success: boolean; message: string }> {
-    await this.departmentsService.delete(id, user.companyId);
+    await this.departmentsService.deleteDepartment(id, user.companyId);
     return {
       success: true,
       message: 'Department deleted successfully',

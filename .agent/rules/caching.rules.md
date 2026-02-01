@@ -1,0 +1,6 @@
+---
+trigger: always_on
+---
+
+follow when cahcing .
+To keep the app fast and the data accurate, follow these simple rules for caching:🚀 The "Two-Way" Caching RuleUse a hybrid approach where you automate simple tasks with decorators and manually control complex tasks inside services.1. At the Controller Level (Automatic)For Fetching Data (GET): Use the @Cacheable decorator. Use the {resource}:all pattern for lists and {resource}:{{id}} for single items.For Changing Data (POST, PATCH, DELETE): Use the @CacheEvict decorator. Whenever you create, update, or delete, you must clear the related cache keys so the user doesn't see old information.2. At the Service Level (Manual)For Complex Logic: Inject the CacheService directly into your service.When to use: Use it when a change in one resource affects others (like a promo code usage affecting the "all promos" list) or when you need to delete multiple keys at once using this.cacheService.mdel().🎨 Standard Naming & TTLData TypeKey PatternSuggested TTLListsresource:allShort (e.g., 60s)Detailsresource:{{id}}Long (e.g., 1 month)Complex OpsManual keysCase-by-case✅ Quick Checklist[ ] Did I add @Cacheable to my GET methods?[ ] Did I add @CacheEvict to every method that modifies data?[ ] Did I use the {{id}} placeholder for specific items?[ ] For complex logic, did I use mdel in the service?

@@ -20,7 +20,10 @@ import { InvitationsModule } from './modules/invitations/invitations.module';
 import { PlansModule } from './modules/plans/plans.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { LogsModule } from './modules/logs/logs.module';
+import { EquipmentModule } from './modules/equipment/equipment.module';
+import { OperatorsModule } from './modules/operators/operators.module';
 import { DatabaseModule } from './database/database.module';
+
 import { schemaValidator } from './config/schema-validator';
 import { baseConfig } from './config/base.config';
 import databaseConfig from './config/database.config';
@@ -73,6 +76,8 @@ const envFilePath = [
     PlansModule,
     SubscriptionsModule,
     LogsModule,
+    EquipmentModule,
+    OperatorsModule,
   ],
   controllers: [AppController],
   providers: [

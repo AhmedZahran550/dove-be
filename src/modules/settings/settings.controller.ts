@@ -9,13 +9,8 @@ import {
   Body,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiQuery,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { SettingsSwagger } from '@/swagger/settings.swagger';
 import { SettingsService } from './settings.service';
 import { RejectionCategory } from '../../database/entities';
 import { RejectionReason } from '../../database/entities';
@@ -30,13 +25,7 @@ export class SettingsController {
 
   // Rejection Categories
   @Get('rejection-categories')
-  @ApiOperation({ summary: 'Get all rejection categories' })
-  @ApiQuery({ name: 'department_id', required: false })
-  @ApiResponse({
-    status: 200,
-    description: 'Categories retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @SettingsSwagger.getCategories()
   async getCategories(
     @AuthUser() user: UserProfile,
     @Query('department_id') departmentId?: string,
@@ -45,10 +34,7 @@ export class SettingsController {
   }
 
   @Get('rejection-categories/:id')
-  @ApiOperation({ summary: 'Get a rejection category by ID' })
-  @ApiResponse({ status: 200, description: 'Category found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Category not found' })
+  @SettingsSwagger.getCategoryById()
   async getCategoryById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -57,10 +43,7 @@ export class SettingsController {
   }
 
   @Post('rejection-categories')
-  @ApiOperation({ summary: 'Create a rejection category' })
-  @ApiResponse({ status: 201, description: 'Category created successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @SettingsSwagger.createCategory()
   async createCategory(
     @Body() data: Partial<RejectionCategory>,
     @AuthUser() user: UserProfile,
@@ -69,10 +52,7 @@ export class SettingsController {
   }
 
   @Patch('rejection-categories/:id')
-  @ApiOperation({ summary: 'Update a rejection category' })
-  @ApiResponse({ status: 200, description: 'Category updated successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Category not found' })
+  @SettingsSwagger.updateCategory()
   async updateCategory(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: Partial<RejectionCategory>,
@@ -82,10 +62,7 @@ export class SettingsController {
   }
 
   @Delete('rejection-categories/:id')
-  @ApiOperation({ summary: 'Delete a rejection category' })
-  @ApiResponse({ status: 200, description: 'Category deleted successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Category not found' })
+  @SettingsSwagger.deleteCategory()
   async deleteCategory(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -96,10 +73,7 @@ export class SettingsController {
 
   // Rejection Reasons
   @Get('rejection-reasons')
-  @ApiOperation({ summary: 'Get all rejection reasons' })
-  @ApiQuery({ name: 'category_id', required: false })
-  @ApiResponse({ status: 200, description: 'Reasons retrieved successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @SettingsSwagger.getReasons()
   async getReasons(
     @AuthUser() user: UserProfile,
     @Query('category_id') categoryId?: string,
@@ -108,10 +82,7 @@ export class SettingsController {
   }
 
   @Get('rejection-reasons/:id')
-  @ApiOperation({ summary: 'Get a rejection reason by ID' })
-  @ApiResponse({ status: 200, description: 'Reason found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Reason not found' })
+  @SettingsSwagger.getReasonById()
   async getReasonById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -120,10 +91,7 @@ export class SettingsController {
   }
 
   @Post('rejection-reasons')
-  @ApiOperation({ summary: 'Create a rejection reason' })
-  @ApiResponse({ status: 201, description: 'Reason created successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @SettingsSwagger.createReason()
   async createReason(
     @Body() data: Partial<RejectionReason>,
     @AuthUser() user: UserProfile,
@@ -132,10 +100,7 @@ export class SettingsController {
   }
 
   @Patch('rejection-reasons/:id')
-  @ApiOperation({ summary: 'Update a rejection reason' })
-  @ApiResponse({ status: 200, description: 'Reason updated successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Reason not found' })
+  @SettingsSwagger.updateReason()
   async updateReason(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: Partial<RejectionReason>,
@@ -145,10 +110,7 @@ export class SettingsController {
   }
 
   @Delete('rejection-reasons/:id')
-  @ApiOperation({ summary: 'Delete a rejection reason' })
-  @ApiResponse({ status: 200, description: 'Reason deleted successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Reason not found' })
+  @SettingsSwagger.deleteReason()
   async deleteReason(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,

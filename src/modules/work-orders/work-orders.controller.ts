@@ -9,13 +9,8 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiResponse,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { WorkOrdersSwagger } from '@/swagger/work-orders.swagger';
 import { WorkOrdersService } from './work-orders.service';
 import { UserProfile, WorkOrder } from '../../database/entities';
 import {
@@ -33,12 +28,7 @@ export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create and start a new work order' })
-  @ApiResponse({ status: 201, description: 'Work order created successfully' })
-  @ApiResponse({
-    status: 400,
-    description: 'Validation error or work order already active',
-  })
+  @WorkOrdersSwagger.create()
   async create(
     @Body() dto: CreateWorkOrderDto,
     @AuthUser() user: UserProfile,
@@ -52,12 +42,7 @@ export class WorkOrdersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all work orders with pagination' })
-  @ApiResponse({
-    status: 200,
-    description: 'Work orders retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @WorkOrdersSwagger.findAll()
   async findAll(
     @Paginate() query: QueryOptions,
     @AuthUser() user: UserProfile,
@@ -66,17 +51,13 @@ export class WorkOrdersController {
   }
 
   @Get('active')
-  @ApiOperation({ summary: 'Get all active (unclosed) work orders' })
-  @ApiResponse({ status: 200, description: 'Active work orders retrieved' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @WorkOrdersSwagger.findActive()
   async findActive(@AuthUser() user: UserProfile): Promise<WorkOrder[]> {
     return this.workOrdersService.findActive(user.companyId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a work order by ID' })
-  @ApiResponse({ status: 200, description: 'Work order found' })
-  @ApiResponse({ status: 404, description: 'Work order not found' })
+  @WorkOrdersSwagger.findById()
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -85,10 +66,7 @@ export class WorkOrdersController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a work order' })
-  @ApiResponse({ status: 200, description: 'Work order updated successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Work order not found' })
+  @WorkOrdersSwagger.update()
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateWorkOrderDto,
@@ -98,10 +76,7 @@ export class WorkOrdersController {
   }
 
   @Post(':id/close')
-  @ApiOperation({ summary: 'Close a work order' })
-  @ApiResponse({ status: 200, description: 'Work order closed successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Work order not found' })
+  @WorkOrdersSwagger.close()
   async close(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CloseWorkOrderDto,
@@ -121,8 +96,7 @@ export class WorkOrdersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a work order' })
-  @ApiResponse({ status: 200, description: 'Work order deleted' })
+  @WorkOrdersSwagger.delete()
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,

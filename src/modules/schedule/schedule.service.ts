@@ -366,4 +366,9 @@ export class ScheduleService {
     await this.scheduleDataRepository.update(id, updateData);
     return this.findScheduleDataById(id, companyId);
   }
+  async getColumnMappings(companyId: string): Promise<CompanyColumnMapping[]> {
+    return this.columnMappingRepository.find({
+      where: { companyId: companyId },
+    });
+  }
 }

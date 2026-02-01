@@ -12,16 +12,8 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiQuery,
-  ApiResponse,
-  ApiParam,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ScheduleSwagger } from '@/swagger/schedule.swagger';
 import { ScheduleService } from './schedule.service';
 import { ScheduleData } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
@@ -48,14 +40,7 @@ export class ScheduleController {
 
   @Post('config')
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
-  @ApiOperation({ summary: 'Save schedule file configuration' })
-  @ApiResponse({ status: 201, description: 'Configuration saved successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - Admin access required',
-  })
+  @ScheduleSwagger.saveConfig()
   async saveConfig(
     @AuthUser() user: UserProfile,
     @Body() dto: SaveScheduleConfigDto,
@@ -71,36 +56,7 @@ export class ScheduleController {
   @Post('import')
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @UseInterceptors(FileInterceptor('file', multerMemoryConfig))
-  @ApiOperation({ summary: 'Upload and import schedule file' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-          description: 'Excel or CSV file to import',
-        },
-        scheduleFileId: {
-          type: 'string',
-          format: 'uuid',
-          description: 'Optional schedule file ID to associate with',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Import completed successfully',
-    type: ImportResultDto,
-  })
-  @ApiResponse({ status: 400, description: 'Invalid file or no data found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - Admin access required',
-  })
+  @ScheduleSwagger.importFile()
   async importFile(
     @AuthUser() user: UserProfile,
     @UploadedFile() file: Express.Multer.File,
@@ -122,17 +78,7 @@ export class ScheduleController {
   // ===== QUERY ENDPOINTS =====
 
   @Get('data')
-  @ApiOperation({ summary: 'Get schedule data with pagination and filters' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'department', required: false, type: String })
-  @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiQuery({ name: 'search', required: false, type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'Schedule data retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ScheduleSwagger.findScheduleData()
   async findScheduleData(
     @Paginate() query: QueryOptions,
     @AuthUser() user?: UserProfile,
@@ -141,13 +87,7 @@ export class ScheduleController {
   }
 
   @Get('data/department/:department')
-  @ApiOperation({ summary: 'Get schedule data for a specific department' })
-  @ApiParam({ name: 'department', description: 'Department name' })
-  @ApiResponse({
-    status: 200,
-    description: 'Department schedule data retrieved',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ScheduleSwagger.findByDepartment()
   async findByDepartment(
     @Param('department') department: string,
     @AuthUser() user: UserProfile,
@@ -159,11 +99,7 @@ export class ScheduleController {
   }
 
   @Get('data/wo/:woId')
-  @ApiOperation({ summary: 'Get schedule data by work order ID' })
-  @ApiParam({ name: 'woId', description: 'Work order ID' })
-  @ApiResponse({ status: 200, description: 'Schedule data found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Schedule data not found' })
+  @ScheduleSwagger.findByWoId()
   async findByWoId(
     @Param('woId') woId: string,
     @AuthUser() user: UserProfile,
@@ -172,10 +108,7 @@ export class ScheduleController {
   }
 
   @Get('data/:id')
-  @ApiOperation({ summary: 'Get schedule data by ID' })
-  @ApiResponse({ status: 200, description: 'Schedule data found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Schedule data not found' })
+  @ScheduleSwagger.findById()
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @AuthUser() user: UserProfile,
@@ -184,13 +117,7 @@ export class ScheduleController {
   }
 
   @Patch('data/:id')
-  @ApiOperation({ summary: 'Update schedule data' })
-  @ApiResponse({
-    status: 200,
-    description: 'Schedule data updated successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'Schedule data not found' })
+  @ScheduleSwagger.updateScheduleData()
   async updateScheduleData(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateData: Partial<ScheduleData>,
@@ -204,23 +131,13 @@ export class ScheduleController {
   }
 
   @Get('departments')
-  @ApiOperation({ summary: 'Get available departments from schedule data' })
-  @ApiResponse({
-    status: 200,
-    description: 'Departments retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ScheduleSwagger.getDepartments()
   async getDepartments(@AuthUser() user: UserProfile): Promise<string[]> {
     return this.scheduleService.getAvailableDepartments(user.companyId);
   }
 
   @Get('files')
-  @ApiOperation({ summary: 'Get all schedule files' })
-  @ApiResponse({
-    status: 200,
-    description: 'Schedule files retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ScheduleSwagger.getScheduleFiles()
   async getScheduleFiles(
     @AuthUser() user: UserProfile,
   ): Promise<ScheduleFile[]> {
@@ -228,9 +145,7 @@ export class ScheduleController {
   }
 
   @Get('files/active')
-  @ApiOperation({ summary: 'Get the active schedule file' })
-  @ApiResponse({ status: 200, description: 'Active schedule file retrieved' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ScheduleSwagger.getActiveScheduleFile()
   async getActiveScheduleFile(
     @AuthUser() user: UserProfile,
   ): Promise<ScheduleFile | null> {

@@ -1,12 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Paginated } from 'nestjs-paginate';
+import { Paginated, FilterOperator, FilterSuffix } from 'nestjs-paginate';
 import { Location } from '../../database/entities';
 import { DBService } from '@/database/db.service';
-import { QueryOptions } from '@/common/query-options';
+import { QueryConfig, QueryOptions } from '@/common/query-options';
 import { CreateLocationDto } from './dto/location.dto';
 import { UpdateLocationDto } from './dto/location.dto';
+
+export const LOCATIONS_PAGINATION_CONFIG: QueryConfig<Location> = {
+  sortableColumns: ['createdAt', 'updatedAt', 'name', 'city'],
+  defaultSortBy: [['createdAt', 'DESC']],
+  searchableColumns: ['name', 'city', 'addressLine1', 'postalCode'],
+  select: undefined,
+  filterableColumns: {
+    isActive: [FilterOperator.EQ],
+    city: [FilterOperator.EQ],
+    'company.id': [FilterOperator.EQ],
+  },
+};
 
 @Injectable()
 export class LocationsService extends DBService<
@@ -18,7 +30,7 @@ export class LocationsService extends DBService<
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
   ) {
-    super(locationsRepository);
+    super(locationsRepository, LOCATIONS_PAGINATION_CONFIG);
   }
 
   async findByCompany(

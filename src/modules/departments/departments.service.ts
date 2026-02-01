@@ -4,25 +4,45 @@ import { Repository } from 'typeorm';
 import { Department } from '../../database/entities';
 import { DepartmentSetting } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
+import { DBService } from '@/database/db.service';
+import { Paginated, FilterOperator, FilterSuffix } from 'nestjs-paginate';
+import { QueryConfig, QueryOptions } from '@/common/query-options';
+
+export const DEPARTMENTS_PAGINATION_CONFIG: QueryConfig<Department> = {
+  sortableColumns: ['createdAt', 'updatedAt', 'department_name', 'sort_order'],
+  defaultSortBy: [['sort_order', 'ASC']],
+  searchableColumns: ['department_name', 'department_code', 'display_name'],
+  select: undefined,
+  filterableColumns: {
+    is_active: [FilterOperator.EQ],
+    company_id: [FilterOperator.EQ],
+  },
+  relations: ['department_settings'],
+};
 
 @Injectable()
-export class DepartmentsService {
+export class DepartmentsService extends DBService<Department> {
   constructor(
     @InjectRepository(Department)
     private departmentsRepository: Repository<Department>,
     @InjectRepository(DepartmentSetting)
     private settingsRepository: Repository<DepartmentSetting>,
-  ) {}
-
-  async findByCompany(companyId: string): Promise<Department[]> {
-    return this.departmentsRepository.find({
-      where: { company_id: companyId, is_active: true },
-      relations: ['department_settings'],
-      order: { sort_order: 'ASC' },
-    });
+  ) {
+    super(departmentsRepository, DEPARTMENTS_PAGINATION_CONFIG);
   }
 
-  async findById(id: string, companyId: string): Promise<Department> {
+  async findByCompany(
+    companyId: string,
+    query: QueryOptions,
+  ): Promise<Paginated<Department>> {
+    const qb = this.departmentsRepository.createQueryBuilder('department');
+    qb.where('department.company_id = :companyId', { companyId });
+    qb.andWhere('department.is_active = :isActive', { isActive: true });
+
+    return super.findAll(query, qb);
+  }
+
+  async findDepartmentById(id: string, companyId: string): Promise<Department> {
     const department = await this.departmentsRepository.findOne({
       where: { id, company_id: companyId },
       relations: ['department_settings'],
@@ -35,7 +55,7 @@ export class DepartmentsService {
     return department;
   }
 
-  async create(
+  async createDepartment(
     companyId: string,
     dto: CreateDepartmentDto,
   ): Promise<Department> {
@@ -94,26 +114,26 @@ export class DepartmentsService {
       await this.settingsRepository.save(settingsToInsert);
     }
 
-    return this.findById(savedDepartment.id, companyId);
+    return this.findDepartmentById(savedDepartment.id, companyId);
   }
 
-  async update(
+  async updateDepartment(
     id: string,
     companyId: string,
     dto: UpdateDepartmentDto,
   ): Promise<Department> {
-    const department = await this.findById(id, companyId);
+    const department = await this.findDepartmentById(id, companyId);
 
     await this.departmentsRepository.update(id, {
       ...dto,
       updatedAt: new Date(),
     });
 
-    return this.findById(id, companyId);
+    return this.findDepartmentById(id, companyId);
   }
 
-  async delete(id: string, companyId: string): Promise<void> {
-    const department = await this.findById(id, companyId);
+  async deleteDepartment(id: string, companyId: string): Promise<void> {
+    const department = await this.findDepartmentById(id, companyId);
 
     // Soft delete by setting is_active to false
     await this.departmentsRepository.update(id, {

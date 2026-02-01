@@ -6,12 +6,8 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthSwagger } from '@/swagger/auth.swagger';
 import { AuthService } from './auth.service';
 import {
   RegisterDto,
@@ -33,16 +29,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  @ApiOperation({ summary: 'Register a new user and organization' })
-  @ApiResponse({
-    status: 201,
-    description: 'User registered successfully',
-    type: AuthResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Validation error or user already exists',
-  })
+  @AuthSwagger.register()
   async register(@Body() dto: RegisterDto): Promise<{ message: string }> {
     return this.authService.register(dto);
   }
@@ -50,13 +37,7 @@ export class AuthController {
   @Post('login')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login with email and password' })
-  @ApiResponse({
-    status: 200,
-    description: 'Login successful',
-    type: AuthResponseDto,
-  })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @AuthSwagger.login()
   async login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(dto);
   }
@@ -64,21 +45,13 @@ export class AuthController {
   @Post('refresh')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh access token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Tokens refreshed successfully',
-    type: AuthResponseDto,
-  })
-  @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+  @AuthSwagger.refresh()
   async refresh(@Body() dto: RefreshTokenDto): Promise<AuthResponseDto> {
     return this.authService.refreshTokens(dto.refresh_token);
   }
 
   @Post('logout')
-  @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Logout and invalidate refresh token' })
-  @ApiResponse({ status: 200, description: 'Logged out successfully' })
+  @AuthSwagger.logout()
   async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);
     return { message: 'Logged out successfully' };
@@ -87,13 +60,7 @@ export class AuthController {
   @Post('email/verify')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Verify email address with token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Email verified successfully, returns auth tokens',
-    type: AuthResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  @AuthSwagger.verifyEmail()
   async verifyEmail(@Body() dto: VerifyEmailDto): Promise<AuthResponseDto> {
     return this.authService.verifyEmail(dto.token);
   }
@@ -101,12 +68,7 @@ export class AuthController {
   @Post('email/resend')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resend verification email' })
-  @ApiResponse({
-    status: 200,
-    description: 'Verification email sent if account exists',
-  })
-  @ApiResponse({ status: 400, description: 'Email already verified' })
+  @AuthSwagger.resendVerification()
   async resendVerification(
     @Body() dto: ResendVerificationDto,
   ): Promise<{ message: string }> {

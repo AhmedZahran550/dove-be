@@ -9,6 +9,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { ValidateCompanyAccess } from '../auth/decorators/validate-company-access.decorator';
 
+import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
+
 @ApiTags('companies')
 @Controller('companies')
 export class CompaniesController {
@@ -16,6 +18,7 @@ export class CompaniesController {
 
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @Get('current')
+  @Cacheable({ key: 'companies:current:{{user.companyId}}', ttl: 300 })
   @CompaniesSwagger.getCurrent()
   async getCurrentCompany(@AuthUser() user: UserProfile) {
     return this.companiesService.findById(user.companyId);
@@ -24,6 +27,7 @@ export class CompaniesController {
   @Roles(Role.COMPANY_ADMIN)
   @Put(':id')
   @ValidateCompanyAccess()
+  @CacheEvict('companies:current:{{id}}')
   @CompaniesSwagger.update()
   async update(
     @Param('id') id: string,

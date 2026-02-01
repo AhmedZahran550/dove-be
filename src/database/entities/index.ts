@@ -17,3 +17,5 @@ export { Plan } from './plan.entity';
 export { Subscription } from './subscription.entity';
 export { Transaction } from './transaction.entity';
 export { WebhookEvent } from './webhook-event.entity';
+export { Operator } from './operator.entity';
+export { Equipment } from './equipment.entity';
