@@ -20,9 +20,12 @@ import {
 } from './dto/work-order.dto';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { QueryOptions, Paginate } from '../../common/query-options';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
 @ApiTags('work-orders')
 @Controller('work-orders')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiBearerAuth('JWT-auth')
 export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}

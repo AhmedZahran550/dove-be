@@ -21,9 +21,12 @@ import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { Paginate, QueryOptions } from '@/common/query-options';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
 @ApiTags('time-segments')
 @Controller('time-segments')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiBearerAuth('JWT-auth')
 export class TimeSegmentsController {
   constructor(private readonly timeSegmentsService: TimeSegmentsService) {}

@@ -18,11 +18,14 @@ import { UserProfile } from '../../database/entities';
 
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { Paginate, QueryOptions } from '@/common/query-options';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
 
 // ...
 
 @ApiTags('departments')
 @Controller('departments')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiBearerAuth('JWT-auth')
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}

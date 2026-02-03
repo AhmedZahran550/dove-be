@@ -95,11 +95,11 @@ export class UserProfile extends BaseEntity {
   @ManyToOne(() => Company, (company) => company.userProfiles, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'companyId' })
+  @JoinColumn({ name: 'company_id' })
   company?: Company;
 
   @ManyToOne(() => Location, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'locationId' })
+  @JoinColumn({ name: 'location_id' })
   location?: Location;
 
   @OneToMany(() => TimeSegment, (segment) => segment.operator)
