@@ -14,14 +14,14 @@ import { UserProfile } from '@/database/entities';
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get('plans/company')
   @SubscriptionsSwagger.getPlans()
   async getPlansForCompany(@AuthUser() user: UserProfile) {
     return this.subscriptionsService.getPlansForCompany(user.companyId);
   }
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get('company/current')
   @SubscriptionsSwagger.getCurrentSubscription()
   async getCurrentSubscription(@AuthUser() user: UserProfile) {
@@ -73,14 +73,14 @@ export class SubscriptionsController {
     return this.subscriptionsService.createBillingPortalSession(user.companyId);
   }
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get('company/transactions')
   @SubscriptionsSwagger.getTransactions()
   async getTransactionHistory(@AuthUser() user: UserProfile) {
     return this.subscriptionsService.getTransactionHistory(user.companyId);
   }
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get('company/feature/:name')
   @SubscriptionsSwagger.checkFeature()
   async checkFeatureAccess(

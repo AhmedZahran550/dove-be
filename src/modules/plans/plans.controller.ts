@@ -28,14 +28,14 @@ export class PlansController {
     return this.plansService.createPlan(dto);
   }
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get()
   @PlansSwagger.findAll()
   async findAll() {
     return this.plansService.findActivePlans();
   }
 
-  @Roles(Role.COMPANY_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.ADMIN, Role.SUPER_ADMIN)
   @Get(':id')
   @PlansSwagger.findOne()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {

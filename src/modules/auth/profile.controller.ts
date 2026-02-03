@@ -12,9 +12,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
+
 @ApiTags('profile')
 @Controller('profile')
 @ApiBearerAuth('JWT-auth')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 export class ProfileController {
   @Get()
   @ApiOperation({ summary: 'Get current user profile' })

@@ -17,9 +17,13 @@ import { RejectionReason } from '../../database/entities';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
 
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/role.model';
+
 @ApiTags('settings')
 @Controller('settings')
 @ApiBearerAuth('JWT-auth')
+@Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
