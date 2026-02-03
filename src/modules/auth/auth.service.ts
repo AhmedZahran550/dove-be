@@ -243,7 +243,12 @@ export class AuthService {
     }
   }
 
-  async logout(userId: string): Promise<void> {}
+  async logout(userId: string): Promise<void> {
+    return;
+    // await this.usersRepository.update(userId, {
+    //   isActive: false,
+    // });
+  }
 
   async validateUser(userId: string): Promise<UserProfile | null> {
     return this.usersRepository.findOneOrFail({

@@ -51,6 +51,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @Public()
   @AuthSwagger.logout()
   async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);
