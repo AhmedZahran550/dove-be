@@ -20,3 +20,5 @@ export { WebhookEvent } from './webhook-event.entity';
 export { Operator } from './operator.entity';
 export { Equipment } from './equipment.entity';
 export { PartnumberInfo as PartNumber } from './partnumber-info.entity';
+export { ConditionalStatusRule } from './conditional-status-rule.entity';
+export { WorkOrderStatus } from './work-order-status.entity';

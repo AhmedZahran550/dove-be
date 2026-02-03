@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { ProfileController } from './profile.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmailModule } from '../../common/mailer/email.module';
 import { UserProfile, Company, Location } from '../../database/entities';
@@ -29,7 +30,7 @@ import { RolesGuard } from './guards/roles.guard';
     }),
     EmailModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, ProfileController],
   providers: [
     AuthService,
     JwtStrategy,
