@@ -13,3 +13,4 @@ export { ScheduleSwagger } from './schedule.swagger';
 export { LogsSwagger } from './logs.swagger';
 export { SettingsSwagger } from './settings.swagger';
 export { TimeSegmentsSwagger } from './time-segments.swagger';
+export { PartNumbersSwagger } from './part-numbers.swagger';

@@ -22,6 +22,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { LogsModule } from './modules/logs/logs.module';
 import { EquipmentModule } from './modules/equipment/equipment.module';
 import { OperatorsModule } from './modules/operators/operators.module';
+import { PartNumbersModule } from './modules/part-numbers/part-numbers.module';
 import { DatabaseModule } from './database/database.module';
 
 import { schemaValidator } from './config/schema-validator';
@@ -78,6 +79,7 @@ const envFilePath = [
     LogsModule,
     EquipmentModule,
     OperatorsModule,
+    PartNumbersModule,
   ],
   controllers: [AppController],
   providers: [
