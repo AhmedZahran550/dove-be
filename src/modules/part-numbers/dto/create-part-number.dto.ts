@@ -4,10 +4,10 @@ import {
   IsOptional,
   IsNumber,
   IsBoolean,
-  IsDateString,
   IsUUID,
-  IsEnum,
   ValidateNested,
+  Min,
+  MinLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -23,6 +23,7 @@ export class CreatePartNumberDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @MinLength(1)
   productId: string;
 
   @ApiPropertyOptional()
@@ -52,11 +53,13 @@ export class CreatePartNumberDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   standardCost?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   sellingPrice?: number;
 
@@ -77,16 +80,19 @@ export class CreatePartNumberDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   leadTimeDays?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   reorderPoint?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   safetyStock?: number;
 
@@ -97,6 +103,7 @@ export class CreatePartNumberDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(0)
   @IsOptional()
   cycleTime?: number;
 
