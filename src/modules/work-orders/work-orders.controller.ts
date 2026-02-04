@@ -12,7 +12,10 @@ import {
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { WorkOrdersSwagger } from '@/swagger/work-orders.swagger';
 import { WorkOrdersService } from './work-orders.service';
+import { WorkOrderStatusesService } from './work-order-statuses.service';
 import { UserProfile, WorkOrder } from '../../database/entities';
+import { WorkOrderStatusResponseDto } from './dto/statuses/work-order-status-response.dto';
+import { plainToInstance } from 'class-transformer';
 import {
   CreateWorkOrderDto,
   UpdateWorkOrderDto,
@@ -28,7 +31,10 @@ import { Role } from '../auth/role.model';
 @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
 @ApiBearerAuth('JWT-auth')
 export class WorkOrdersController {
-  constructor(private readonly workOrdersService: WorkOrdersService) {}
+  constructor(
+    private readonly workOrdersService: WorkOrdersService,
+    private readonly statusesService: WorkOrderStatusesService,
+  ) {}
 
   @Post()
   @WorkOrdersSwagger.create()
@@ -41,6 +47,23 @@ export class WorkOrdersController {
       success: true,
       message: 'Work order started successfully',
       data: workOrder,
+    };
+  }
+
+  @Get('statuses')
+  async getStatuses(
+    @Paginate() query: QueryOptions,
+    @AuthUser() user: UserProfile,
+  ) {
+    const qb = this.statusesService.getQueryBuilder({ alias: 'status' });
+    qb.where('status.companyId = :companyId', { companyId: user.companyId });
+
+    const result = await this.statusesService.findAll(query, qb);
+    return {
+      success: true,
+      data: plainToInstance(WorkOrderStatusResponseDto, result.data, {
+        excludeExtraneousValues: true,
+      }),
     };
   }
 

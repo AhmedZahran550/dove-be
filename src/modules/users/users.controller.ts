@@ -2,10 +2,12 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Patch,
   Param,
   Delete,
+  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { UsersSwagger } from '@/swagger/users.swagger';
 import { UpdateUserDto } from './dto/user.dto';
+import { UpdateUserPreferenceDto } from './dto/user-preferences.dto';
 
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { Paginate, QueryOptions } from '@/common/query-options';
@@ -42,6 +45,37 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getProfile(@AuthUser() user: UserProfile) {
     return this.usersService.findById(user.id);
+  }
+
+  @Get('me/preferences')
+  @UsersSwagger.getPreferences()
+  async getPreferences(@AuthUser() user: UserProfile) {
+    const prefs = await this.usersService.getPreferences(user.id);
+    return { success: true, preferences: prefs };
+  }
+
+  @Put('me/preferences')
+  @UsersSwagger.updatePreference()
+  async updatePreferences(
+    @AuthUser() user: UserProfile,
+    @Body() dto: UpdateUserPreferenceDto,
+  ) {
+    const updated = await this.usersService.updatePreference(
+      user.id,
+      dto.key,
+      dto.value,
+    );
+    return { success: true, data: updated };
+  }
+
+  @Delete('me/preferences')
+  @UsersSwagger.deletePreference()
+  async deletePreferences(
+    @AuthUser() user: UserProfile,
+    @Query('key') key: string,
+  ) {
+    await this.usersService.deletePreference(user.id, key);
+    return { success: true };
   }
 
   @Get()

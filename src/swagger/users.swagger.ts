@@ -8,6 +8,10 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { UserResponseDto, UpdateUserDto } from '../modules/users/dto/user.dto';
+import {
+  UpdateUserPreferenceDto,
+  UserPreferencesResponseDto,
+} from '../modules/users/dto/user-preferences.dto';
 
 export const UsersSwagger = {
   getProfile: () =>
@@ -69,5 +73,51 @@ export const UsersSwagger = {
       }),
       ApiResponse({ status: 404, description: 'User not found' }),
       ApiBearerAuth(),
+    ),
+  getPreferences: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get user preferences' }),
+      ApiResponse({
+        status: 200,
+        description: 'User preferences retrieved',
+        type: UserPreferencesResponseDto,
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  updatePreference: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Update user preference' }),
+      ApiBody({ type: UpdateUserPreferenceDto }),
+      ApiResponse({
+        status: 200,
+        description: 'User preference updated',
+        schema: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { type: 'object' },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  deletePreference: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Delete user preference key' }),
+      ApiQuery({ name: 'key', required: true, type: String }),
+      ApiResponse({
+        status: 200,
+        description: 'User preference deleted',
+        schema: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
     ),
 };

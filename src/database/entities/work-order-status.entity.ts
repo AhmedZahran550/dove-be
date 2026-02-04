@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+  Unique,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
@@ -30,6 +38,18 @@ export class WorkOrderStatus extends BaseEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   icon?: string;
 
+  @Column({ type: 'varchar', length: 7, nullable: true })
+  fontColor?: string;
+
+  @Column({ type: 'varchar', length: 7, nullable: true })
+  borderColor?: string;
+
+  @Column({ type: 'varchar', length: 20, default: 'normal' })
+  fontWeight: string;
+
+  @Column({ type: 'boolean', default: false })
+  isFlashing: boolean;
+
   @Column({ type: 'boolean', default: false })
   isDefault: boolean;
 
@@ -49,7 +69,9 @@ export class WorkOrderStatus extends BaseEntity {
   isActive: boolean;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.workOrderStatuses, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.workOrderStatuses, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 

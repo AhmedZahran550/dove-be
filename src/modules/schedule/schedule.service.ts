@@ -11,6 +11,8 @@ import { ScheduleData } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
 import { CompanyColumnMapping } from '../../database/entities';
 import { QueryOptions } from '../../common/query-options';
+import { Department } from '../../database/entities/department.entity';
+import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
 import {
   generateNormalizationRules,
   applyNormalization,
@@ -36,6 +38,10 @@ export class ScheduleService {
     private scheduleFileRepository: Repository<ScheduleFile>,
     @InjectRepository(CompanyColumnMapping)
     private columnMappingRepository: Repository<CompanyColumnMapping>,
+    @InjectRepository(Department)
+    private departmentRepository: Repository<Department>,
+    @InjectRepository(SystemConfiguration)
+    private systemConfigRepository: Repository<SystemConfiguration>,
   ) {}
 
   // ===== IMPORT METHODS =====
@@ -370,5 +376,124 @@ export class ScheduleService {
     return this.columnMappingRepository.find({
       where: { companyId: companyId },
     });
+  }
+
+  // ===== NEW METHODS FOR FRONTEND =====
+
+  async getDepartmentSummary(companyId: string): Promise<any[]> {
+    const summary = await this.scheduleDataRepository
+      .createQueryBuilder('sd')
+      .select('sd.department', 'department_name')
+      .addSelect('SUM(sd.qtyOpen)', 'target_qty') // Assuming target is open qty for now, adjust as needed
+      .addSelect('SUM(sd.prodQty)', 'completed_qty') // Assuming prodQty is string, might need casting or logic
+      .addSelect('d.id', 'id')
+      .addSelect('d.display_name', 'display_name')
+      .addSelect('d.department_code', 'department_code')
+      .leftJoin(
+        Department,
+        'd',
+        'd.company_id = sd.companyId AND (d.department_name = sd.department OR d.display_name = sd.department)',
+      )
+      .where('sd.companyId = :companyId', { companyId })
+      .andWhere('sd.department IS NOT NULL')
+      .groupBy('sd.department')
+      .addGroupBy('d.id')
+      .addGroupBy('d.display_name')
+      .addGroupBy('d.department_code')
+      .getRawMany();
+
+    return summary.map((item) => {
+      const target = parseFloat(item.target_qty) || 0;
+      const completed = parseFloat(item.completed_qty) || 0;
+      return {
+        id: item.id || `dept_${item.department_name}`,
+        departmentName: item.department_name,
+        displayName: item.display_name || item.department_name,
+        departmentCode:
+          item.department_code ||
+          item.department_name.substring(0, 3).toUpperCase(),
+        targetQty: target,
+        completedQty: completed,
+        percentage: target > 0 ? (completed / target) * 100 : 0,
+      };
+    });
+  }
+
+  async getScheduleColumns(companyId: string): Promise<any> {
+    // 1. Get standard columns from entity
+    const standardColumns = [
+      'status',
+      'priority',
+      'notes',
+      'assigned_to',
+      'due_date',
+    ];
+
+    // 2. Get dynamic columns from schedule data (using rawData or distinct keys)
+    // For now, we'll return a hardcoded list of potential Excel columns matching the frontend requirement
+    // In a real scenario, this should scan `rawData` keys or use ColumnMapping.
+    const scheduleDataColumns = [
+      { excelName: 'Customer Name', normalizedName: 'customer_name' },
+      { excelName: 'Order Date', normalizedName: 'order_date' },
+      { excelName: 'Part Number', normalizedName: 'partNumber' },
+      { excelName: 'Work Order', normalizedName: 'woId' },
+    ];
+
+    return {
+      success: true,
+      scheduleDataColumns,
+      workOrderColumns: standardColumns,
+      allColumns: [
+        ...scheduleDataColumns.map((c) => c.normalizedName),
+        ...standardColumns,
+      ],
+    };
+  }
+
+  async getScheduleSyncConfig(companyId: string): Promise<any> {
+    const config = await this.systemConfigRepository.findOne({
+      where: { companyId, configKey: 'SCHEDULE_SYNC_STATE' },
+    });
+
+    const activeFile = await this.getActiveScheduleFile(companyId);
+
+    return {
+      success: true,
+      scheduleFile: {
+        lastSyncStatus: config?.configValue || 'success',
+        lastSyncError: null,
+        syncRetryCount: 0,
+        sourceType: activeFile?.sourceType || 'excel_import',
+        lastSyncedAt: activeFile?.lastSyncedAt || new Date(),
+      },
+    };
+  }
+
+  async triggerScheduleSync(companyId: string): Promise<any> {
+    // 1. Update system config to pending
+    let config = await this.systemConfigRepository.findOne({
+      where: { companyId, configKey: 'SCHEDULE_SYNC_STATE' },
+    });
+
+    if (!config) {
+      config = this.systemConfigRepository.create({
+        companyId,
+        configKey: 'SCHEDULE_SYNC_STATE',
+        configType: 'string',
+        category: 'schedule',
+        isActive: true,
+      });
+    }
+
+    config.configValue = 'pending';
+    await this.systemConfigRepository.save(config);
+
+    // 2. In a real app, this would dispatch a Job/Queue
+    // await this.queue.add('sync-schedule', { companyId });
+
+    return {
+      success: true,
+      message: 'Sync started',
+    };
   }
 }

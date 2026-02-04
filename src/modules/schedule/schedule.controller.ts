@@ -144,6 +144,30 @@ export class ScheduleController {
     return this.scheduleService.getScheduleFiles(user.companyId);
   }
 
+  @Get('department-summary')
+  @ScheduleSwagger.getDepartmentSummary()
+  async getDepartmentSummary(@AuthUser() user: UserProfile) {
+    return this.scheduleService.getDepartmentSummary(user.companyId);
+  }
+
+  @Get('columns')
+  @ScheduleSwagger.getScheduleColumns()
+  async getScheduleColumns(@AuthUser() user: UserProfile) {
+    return this.scheduleService.getScheduleColumns(user.companyId);
+  }
+
+  @Get('config')
+  @ScheduleSwagger.getScheduleSyncConfig()
+  async getScheduleSyncConfig(@AuthUser() user: UserProfile) {
+    return this.scheduleService.getScheduleSyncConfig(user.companyId);
+  }
+
+  @Post('sync')
+  @ScheduleSwagger.triggerScheduleSync()
+  async triggerScheduleSync(@AuthUser() user: UserProfile) {
+    return this.scheduleService.triggerScheduleSync(user.companyId);
+  }
+
   @Get('files/active')
   @ScheduleSwagger.getActiveScheduleFile()
   async getActiveScheduleFile(

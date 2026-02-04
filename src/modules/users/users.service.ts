@@ -70,4 +70,34 @@ export class UsersService extends DBService<UserProfile> {
       lastLoginAt: new Date(),
     });
   }
+
+  async getPreferences(userId: string): Promise<Record<string, any>> {
+    const user = await this.findById(userId);
+    return user.preferences || {};
+  }
+
+  async updatePreference(
+    userId: string,
+    key: string,
+    value: any,
+  ): Promise<Record<string, any>> {
+    const user = await this.findById(userId);
+    const preferences = user.preferences || {};
+    preferences[key] = value;
+    await this.usersRepository.update(userId, { preferences });
+    return preferences;
+  }
+
+  async deletePreference(
+    userId: string,
+    key: string,
+  ): Promise<Record<string, any>> {
+    const user = await this.findById(userId);
+    const preferences = user.preferences || {};
+    if (key in preferences) {
+      delete preferences[key];
+      await this.usersRepository.update(userId, { preferences });
+    }
+    return preferences;
+  }
 }

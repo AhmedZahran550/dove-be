@@ -10,6 +10,11 @@ import {
 } from '@nestjs/swagger';
 import { ScheduleFile, ScheduleData } from '../database/entities';
 import { ImportResultDto } from '../modules/schedule/dto/schedule-import.dto';
+import { ScheduleDepartmentSummaryDto } from '../modules/schedule/dto/schedule-summary.dto';
+import {
+  ScheduleColumnsResponseDto,
+  ScheduleConfigResponseDto,
+} from '../modules/schedule/dto/schedule-config.dto';
 
 export const ScheduleSwagger = {
   saveConfig: () =>
@@ -146,6 +151,59 @@ export const ScheduleSwagger = {
       ApiResponse({
         status: 200,
         description: 'Active schedule file retrieved',
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getDepartmentSummary: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get production summary per department' }),
+      ApiQuery({ name: 'release_date_from', required: false, type: String }),
+      ApiQuery({ name: 'release_date_to', required: false, type: String }),
+      ApiQuery({ name: 'departments', required: false, type: String }),
+      ApiResponse({
+        status: 200,
+        description: 'Department summary retrieved',
+        type: [ScheduleDepartmentSummaryDto],
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getScheduleColumns: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get available schedule columns' }),
+      ApiResponse({
+        status: 200,
+        description: 'Columns configuration retrieved',
+        type: ScheduleColumnsResponseDto,
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getScheduleSyncConfig: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get schedule sync status and configuration' }),
+      ApiResponse({
+        status: 200,
+        description: 'Sync configuration retrieved',
+        type: ScheduleConfigResponseDto,
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  triggerScheduleSync: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Trigger manual schedule sync' }),
+      ApiResponse({
+        status: 200,
+        description: 'Sync started successfully',
+        schema: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            message: { type: 'string' },
+          },
+        },
       }),
       ApiResponse({ status: 401, description: 'Unauthorized' }),
       ApiBearerAuth('JWT-auth'),

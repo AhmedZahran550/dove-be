@@ -8,4 +8,8 @@ export class WorkOrderStatusResponseDto {
   @Expose() @ApiProperty() color: string;
   @Expose() @ApiProperty() description: string;
   @Expose() @ApiProperty() isDefault: boolean;
+  @Expose() @ApiProperty() fontColor: string;
+  @Expose() @ApiProperty() borderColor: string;
+  @Expose() @ApiProperty() fontWeight: string;
+  @Expose() @ApiProperty() isFlashing: boolean;
 }
