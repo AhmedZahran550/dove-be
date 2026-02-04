@@ -37,6 +37,7 @@ import { GeneralExceptionFilter } from './common/filters/general-exception.filte
 import { LoggingInterceptor } from './common/interceptors/log.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
 import { LoggerMiddleware } from './common/logger.middleware';
+import { SharedModule } from './common/shared.module';
 
 const envFolderPath = `${__dirname}/config/env`;
 const envFilePath = [
@@ -64,6 +65,7 @@ const envFilePath = [
       isGlobal: true,
       ttl: 300, // 5 minutes default
     }),
+    SharedModule,
     AuthModule,
     UsersModule,
     CompaniesModule,
