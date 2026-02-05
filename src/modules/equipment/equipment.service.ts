@@ -37,4 +37,9 @@ export class EquipmentService extends DBService<
   ) {
     super(equipmentRepository, EQUIPMENT_PAGINATION_CONFIG);
   }
+  async findAllActive(companyId: string) {
+    return this.equipmentRepository.find({
+      where: { company_id: companyId, status: 'active' },
+    });
+  }
 }

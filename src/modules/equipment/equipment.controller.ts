@@ -36,6 +36,14 @@ export class EquipmentController {
     return this.equipmentService.findAll(query);
   }
 
+  @Get('active')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  @Cacheable({ key: 'equipment:active', ttl: 300 })
+  async getActiveEquipment(@AuthUser() user: UserProfile) {
+    const equipment = await this.equipmentService.findAllActive(user.companyId);
+    return { success: true, equipment };
+  }
+
   @Get(':id')
   @Cacheable({ key: 'equipment:{{id}}', ttl: 2592000 })
   @EquipmentSwagger.findOne()

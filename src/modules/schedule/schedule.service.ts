@@ -385,7 +385,10 @@ export class ScheduleService {
       .createQueryBuilder('sd')
       .select('sd.department', 'department_name')
       .addSelect('SUM(sd.qtyOpen)', 'target_qty') // Assuming target is open qty for now, adjust as needed
-      .addSelect('SUM(sd.prodQty)', 'completed_qty') // Assuming prodQty is string, might need casting or logic
+      .addSelect(
+        "SUM(CAST(NULLIF(regexp_replace(sd.prodQty, '[^0-9]', '', 'g'), '') AS INTEGER))",
+        'completed_qty',
+      ) // Cast string prodQty to integer, handling non-numeric chars
       .addSelect('d.id', 'id')
       .addSelect('d.display_name', 'display_name')
       .addSelect('d.department_code', 'department_code')

@@ -45,4 +45,9 @@ export class OperatorsService extends DBService<
   ) {
     super(operatorsRepository, OPERATORS_PAGINATION_CONFIG);
   }
+  async findAllActive(companyId: string) {
+    return this.operatorsRepository.find({
+      where: { company_id: companyId, status: 'active' },
+    });
+  }
 }

@@ -36,6 +36,14 @@ export class OperatorsController {
     return this.operatorsService.findAll(query);
   }
 
+  @Get('active')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  @Cacheable({ key: 'operators:active', ttl: 300 })
+  async getActiveOperators(@AuthUser() user: UserProfile) {
+    const operators = await this.operatorsService.findAllActive(user.companyId);
+    return { success: true, operators };
+  }
+
   @Get(':id')
   @Cacheable({ key: 'operators:{{id}}', ttl: 2592000 })
   @OperatorsSwagger.findOne()

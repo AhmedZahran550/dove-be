@@ -31,6 +31,7 @@ export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
   @Get()
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
   @Cacheable({ key: 'departments:all', ttl: 60 })
   @DepartmentsSwagger.findAll()
   async findAll(
@@ -41,6 +42,7 @@ export class DepartmentsController {
   }
 
   @Get('filter-options')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
   @Cacheable({ key: 'departments:filter-options', ttl: 3600 })
   @DepartmentsSwagger.getFilterOptions()
   async getFilterOptions(@AuthUser() user: UserProfile) {

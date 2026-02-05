@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ScheduleSwagger } from '@/swagger/schedule.swagger';
 import { ScheduleService } from './schedule.service';
-import { ScheduleData } from '../../database/entities';
+import { ScheduleData, CompanyColumnMapping } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { QueryOptions, Paginate } from '../../common/query-options';
@@ -77,7 +77,7 @@ export class ScheduleController {
 
   // ===== QUERY ENDPOINTS =====
 
-  @Get('data')
+  @Get(['data', 'list'])
   @ScheduleSwagger.findScheduleData()
   async findScheduleData(
     @Paginate() query: QueryOptions,
@@ -166,6 +166,48 @@ export class ScheduleController {
   @ScheduleSwagger.triggerScheduleSync()
   async triggerScheduleSync(@AuthUser() user: UserProfile) {
     return this.scheduleService.triggerScheduleSync(user.companyId);
+  }
+
+  @Get('column-mappings')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  async getColumnMappings(
+    @AuthUser() user: UserProfile,
+  ): Promise<{ success: boolean; mappings: any[] }> {
+    const mappings = await this.scheduleService.getColumnMappings(
+      user.companyId,
+    );
+
+    // Transform to match frontend request if needed, or return as is.
+    // Frontend expects: { "success": true, "mappings": [ { "is_default": true, "mapping_config": ... } ] }
+    // The entity has isDefault and mappingConfig (camelCase properties usually in TypeORM entities but let's check basic transformation)
+    // We'll return the entities wrapped in the response structure.
+
+    return {
+      success: true,
+      mappings: mappings.map((m) => ({
+        is_default: m.isDefault,
+        mapping_config: m.mappingConfig,
+        // include other fields if necessary
+      })),
+    };
+  }
+
+  @Get(':woNumber')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  async getScheduleByWoNumber(
+    @Param('woNumber') woNumber: string,
+    @AuthUser() user: UserProfile,
+  ): Promise<{ success: boolean; data: { schedule: ScheduleData | null } }> {
+    const schedule = await this.scheduleService.findScheduleDataByWoId(
+      woNumber,
+      user.companyId,
+    );
+    return {
+      success: true,
+      data: {
+        schedule,
+      },
+    };
   }
 
   @Get('files/active')
