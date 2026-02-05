@@ -1,0 +1,8 @@
+{
+  "track_id": "auth_20260205",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-05T20:57:00Z",
+  "updated_at": "2026-02-05T20:57:00Z",
+  "description": "Implement the core user authentication flow, including user registration, login, and session management, using JWT and Passport.js with Argon2 for secure password hashing."
+}
