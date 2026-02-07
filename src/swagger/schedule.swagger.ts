@@ -15,6 +15,11 @@ import {
   ScheduleColumnsResponseDto,
   ScheduleConfigResponseDto,
 } from '../modules/schedule/dto/schedule-config.dto';
+import {
+  CreateColumnMappingDto,
+  ColumnMappingResponseDto,
+  UpdateColumnMappingDto,
+} from '../modules/schedule/dto/schedule-mapping.dto';
 
 export const ScheduleSwagger = {
   saveConfig: () =>
@@ -175,7 +180,72 @@ export const ScheduleSwagger = {
       ApiResponse({
         status: 200,
         description: 'Columns configuration retrieved',
-        type: ScheduleColumnsResponseDto,
+        schema: {
+          properties: {
+            data: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  excelName: { type: 'string' },
+                  normalizedName: { type: 'string' },
+                  sampleValue: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getColumnMappings: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get column mappings' }),
+      ApiResponse({
+        status: 200,
+        description: 'Column mappings retrieved',
+        schema: {
+          properties: {
+            data: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/ColumnMappingResponseDto' },
+            },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  createColumnMapping: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Create a new column mapping' }),
+      ApiBody({ type: CreateColumnMappingDto }),
+      ApiResponse({
+        status: 201,
+        description: 'Column mapping created',
+        schema: {
+          properties: {
+            data: { $ref: '#/components/schemas/ColumnMappingResponseDto' },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  updateColumnMapping: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Update a column mapping' }),
+      ApiParam({ name: 'id', description: 'Mapping ID' }),
+      ApiBody({ type: UpdateColumnMappingDto }),
+      ApiResponse({
+        status: 200,
+        description: 'Column mapping updated',
+        schema: {
+          properties: {
+            data: { $ref: '#/components/schemas/ColumnMappingResponseDto' },
+          },
+        },
       }),
       ApiResponse({ status: 401, description: 'Unauthorized' }),
       ApiBearerAuth('JWT-auth'),
@@ -206,6 +276,56 @@ export const ScheduleSwagger = {
         },
       }),
       ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getTimeSegments: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get time segments for a schedule' }),
+      ApiParam({ name: 'id', description: 'Schedule data ID' }),
+      ApiResponse({
+        status: 200,
+        description: 'Time segments retrieved successfully',
+        schema: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'number' },
+                  workOrderId: { type: 'string', format: 'uuid' },
+                  startTime: { type: 'string', format: 'date-time' },
+                  endTime: {
+                    type: 'string',
+                    format: 'date-time',
+                    nullable: true,
+                  },
+                  qtyCompleted: { type: 'number' },
+                  downTimeMinutes: { type: 'number' },
+                  notes: { type: 'string', nullable: true },
+                  step: { type: 'string', nullable: true },
+                  operatorId: {
+                    type: 'string',
+                    format: 'uuid',
+                    nullable: true,
+                  },
+                  operatorName: { type: 'string', nullable: true },
+                  machineName: { type: 'string', nullable: true },
+                  equipmentId: {
+                    type: 'string',
+                    format: 'uuid',
+                    nullable: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiResponse({ status: 404, description: 'Schedule data not found' }),
       ApiBearerAuth('JWT-auth'),
     ),
 };

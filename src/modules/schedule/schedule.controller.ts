@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Patch,
   Param,
   Query,
@@ -28,6 +29,10 @@ import {
   ImportScheduleDto,
   ImportResultDto,
 } from './dto/schedule-import.dto';
+import {
+  CreateColumnMappingDto,
+  UpdateColumnMappingDto,
+} from './dto/schedule-mapping.dto';
 
 @ApiTags('schedule')
 @Controller('schedule')
@@ -153,7 +158,10 @@ export class ScheduleController {
   @Get('columns')
   @ScheduleSwagger.getScheduleColumns()
   async getScheduleColumns(@AuthUser() user: UserProfile) {
-    return this.scheduleService.getScheduleColumns(user.companyId);
+    const columns = await this.scheduleService.getScheduleColumns(
+      user.companyId,
+    );
+    return { data: columns };
   }
 
   @Get('config')
@@ -170,26 +178,42 @@ export class ScheduleController {
 
   @Get('column-mappings')
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
-  async getColumnMappings(
-    @AuthUser() user: UserProfile,
-  ): Promise<{ success: boolean; mappings: any[] }> {
+  @ScheduleSwagger.getColumnMappings()
+  async getColumnMappings(@AuthUser() user: UserProfile) {
     const mappings = await this.scheduleService.getColumnMappings(
       user.companyId,
     );
+    return { data: mappings };
+  }
 
-    // Transform to match frontend request if needed, or return as is.
-    // Frontend expects: { "success": true, "mappings": [ { "is_default": true, "mapping_config": ... } ] }
-    // The entity has isDefault and mappingConfig (camelCase properties usually in TypeORM entities but let's check basic transformation)
-    // We'll return the entities wrapped in the response structure.
+  @Post('column-mappings')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
+  @ScheduleSwagger.createColumnMapping()
+  async createColumnMapping(
+    @AuthUser() user: UserProfile,
+    @Body() dto: CreateColumnMappingDto,
+  ) {
+    const mapping = await this.scheduleService.createColumnMapping(
+      user.companyId,
+      dto,
+    );
+    return { data: mapping };
+  }
 
-    return {
-      success: true,
-      mappings: mappings.map((m) => ({
-        is_default: m.isDefault,
-        mapping_config: m.mappingConfig,
-        // include other fields if necessary
-      })),
-    };
+  @Put('column-mappings/:id')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
+  @ScheduleSwagger.updateColumnMapping()
+  async updateColumnMapping(
+    @AuthUser() user: UserProfile,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateColumnMappingDto,
+  ) {
+    const mapping = await this.scheduleService.updateColumnMapping(
+      id,
+      user.companyId,
+      dto,
+    );
+    return { data: mapping };
   }
 
   @Get(':woNumber')
@@ -216,5 +240,22 @@ export class ScheduleController {
     @AuthUser() user: UserProfile,
   ): Promise<ScheduleFile | null> {
     return this.scheduleService.getActiveScheduleFile(user.companyId);
+  }
+
+  @Get(':id/time-segments')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  @ScheduleSwagger.getTimeSegments()
+  async getTimeSegments(
+    @Param('id', ParseUUIDPipe) id: string,
+    @AuthUser() user: UserProfile,
+  ): Promise<{ success: boolean; data: any[] }> {
+    const data = await this.scheduleService.getTimeSegmentsByScheduleId(
+      id,
+      user.companyId,
+    );
+    return {
+      success: true,
+      data,
+    };
   }
 }

@@ -133,4 +133,3 @@ export class EndTimeSegmentDto {
   @IsOptional()
   notes?: string;
 }
-

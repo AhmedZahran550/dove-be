@@ -5,6 +5,7 @@ import { ScheduleFile } from '../../database/entities';
 import { CompanyColumnMapping } from '../../database/entities';
 import { Department } from '../../database/entities/department.entity';
 import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
+import { TimeSegment } from '../../database/entities/time-segment.entity';
 import { ScheduleService } from './schedule.service';
 import { ScheduleController } from './schedule.controller';
 
@@ -16,6 +17,7 @@ import { ScheduleController } from './schedule.controller';
       CompanyColumnMapping,
       Department,
       SystemConfiguration,
+      TimeSegment,
     ]),
   ],
   controllers: [ScheduleController],

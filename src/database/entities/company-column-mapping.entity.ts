@@ -17,6 +17,15 @@ export class CompanyColumnMapping extends BaseEntity {
   @Column({ type: 'jsonb', nullable: true })
   normalizationRules?: Record<string, string>;
 
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
+  @Column({ type: 'varchar', length: 50, default: 'excel' })
+  sourceType: string;
+
+  @Column({ type: 'jsonb', nullable: true, default: [] })
+  requiredColumns?: string[];
+
   // JSON object: target field -> { source_column, alternate_columns }
   @Column({ type: 'jsonb', nullable: true })
   mappingConfig?: Record<string, any>;

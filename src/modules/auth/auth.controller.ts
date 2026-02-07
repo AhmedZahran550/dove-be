@@ -21,6 +21,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthUser } from './decorators/auth-user.decorator';
 import { UserProfile } from '../../database/entities';
 import { Public } from './decorators/public.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from './role.model';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -51,7 +53,15 @@ export class AuthController {
   }
 
   @Post('logout')
-  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Roles(
+    Role.ADMIN,
+    Role.SUPER_ADMIN,
+    Role.COMPANY_ADMIN,
+    Role.LOCATION_ADMIN,
+    Role.USER,
+    Role.OPERATOR,
+  )
   @AuthSwagger.logout()
   async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);

@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, In } from 'typeorm';
 import * as XLSX from 'xlsx';
 import { ScheduleData } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
@@ -13,6 +13,9 @@ import { CompanyColumnMapping } from '../../database/entities';
 import { QueryOptions } from '../../common/query-options';
 import { Department } from '../../database/entities/department.entity';
 import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
+import { TimeSegment } from '../../database/entities/time-segment.entity';
+import { Equipment } from '../../database/entities/equipment.entity';
+import { UserProfile } from '../../database/entities/user-profile.entity';
 import {
   generateNormalizationRules,
   applyNormalization,
@@ -26,6 +29,10 @@ import {
   SaveScheduleConfigDto,
   ImportResultDto,
 } from './dto/schedule-import.dto';
+import {
+  CreateColumnMappingDto,
+  UpdateColumnMappingDto,
+} from './dto/schedule-mapping.dto';
 
 @Injectable()
 export class ScheduleService {
@@ -42,6 +49,8 @@ export class ScheduleService {
     private departmentRepository: Repository<Department>,
     @InjectRepository(SystemConfiguration)
     private systemConfigRepository: Repository<SystemConfiguration>,
+    @InjectRepository(TimeSegment)
+    private timeSegmentRepository: Repository<TimeSegment>,
   ) {}
 
   // ===== IMPORT METHODS =====
@@ -201,27 +210,36 @@ export class ScheduleService {
       );
     }
 
-    // 6. Upsert records (update if exists, insert if new)
-    let insertedCount = 0;
-    let updatedCount = 0;
+    // 6. Efficiently calculate stats (one query instead of N)
+    const woIds = recordsToUpsert.map((r) => r.woId);
 
-    for (const record of recordsToUpsert) {
-      const existing = await this.scheduleDataRepository.findOne({
-        where: { companyId, woId: record.woId },
-      });
+    // We need to chunk the check for existing records to avoid parameter limit issues if thousands of records
+    let existingCount = 0;
+    const chunkSize = 1000;
 
-      if (existing) {
-        // Update existing record
-        await this.scheduleDataRepository.update(existing.id, {
-          ...record,
-          id: existing.id,
+    for (let i = 0; i < woIds.length; i += chunkSize) {
+      const chunk = woIds.slice(i, i + chunkSize);
+      if (chunk.length > 0) {
+        const existingInChunk = await this.scheduleDataRepository.count({
+          where: {
+            companyId,
+            woId: In(chunk) as any,
+          },
         });
-        updatedCount++;
-      } else {
-        // Insert new record
-        await this.scheduleDataRepository.save(record);
-        insertedCount++;
+        existingCount += existingInChunk;
       }
+    }
+
+    const insertedCount = recordsToUpsert.length - existingCount;
+    const updatedCount = existingCount;
+
+    // 7. Bulk Upsert (one query per chunk to handle potential parameter limits)
+    for (let i = 0; i < recordsToUpsert.length; i += chunkSize) {
+      const chunk = recordsToUpsert.slice(i, i + chunkSize);
+      await this.scheduleDataRepository.upsert(chunk, {
+        conflictPaths: ['companyId', 'woId'],
+        skipUpdateIfNoValuesChanged: true,
+      });
     }
 
     // 7. Update mapping statistics
@@ -374,8 +392,53 @@ export class ScheduleService {
   }
   async getColumnMappings(companyId: string): Promise<CompanyColumnMapping[]> {
     return this.columnMappingRepository.find({
-      where: { companyId: companyId },
+      where: { companyId },
+      order: { isDefault: 'DESC', createdAt: 'DESC' },
     });
+  }
+
+  async createColumnMapping(
+    companyId: string,
+    dto: CreateColumnMappingDto,
+  ): Promise<CompanyColumnMapping> {
+    if (dto.isDefault) {
+      await this.columnMappingRepository.update(
+        { companyId, isDefault: true },
+        { isDefault: false },
+      );
+    }
+
+    const mapping = this.columnMappingRepository.create({
+      companyId,
+      ...dto,
+      isActive: true,
+    });
+
+    return this.columnMappingRepository.save(mapping);
+  }
+
+  async updateColumnMapping(
+    id: string,
+    companyId: string,
+    dto: UpdateColumnMappingDto,
+  ): Promise<CompanyColumnMapping> {
+    const mapping = await this.columnMappingRepository.findOne({
+      where: { id, companyId },
+    });
+
+    if (!mapping) {
+      throw new NotFoundException(`Column mapping not found`);
+    }
+
+    if (dto.isDefault && !mapping.isDefault) {
+      await this.columnMappingRepository.update(
+        { companyId, isDefault: true },
+        { isDefault: false },
+      );
+    }
+
+    Object.assign(mapping, dto);
+    return this.columnMappingRepository.save(mapping);
   }
 
   // ===== NEW METHODS FOR FRONTEND =====
@@ -422,35 +485,46 @@ export class ScheduleService {
     });
   }
 
-  async getScheduleColumns(companyId: string): Promise<any> {
-    // 1. Get standard columns from entity
-    const standardColumns = [
-      'status',
-      'priority',
-      'notes',
-      'assigned_to',
-      'due_date',
-    ];
-
-    // 2. Get dynamic columns from schedule data (using rawData or distinct keys)
+  async getScheduleColumns(companyId: string): Promise<any[]> {
+    // 1. Get dynamic columns from schedule data
     // For now, we'll return a hardcoded list of potential Excel columns matching the frontend requirement
-    // In a real scenario, this should scan `rawData` keys or use ColumnMapping.
-    const scheduleDataColumns = [
-      { excelName: 'Customer Name', normalizedName: 'customer_name' },
-      { excelName: 'Order Date', normalizedName: 'order_date' },
-      { excelName: 'Part Number', normalizedName: 'partNumber' },
-      { excelName: 'Work Order', normalizedName: 'woId' },
+    // In a real scenario, we might scan the `rawData` or `mappingConfig` of recent imports
+
+    // Using the sample values requested
+    const columns = [
+      {
+        excelName: 'Work Order',
+        normalizedName: 'woId',
+        sampleValue: 'WO-12345',
+      },
+      {
+        excelName: 'Part No',
+        normalizedName: 'partNumber',
+        sampleValue: 'PN-ABC',
+      },
+      {
+        excelName: 'Quantity',
+        normalizedName: 'qtyOpen',
+        sampleValue: '100',
+      },
+      {
+        excelName: 'Due Date',
+        normalizedName: 'dueDate',
+        sampleValue: '2024-05-20',
+      },
+      {
+        excelName: 'Status',
+        normalizedName: 'status',
+        sampleValue: 'In Progress',
+      },
+      {
+        excelName: 'Department',
+        normalizedName: 'department',
+        sampleValue: 'Assembly',
+      },
     ];
 
-    return {
-      success: true,
-      scheduleDataColumns,
-      workOrderColumns: standardColumns,
-      allColumns: [
-        ...scheduleDataColumns.map((c) => c.normalizedName),
-        ...standardColumns,
-      ],
-    };
+    return columns;
   }
 
   async getScheduleSyncConfig(companyId: string): Promise<any> {
@@ -498,5 +572,59 @@ export class ScheduleService {
       success: true,
       message: 'Sync started',
     };
+  }
+
+  /**
+   * Get time segments by schedule data ID with expanded operator and equipment info
+   */
+  async getTimeSegmentsByScheduleId(
+    scheduleId: string,
+    companyId: string,
+  ): Promise<any[]> {
+    // First get the schedule data to get the work order ID
+    const scheduleData = await this.findScheduleDataById(scheduleId, companyId);
+
+    if (!scheduleData || !scheduleData.woId) {
+      return [];
+    }
+
+    // Query time segments with operator and equipment information
+    const timeSegments = await this.timeSegmentRepository
+      .createQueryBuilder('ts')
+      .leftJoinAndSelect('ts.operator', 'operator')
+      .leftJoinAndSelect('ts.workOrder', 'workOrder')
+      .leftJoin(Equipment, 'equipment', 'equipment.id = ts.equipmentId')
+      .addSelect(['equipment.id', 'equipment.name'])
+      .where('workOrder.woNumber = :woNumber', { woNumber: scheduleData.woId })
+      .andWhere('ts.companyId = :companyId', { companyId })
+      .andWhere('ts.isActive = :isActive', { isActive: true })
+      .orderBy('ts.startTime', 'ASC')
+      .getMany();
+
+    // Transform to match the expected frontend structure
+    return timeSegments.map((segment: any) => {
+      // Calculate down time in minutes
+      let downTimeMinutes = 0;
+      if (segment.segmentType === 'downtime' && segment.durationMinutes) {
+        downTimeMinutes = segment.durationMinutes;
+      }
+
+      return {
+        id: parseInt(segment.id),
+        workOrderId: segment.workOrderId,
+        startTime: segment.startTime.toISOString(),
+        endTime: segment.endTime ? segment.endTime.toISOString() : null,
+        qtyCompleted: segment.qtyProduced || 0,
+        downTimeMinutes,
+        notes: segment.notes || null,
+        step: null, // This field doesn't exist in TimeSegment entity yet
+        operatorId: segment.operatorId || null,
+        operatorName: segment.operator
+          ? `${segment.operator.firstName || ''} ${segment.operator.lastName || ''}`.trim()
+          : null,
+        machineName: segment.equipment_name || null,
+        equipmentId: segment.equipmentId || null,
+      };
+    });
   }
 }

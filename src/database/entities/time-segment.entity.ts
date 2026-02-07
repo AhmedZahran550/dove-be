@@ -79,15 +79,21 @@ export class TimeSegment extends BaseEntity {
   notes?: string;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.timeSegments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.timeSegments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.timeSegments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.timeSegments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workOrderId' })
   workOrder?: WorkOrder;
 
-  @ManyToOne(() => UserProfile, (user) => user.timeSegments, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => UserProfile, (user) => user.timeSegments, {
+    onDelete: 'RESTRICT',
+  })
   @JoinColumn({ name: 'operatorId' })
   operator?: UserProfile;
 
