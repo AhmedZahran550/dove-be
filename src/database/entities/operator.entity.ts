@@ -10,22 +10,22 @@ import { OperatorDepartment } from './operator-department.entity';
 @Entity('operators')
 export class Operator extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  user_id: string;
+  userId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  default_location_id: string;
+  defaultLocationId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  operator_id: string;
+  operatorId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  first_name: string;
+  firstName: string;
 
   @Column({ type: 'varchar', length: 255 })
-  last_name: string;
+  lastName: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   email: string;
@@ -37,31 +37,31 @@ export class Operator extends BaseEntity {
   position: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  employee_type: string;
+  employeeType: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
   shift: string;
 
   @Column({ type: 'date', nullable: true })
-  date_of_birth: Date;
+  dateOfBirth: Date;
 
   @Column({ type: 'date', nullable: true })
-  hire_date: Date;
+  hireDate: Date;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  company_employee_id: string;
+  companyEmployeeId: string;
 
   @Column({ type: 'varchar', length: 50, default: 'active' })
   status: string;
 
   @Column({ type: 'text', nullable: true })
-  password_hash: string;
+  passwordHash: string;
 
   @Column({ type: 'boolean', default: true })
-  must_change_password: boolean;
+  mustChangePassword: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
-  last_login_at: Date;
+  lastLoginAt: Date;
 
   // Relations
   @ManyToOne(() => Company)

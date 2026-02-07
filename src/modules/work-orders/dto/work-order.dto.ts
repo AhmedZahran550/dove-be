@@ -14,48 +14,53 @@ export class CreateWorkOrderDto {
   @ApiProperty({ example: 'WO-2024-001' })
   @IsString()
   @IsNotEmpty()
-  wo_id: string;
+  woId: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  wo_number?: string;
+  woNumber?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  part_number?: string;
+  partNumber?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  lot_number?: string;
+  lotNumber?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  bulk_lot_number?: string;
+  bulkLotNumber?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  wo_qty?: number;
+  woQty?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  equipment_id?: string;
+  equipmentId?: string;
+
+  @ApiPropertyOptional({ description: 'Process step UUID' })
+  @IsOptional()
+  @IsString()
+  processStepId?: string;
 
   @ApiPropertyOptional({ description: 'Setup time in HH:MM format' })
   @IsOptional()
   @IsString()
-  setup_time?: string;
+  setupTime?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsDateString()
-  start_time?: string;
+  startTime?: string;
 
   @ApiPropertyOptional({ description: 'Array of operator UUIDs' })
   @IsOptional()
@@ -69,38 +74,38 @@ export class UpdateWorkOrderDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  qty_completed?: number;
+  qtyCompleted?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  qty_rejected?: number;
+  qtyRejected?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  current_status?: string;
+  currentStatus?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsUUID()
-  status_id?: string;
+  statusId?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  operator_comment?: string;
+  operatorComment?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  lead_hand_comment?: string;
+  leadHandComment?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  supervisor_comment?: string;
+  supervisorComment?: string;
 
   statusUpdatedBy?: string;
 
@@ -112,18 +117,18 @@ export class CloseWorkOrderDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  qty_completed?: number;
+  qtyCompleted?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  qty_rejected?: number;
+  qtyRejected?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  operator_comment?: string;
+  operatorComment?: string;
 }
 
 export class WorkOrderResponseDto {
@@ -131,26 +136,26 @@ export class WorkOrderResponseDto {
   id: string;
 
   @ApiProperty()
-  wo_number: string;
+  woNumber: string;
 
   @ApiProperty()
-  company_id: string;
+  companyId: string;
 
   @ApiProperty()
-  location_id: string;
+  locationId: string;
 
   @ApiProperty()
-  wo_qty: number;
+  woQty: number;
 
   @ApiProperty()
-  current_status: string;
+  currentStatus: string;
 
   @ApiPropertyOptional()
-  start_time?: Date;
+  startTime?: Date;
 
   @ApiPropertyOptional()
-  closing_time?: Date;
+  closingTime?: Date;
 
   @ApiProperty()
-  created_at: Date;
+  createdAt: Date;
 }

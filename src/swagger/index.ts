@@ -9,6 +9,7 @@ export { AuthSwagger } from './auth.swagger';
 export { DepartmentsSwagger } from './departments.swagger';
 export { LocationsSwagger } from './locations.swagger';
 export { WorkOrdersSwagger } from './work-orders.swagger';
+export { WorkOrderStatusesSwagger } from './work-order-statuses.swagger';
 export { ScheduleSwagger } from './schedule.swagger';
 export { LogsSwagger } from './logs.swagger';
 export { SettingsSwagger } from './settings.swagger';

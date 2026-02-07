@@ -28,7 +28,7 @@ export class WorkOrdersService {
     const existingWO = await this.workOrdersRepository.findOne({
       where: {
         companyId: companyId,
-        woNumber: dto.wo_id,
+        woNumber: dto.woId,
         closingTime: IsNull(),
       },
     });
@@ -49,24 +49,24 @@ export class WorkOrdersService {
     }
 
     // Parse setup time (HH:MM format to minutes)
-    const setupMinutes = this.parseSetupMinutes(dto.setup_time);
+    const setupMinutes = this.parseSetupMinutes(dto.setupTime);
 
-    // Validate equipment_id is UUID if provided
+    // Validate equipmentId is UUID if provided
     const equipmentId =
-      dto.equipment_id && this.isValidUUID(dto.equipment_id)
-        ? dto.equipment_id
+      dto.equipmentId && this.isValidUUID(dto.equipmentId)
+        ? dto.equipmentId
         : undefined;
 
     const workOrder = this.workOrdersRepository.create({
       companyId: companyId,
       locationId: defaultLocation.id,
-      woNumber: dto.wo_id,
-      lotNumber: dto.lot_number || dto.part_number,
-      bulkLotNumber: dto.bulk_lot_number,
-      woQty: dto.wo_qty || 1,
+      woNumber: dto.woId,
+      lotNumber: dto.lotNumber || dto.partNumber,
+      bulkLotNumber: dto.bulkLotNumber,
+      woQty: dto.woQty || 1,
       equipmentId: equipmentId,
       setupTime: setupMinutes,
-      startTime: dto.start_time ? new Date(dto.start_time) : new Date(),
+      startTime: dto.startTime ? new Date(dto.startTime) : new Date(),
       currentStatus: 'running',
       statusUpdatedAt: new Date(),
     });
@@ -141,7 +141,7 @@ export class WorkOrdersService {
 
     const updateData = { ...dto };
 
-    if (dto.current_status || dto.status_id) {
+    if (dto.currentStatus || dto.statusId) {
       updateData.statusUpdatedAt = new Date();
       if (userId) {
         updateData.statusUpdatedBy = userId;
@@ -170,14 +170,14 @@ export class WorkOrdersService {
       statusUpdatedAt: new Date(),
     };
 
-    if (dto.qty_completed !== undefined) {
-      updateData.qtyCompleted = dto.qty_completed;
+    if (dto.qtyCompleted !== undefined) {
+      updateData.qtyCompleted = dto.qtyCompleted;
     }
-    if (dto.qty_rejected !== undefined) {
-      updateData.qtyRejected = dto.qty_rejected;
+    if (dto.qtyRejected !== undefined) {
+      updateData.qtyRejected = dto.qtyRejected;
     }
-    if (dto.operator_comment) {
-      updateData.operatorComment = dto.operator_comment;
+    if (dto.operatorComment) {
+      updateData.operatorComment = dto.operatorComment;
     }
     if (userId) {
       updateData.statusUpdatedBy = userId;

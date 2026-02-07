@@ -12,4 +12,5 @@ export class WorkOrderStatusResponseDto {
   @Expose() @ApiProperty() borderColor: string;
   @Expose() @ApiProperty() fontWeight: string;
   @Expose() @ApiProperty() isFlashing: boolean;
+  @Expose() @ApiProperty({ enum: ['default', 'custom'] }) statusType: string;
 }

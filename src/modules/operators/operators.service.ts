@@ -13,12 +13,12 @@ export const OPERATORS_PAGINATION_CONFIG: QueryConfig<Operator> = {
   sortableColumns: [
     'createdAt',
     'updatedAt',
-    'first_name',
-    'last_name',
+    'firstName',
+    'lastName',
     'status',
   ],
   defaultSortBy: [['createdAt', 'DESC']],
-  searchableColumns: ['first_name', 'last_name', 'operator_id', 'email'],
+  searchableColumns: ['firstName', 'lastName', 'operatorId', 'email'],
   select: undefined,
   filterableColumns: {
     status: [FilterOperator.EQ, FilterSuffix.NOT],
@@ -28,7 +28,6 @@ export const OPERATORS_PAGINATION_CONFIG: QueryConfig<Operator> = {
     'defaultLocation.id': [FilterOperator.EQ],
     'company.id': [FilterOperator.EQ],
   },
-  relations: ['company', 'defaultLocation'],
 };
 
 @Injectable()
@@ -47,7 +46,7 @@ export class OperatorsService extends DBService<
   }
   async findAllActive(companyId: string) {
     return this.operatorsRepository.find({
-      where: { company_id: companyId, status: 'active' },
+      where: { companyId: companyId, status: 'active' },
     });
   }
 }
