@@ -6,7 +6,7 @@ This plan outlines the steps to standardize ORM entity naming to `camelCase` and
 - [x] Task: Audit all entities in `src/database/entities/` to identify non-camelCase properties.
 - [x] Task: Audit `src/utils/column-mapping.ts` and `src/utils/schedule-normalizer.ts` for hardcoded property names.
 - [x] Task: Verify `CustomNamingStrategy` in `src/database/custom-naming.strategy.ts` correctly handles `camelCase` to `snake_case` conversion.
-- [ ] Task: Conductor - User Manual Verification 'Preparation and Audit' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Preparation and Audit' (Protocol in workflow.md) [checkpoint: 4ccb5c2]
 
 ## Phase 2: Entity Refactoring (TDD)
 - [ ] Task: Write unit tests to verify Entity-to-Database mapping for a sample of refactored entities.
