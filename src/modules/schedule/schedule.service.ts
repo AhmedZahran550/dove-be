@@ -485,46 +485,46 @@ export class ScheduleService {
     });
   }
 
-  async getScheduleColumns(companyId: string): Promise<any[]> {
-    // 1. Get dynamic columns from schedule data
-    // For now, we'll return a hardcoded list of potential Excel columns matching the frontend requirement
-    // In a real scenario, we might scan the `rawData` or `mappingConfig` of recent imports
+  async getScheduleColumns(companyId: string): Promise<any> {
+    const mapping = await this.columnMappingRepository.findOne({
+      where: { companyId, isDefault: true, isActive: true },
+    });
 
-    // Using the sample values requested
-    const columns = [
-      {
-        excelName: 'Work Order',
-        normalizedName: 'woId',
-        sampleValue: 'WO-12345',
-      },
-      {
-        excelName: 'Part No',
-        normalizedName: 'partNumber',
-        sampleValue: 'PN-ABC',
-      },
-      {
-        excelName: 'Quantity',
-        normalizedName: 'qtyOpen',
-        sampleValue: '100',
-      },
-      {
-        excelName: 'Due Date',
-        normalizedName: 'dueDate',
-        sampleValue: '2024-05-20',
-      },
-      {
-        excelName: 'Status',
-        normalizedName: 'status',
-        sampleValue: 'In Progress',
-      },
-      {
-        excelName: 'Department',
-        normalizedName: 'department',
-        sampleValue: 'Assembly',
-      },
-    ];
+    const normalizationRules = mapping?.normalizationRules || {};
+    const excelColumns = Object.keys(normalizationRules);
 
-    return columns;
+    // Create scheduleDataColumns from normalization rules
+    // Based on spec example, it includes both the original and the normalized versions
+    const scheduleDataColumns: any[] = [];
+
+    // Add original names
+    excelColumns.forEach((excelName) => {
+      scheduleDataColumns.push({
+        excelName: excelName,
+        normalizedName: excelName,
+      });
+    });
+
+    // Add normalized names
+    excelColumns.forEach((excelName) => {
+      scheduleDataColumns.push({
+        excelName: excelName,
+        normalizedName: normalizationRules[excelName],
+      });
+    });
+
+    return {
+      success: true,
+      scheduleDataColumns,
+      normalizationRules,
+      totalColumns: scheduleDataColumns.length,
+      _debug: {
+        company_id: companyId,
+        scheduleColumnNames: scheduleDataColumns.map((c) => c.normalizedName),
+        scheduleColumnCount: scheduleDataColumns.length,
+        workOrderColumnCount: 0,
+      },
+    };
   }
 
   async getScheduleSyncConfig(companyId: string): Promise<any> {
@@ -534,14 +534,23 @@ export class ScheduleService {
 
     const activeFile = await this.getActiveScheduleFile(companyId);
 
+    if (!activeFile) {
+      return {
+        success: true,
+        scheduleFile: null,
+      };
+    }
+
     return {
       success: true,
       scheduleFile: {
+        ...activeFile,
         lastSyncStatus: config?.configValue || 'success',
         lastSyncError: null,
         syncRetryCount: 0,
-        sourceType: activeFile?.sourceType || 'excel_import',
-        lastSyncedAt: activeFile?.lastSyncedAt || new Date(),
+        nextRetryAt: null,
+        emailNotifications: true,
+        automaticBackups: true,
       },
     };
   }

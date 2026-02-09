@@ -102,6 +102,12 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1",
+      "^@config/(.*)$": "<rootDir>/config/$1",
+      "^@entities/(.*)$": "<rootDir>/database/entities/$1",
+      "^@shared/(.*)$": "<rootDir>/common/$1"
+    }
   }
 }
