@@ -161,8 +161,8 @@ export class CacheInterceptor implements NestInterceptor {
     try {
       if (!this.cacheManager.stores?.[0]?.store) return;
 
-      const keys = Array.from(this.cacheManager.stores[0].store.keys());
-      const matchingKeys = keys.filter((key) => key.startsWith(pattern));
+      const keys = (this.cacheManager.stores[0].store.keys() as any) as string[];
+      const matchingKeys = keys.filter((key) => String(key).startsWith(pattern));
 
       if (matchingKeys.length > 0) {
         await this.cacheManager.mdel(matchingKeys);

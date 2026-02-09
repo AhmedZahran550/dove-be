@@ -9,7 +9,7 @@
 *   **Database:** PostgreSQL
 *   **ORM:** TypeORM (v0.3.28)
 *   **Migrations:** TypeORM CLI
-*   **Naming Strategy:** Custom naming strategy (snake_case)
+*   **Naming Strategy:** Custom naming strategy (snake_case database columns, camelCase ORM entity properties)
 
 ## Infrastructure & Services
 *   **Caching:** @nestjs/cache-manager with cache-manager (v7.2.7)

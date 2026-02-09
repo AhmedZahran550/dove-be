@@ -13,13 +13,13 @@ This plan outlines the steps to standardize ORM entity naming to `camelCase` and
 - [x] Task: Refactor properties in `src/database/entities/` to `camelCase`.
 - [x] Task: Update `@Column` and relation decorators (`@ManyToOne`, `@OneToMany`, etc.) to ensure explicit names are maintained if necessary.
 - [x] Task: Run tests to ensure `TypeORM` still maps correctly to the existing `snake_case` database schema.
-- [x] Task: Conductor - User Manual Verification 'Entity Refactoring' (Protocol in workflow.md) [checkpoint: pending]
+- [x] Task: Conductor - User Manual Verification 'Entity Refactoring' (Protocol in workflow.md) [checkpoint: 42859ae]
 
 ## Phase 3: Mapping Logic Update
 - [x] Task: Write tests for `column-mapping.ts` utility using the new `camelCase` property names.
 - [x] Task: Update `src/utils/column-mapping.ts` to use `camelCase` properties when mapping file columns to entities.
 - [x] Task: Update `src/utils/schedule-normalizer.ts` to ensure consistency with refactored entities.
-- [x] Task: Conductor - User Manual Verification 'Mapping Logic Update' (Protocol in workflow.md) [checkpoint: pending]
+- [x] Task: Conductor - User Manual Verification 'Mapping Logic Update' (Protocol in workflow.md) [checkpoint: 42859ae]
 
 ## Phase 4: Data Consistency & Final Verification
 - [ ] Task: Check existing data in `company_column_mapping` table (or equivalent) to see if it stores property names that need migration to `camelCase`.
