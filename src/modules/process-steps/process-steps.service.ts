@@ -7,13 +7,13 @@ import { QueryConfig, QueryOptions } from '@/common/query-options';
 import { FilterOperator } from 'nestjs-paginate';
 
 export const PROCESS_STEPS_PAGINATION_CONFIG: QueryConfig<ProcessStep> = {
-  sortableColumns: ['sequence', 'step_name'],
+  sortableColumns: ['sequence', 'stepName'],
   defaultSortBy: [['sequence', 'ASC']],
-  searchableColumns: ['step_name', 'department_id'],
+  searchableColumns: ['stepName', 'departmentId'],
   filterableColumns: {
-    company_id: [FilterOperator.EQ],
-    department_id: [FilterOperator.EQ],
-    is_active: [FilterOperator.EQ],
+    companyId: [FilterOperator.EQ],
+    departmentId: [FilterOperator.EQ],
+    isActive: [FilterOperator.EQ],
   },
 };
 
@@ -32,9 +32,9 @@ export class ProcessStepsService extends DBService<ProcessStep> {
   ): Promise<ProcessStep[]> {
     return this.processStepRepository.find({
       where: {
-        company_id: companyId,
-        department_id: departmentId,
-        is_active: true,
+        companyId: companyId,
+        departmentId: departmentId,
+        isActive: true,
       },
       order: {
         sequence: 'ASC',

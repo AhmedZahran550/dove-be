@@ -23,8 +23,7 @@ export interface QueryOptions extends PaginateQuery, TransactionOptions {
 }
 
 export interface QueryOneOptions<T>
-  extends TFindOneOptions<T>,
-    TransactionOptions {
+  extends TFindOneOptions<T>, TransactionOptions {
   enableCache?: boolean;
   ttl?: any;
 }

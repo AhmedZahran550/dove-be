@@ -83,11 +83,15 @@ export class ScheduleData extends BaseEntity {
   syncedWorkOrderId?: string;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.scheduleData, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.scheduleData, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => ScheduleFile, (file) => file.scheduleData, { onDelete: 'SET NULL' })
+  @ManyToOne(() => ScheduleFile, (file) => file.scheduleData, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'scheduleFileId' })
   scheduleFile?: ScheduleFile;
 

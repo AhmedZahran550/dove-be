@@ -129,10 +129,7 @@ export class ScheduleService {
 
     const firstSheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[firstSheetName];
-    const jsonData = XLSX.utils.sheet_to_json(sheet, { raw: false }) as Record<
-      string,
-      any
-    >[];
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { raw: false });
 
     if (!jsonData || jsonData.length === 0) {
       throw new BadRequestException('No data rows found in the file');
@@ -243,7 +240,7 @@ export class ScheduleService {
     }
 
     // 7. Update mapping statistics
-    await this.columnMappingRepository.update(mapping!.id, {
+    await this.columnMappingRepository.update(mapping.id, {
       lastUsedAt: new Date(),
       successCount: () => 'success_count + 1',
     } as any);
@@ -453,19 +450,19 @@ export class ScheduleService {
         'completed_qty',
       ) // Cast string prodQty to integer, handling non-numeric chars
       .addSelect('d.id', 'id')
-      .addSelect('d.display_name', 'display_name')
-      .addSelect('d.department_code', 'department_code')
+      .addSelect('d.displayName', 'display_name')
+      .addSelect('d.departmentCode', 'department_code')
       .leftJoin(
         Department,
         'd',
-        'd.company_id = sd.companyId AND (d.department_name = sd.department OR d.display_name = sd.department)',
+        'd.companyId = sd.companyId AND (d.departmentName = sd.department OR d.displayName = sd.department)',
       )
       .where('sd.companyId = :companyId', { companyId })
       .andWhere('sd.department IS NOT NULL')
       .groupBy('sd.department')
       .addGroupBy('d.id')
-      .addGroupBy('d.display_name')
-      .addGroupBy('d.department_code')
+      .addGroupBy('d.displayName')
+      .addGroupBy('d.departmentCode')
       .getRawMany();
 
     return summary.map((item) => {
@@ -519,7 +516,7 @@ export class ScheduleService {
       normalizationRules,
       totalColumns: scheduleDataColumns.length,
       _debug: {
-        company_id: companyId,
+        companyId: companyId,
         scheduleColumnNames: scheduleDataColumns.map((c) => c.normalizedName),
         scheduleColumnCount: scheduleDataColumns.length,
         workOrderColumnCount: 0,

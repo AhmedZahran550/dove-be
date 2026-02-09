@@ -34,7 +34,9 @@ export class SystemConfiguration extends BaseEntity {
   updatedBy?: string;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.systemConfigurations, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.systemConfigurations, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 

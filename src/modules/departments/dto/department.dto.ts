@@ -101,4 +101,3 @@ export class UpdateDepartmentDto {
   @IsOptional()
   is_active?: boolean;
 }
-

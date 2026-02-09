@@ -8,28 +8,28 @@ import { UserProfile } from './user-profile.entity';
 @Entity('work_order_downtime')
 export class WorkOrderDowntime extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  work_order_id: string;
+  workOrderId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  downtime_reason_id: string;
+  downtimeReasonId: string;
 
   @Column({ type: 'timestamptz' })
-  start_time: Date;
+  startTime: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  end_time: Date;
+  endTime: Date;
 
   @Column({ type: 'int', nullable: true })
-  duration_minutes: number;
+  durationMinutes: number;
 
   @Column({ type: 'text', nullable: true })
   notes: string;
 
   @Column({ type: 'uuid', nullable: true })
-  operator_id: string;
+  operatorId: string;
 
   // Relations
   @ManyToOne(() => Company)

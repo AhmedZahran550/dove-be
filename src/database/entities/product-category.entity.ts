@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+  Unique,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 
@@ -30,7 +38,9 @@ export class ProductCategory extends BaseEntity {
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => ProductCategory, (category) => category.childCategories, { onDelete: 'SET NULL' })
+  @ManyToOne(() => ProductCategory, (category) => category.childCategories, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'parentCategoryId' })
   parentCategory?: ProductCategory;
 

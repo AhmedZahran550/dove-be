@@ -20,7 +20,7 @@ export enum ErrorGroup {
 }
 
 function handleError(error: any) {
-  const code = (error as any).code;
+  const code = error.code;
   if (!code) {
     throw error;
   }
@@ -55,7 +55,7 @@ function handleError(error: any) {
 }
 
 function getError(error: any): AppErrorBase {
-  const errorCode = (error as any).code;
+  const errorCode = error.code;
   if (!errorCode) {
     throw error;
   }
@@ -105,7 +105,7 @@ function getError(error: any): AppErrorBase {
         errors,
       };
     case DBErrorCode.NOT_NULL_CONSTRAINT:
-      property = (error as any).column;
+      property = error.column;
       errors = [
         {
           property,

@@ -7,7 +7,7 @@ import { DowntimeReason } from './downtime-reason.entity';
 @Entity('downtime_categories')
 export class DowntimeCategory extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'text' })
   name: string;
@@ -16,7 +16,7 @@ export class DowntimeCategory extends BaseEntity {
   description: string;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId: string;
 
   // Relations
   @ManyToOne(() => Company)

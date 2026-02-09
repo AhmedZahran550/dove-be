@@ -7,10 +7,10 @@ import { UserProfile } from './user-profile.entity';
 @Entity('work_order_custom_statuses')
 export class WorkOrderCustomStatus extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -22,10 +22,10 @@ export class WorkOrderCustomStatus extends BaseEntity {
   color: string;
 
   @Column({ type: 'int', default: 0 })
-  display_order: number;
+  displayOrder: number;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   // Relations
   @ManyToOne(() => Company)

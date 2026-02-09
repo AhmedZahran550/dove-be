@@ -4,17 +4,17 @@ import { BaseEntity } from './base.entity';
 @Entity('column_mapping_templates')
 export class ColumnMappingTemplate extends BaseEntity {
   @Column({ type: 'varchar', unique: true })
-  template_name: string;
+  templateName: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'varchar', nullable: true })
-  erp_system: string;
+  erpSystem: string;
 
   @Column({ type: 'boolean', default: false })
-  is_system_template: boolean;
+  isSystemTemplate: boolean;
 
   @Column({ type: 'jsonb' })
-  mapping_config: Record<string, any>;
+  mappingConfig: Record<string, any>;
 }

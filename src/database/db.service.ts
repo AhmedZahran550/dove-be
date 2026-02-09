@@ -258,7 +258,7 @@ export abstract class DBService<
           let operator = '';
           const operatorMatch = filterValue.match(/^(.+):/);
           if (filterValue === '$null') {
-            let operator = '$null';
+            const operator = '$null';
           } else if (operatorMatch) {
             operator = operatorMatch[1].toLowerCase();
             if (!allowedOperators.some((op) => op.toLowerCase() === operator)) {

@@ -60,7 +60,7 @@ export class InvitationsService extends DBService<Invitation> {
         email: dto.email.toLowerCase(),
         companyId: companyId,
         status: InvitationStatus.PENDING,
-        expires_at: MoreThan(new Date()),
+        expiresAt: MoreThan(new Date()),
       },
     });
 
@@ -90,10 +90,10 @@ export class InvitationsService extends DBService<Invitation> {
       fullName: (dto.firstName || '') + ' ' + (dto.lastName || ''),
       customMessage: dto.message,
       role: dto.role,
-      location_id: dto.location_id,
+      locationId: dto.location_id,
       token,
-      expires_at: addDays(new Date(), 7),
-      invited_by: invitedBy.id, // Use the user ID, not the full object
+      expiresAt: addDays(new Date(), 7),
+      invitedBy: invitedBy.id, // Use the user ID, not the full object
     });
 
     const savedInvitation = await this.invitationsRepository.save(invitation);
@@ -124,9 +124,9 @@ export class InvitationsService extends DBService<Invitation> {
     try {
       // Get location name if applicable
       let locationName: string | undefined;
-      if (invitation.location_id) {
+      if (invitation.locationId) {
         const location = await this.locationsRepository.findOne({
-          where: { id: invitation.location_id },
+          where: { id: invitation.locationId },
         });
         locationName = location?.name;
       }
@@ -194,11 +194,11 @@ export class InvitationsService extends DBService<Invitation> {
       throw new NotFoundException('Invitation not found');
     }
 
-    if (invitation.status !== 'pending') {
+    if (invitation.status !== InvitationStatus.PENDING) {
       throw new BadRequestException('This invitation has already been used');
     }
 
-    if (new Date() > invitation.expires_at) {
+    if (new Date() > invitation.expiresAt) {
       throw new BadRequestException('This invitation has expired');
     }
 
@@ -211,7 +211,7 @@ export class InvitationsService extends DBService<Invitation> {
       const invitation = await this.findByToken(dto.token);
       const user = queryRunner.manager.create(UserProfile, {
         companyId: invitation.companyId,
-        locationId: invitation.location_id,
+        locationId: invitation.locationId,
         email: invitation.email,
         firstName: dto.firstName,
         lastName: dto.lastName,
@@ -225,7 +225,7 @@ export class InvitationsService extends DBService<Invitation> {
         invitation.id,
         {
           status: InvitationStatus.ACCEPTED,
-          accepted_at: new Date(),
+          acceptedAt: new Date(),
         },
         { manager: queryRunner.manager },
       );
@@ -255,7 +255,7 @@ export class InvitationsService extends DBService<Invitation> {
         id: invitation.id,
         role: invitation.role,
         companyId: invitation.companyId,
-        location_id: invitation.location_id,
+        location_id: invitation.locationId,
       },
       {
         secret: this.configService.get('jwt.invitationToken.secret'),
@@ -266,7 +266,7 @@ export class InvitationsService extends DBService<Invitation> {
     await this.invitationsRepository.update(id, {
       token: newToken,
       status: InvitationStatus.PENDING,
-      expires_at: addDays(new Date(), 7),
+      expiresAt: addDays(new Date(), 7),
     });
 
     // Resend email with updated token

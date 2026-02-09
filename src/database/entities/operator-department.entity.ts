@@ -6,13 +6,13 @@ import { Department } from './department.entity';
 @Entity('operator_departments')
 export class OperatorDepartment extends BaseEntity {
   @Column({ type: 'uuid' })
-  operator_id: string;
+  operatorId: string;
 
   @Column({ type: 'uuid' })
-  department_id: string;
+  departmentId: string;
 
   @Column({ type: 'boolean', default: false })
-  is_primary: boolean;
+  isPrimary: boolean;
 
   // Relations
   @ManyToOne(() => Operator, (operator) => operator.operatorDepartments)

@@ -80,7 +80,7 @@ export class WebhookService {
       return true;
     } catch (error) {
       // Handle race condition - another process may have inserted
-      if ((error as any)?.code === '23505') {
+      if (error?.code === '23505') {
         // Unique violation
         this.logger.log(`Event ${eventId} race condition detected, skipping`);
         return false;

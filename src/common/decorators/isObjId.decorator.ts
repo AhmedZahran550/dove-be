@@ -8,7 +8,7 @@ export class UUIDObject {
   id: string;
 }
 export class IDObject {
-  @IsString() 
+  @IsString()
   id: string;
 }
 export function IsUUIDObj() {

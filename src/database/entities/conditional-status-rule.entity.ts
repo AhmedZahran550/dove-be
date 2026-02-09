@@ -7,25 +7,25 @@ import { UserProfile } from './user-profile.entity';
 @Entity('conditional_status_rules')
 export class ConditionalStatusRule extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  rule_name: string;
+  ruleName: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'int', default: 0 })
   priority: number;
 
   @Column({ type: 'uuid', nullable: true })
-  status_id: string;
+  statusId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  status_name: string;
+  statusName: string;
 
   @Column({ type: 'jsonb' })
   conditions: Record<string, any>;
@@ -34,22 +34,22 @@ export class ConditionalStatusRule extends BaseEntity {
   actions: Record<string, any>[];
 
   @Column({ type: 'boolean', default: true })
-  run_on_import: boolean;
+  runOnImport: boolean;
 
   @Column({ type: 'boolean', default: true })
-  run_on_update: boolean;
+  runOnUpdate: boolean;
 
   @Column({ type: 'boolean', default: false })
-  run_on_schedule: boolean;
+  runOnSchedule: boolean;
 
   @Column({ type: 'varchar', nullable: true })
-  schedule_cron: string;
+  scheduleCron: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  last_executed_at: Date;
+  lastExecutedAt: Date;
 
   @Column({ type: 'int', default: 0 })
-  execution_count: number;
+  executionCount: number;
 
   // Relations
   @ManyToOne(() => Company)

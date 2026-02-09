@@ -29,7 +29,7 @@ export class ConditionalStatusRulesController {
     @AuthUser() user: UserProfile,
   ) {
     const qb = this.rulesService.getQueryBuilder({ alias: 'rule' });
-    qb.where('rule.company_id = :companyId', { companyId: user.companyId });
+    qb.where('rule.companyId = :companyId', { companyId: user.companyId });
 
     const result = await this.rulesService.findAll(query, qb);
     return {

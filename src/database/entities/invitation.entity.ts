@@ -11,7 +11,7 @@ export enum InvitationStatus {
 }
 
 @Entity('invitations')
-@Index('idx_invitations_company_id', ['company'])
+@Index('idx_invitations_company_id', ['companyId'])
 @Index('idx_invitations_email', ['email'])
 @Index('idx_invitations_token', ['token'])
 export class Invitation extends BaseEntity {
@@ -33,7 +33,7 @@ export class Invitation extends BaseEntity {
   customMessage: string;
 
   @Column({ type: 'uuid', nullable: true })
-  location_id: string;
+  locationId: string;
 
   @Column({ type: 'text', unique: true })
   token: string;
@@ -46,13 +46,13 @@ export class Invitation extends BaseEntity {
   status: InvitationStatus;
 
   @Column({ type: 'timestamptz' })
-  expires_at: Date;
+  expiresAt: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  invited_by: string;
+  invitedBy: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  accepted_at: Date;
+  acceptedAt: Date;
 
   // Relations`
   @ManyToOne(() => Company)

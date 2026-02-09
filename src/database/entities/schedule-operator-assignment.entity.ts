@@ -10,34 +10,34 @@ import { UserProfile } from './user-profile.entity';
 @Entity('schedule_operator_assignments')
 export class ScheduleOperatorAssignment extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  schedule_data_id: string;
+  scheduleDataId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  operator_id: string;
+  operatorId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  shift_id: string;
+  shiftId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  process_step_id: string;
+  processStepId: string;
 
   @Column({ type: 'varchar', default: 'scheduled' })
   status: string;
 
   @Column({ type: 'uuid', nullable: true })
-  assigned_by: string;
+  assignedBy: string;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  assigned_at: Date;
+  assignedAt: Date;
 
   @Column({ type: 'text', nullable: true })
   notes: string;
 
   @Column({ type: 'timestamptz', nullable: true })
-  scheduled_start_time: Date;
+  scheduledStartTime: Date;
 
   // Relations
   @ManyToOne(() => Company)
@@ -62,5 +62,5 @@ export class ScheduleOperatorAssignment extends BaseEntity {
 
   @ManyToOne(() => UserProfile)
   @JoinColumn({ name: 'assigned_by' })
-  assignedBy: UserProfile;
+  assignedByUser: UserProfile;
 }

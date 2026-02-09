@@ -9,7 +9,7 @@ import { UserProfile } from './user-profile.entity';
 @Entity('email_verification_tokens')
 export class EmailVerificationToken extends BaseEntity {
   @Column({ type: 'uuid' })
-  user_id: string;
+  userId: string;
 
   @Column({ type: 'text', unique: true })
   token: string;
@@ -18,22 +18,22 @@ export class EmailVerificationToken extends BaseEntity {
   email: string;
 
   @Column({ type: 'timestamptz' })
-  expires_at: Date;
+  expiresAt: Date;
 
   @Column({ type: 'boolean', default: false })
   verified: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
-  verified_at: Date;
+  verifiedAt: Date;
 
   @Column({ type: 'text', nullable: true })
-  full_name: string;
+  fullName: string;
 
   @Column({ type: 'text', nullable: true })
   phone: string;
 
   @Column({ type: 'text', nullable: true })
-  organization_name: string;
+  organizationName: string;
 
   // Relations
   // Note: user_id references auth.users(id) in schema. I will map it to UserProfile if possible or just keep it as ID.

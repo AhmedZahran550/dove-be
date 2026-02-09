@@ -230,7 +230,7 @@ export class SubscriptionsService {
 
     return {
       sessionId: session.id,
-      url: session.url!,
+      url: session.url,
     };
   }
 

@@ -56,10 +56,10 @@ export class WorkOrderStatusesService extends DBService<
 
     // Get defaults that aren't overridden by custom statuses
     const defaultsToInclude = DEFAULT_WORK_ORDER_STATUSES.filter(
-      (defaultStatus) => !customStatusCodes.has(defaultStatus.code!),
+      (defaultStatus) => !customStatusCodes.has(defaultStatus.code),
     ).map((defaultStatus) => ({
       ...defaultStatus,
-      id: getDefaultStatusId(defaultStatus.code!),
+      id: getDefaultStatusId(defaultStatus.code),
       companyId,
       statusType: StatusType.DEFAULT,
       createdAt: new Date(),

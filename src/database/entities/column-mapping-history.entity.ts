@@ -7,43 +7,43 @@ import { UserProfile } from './user-profile.entity';
 @Entity('column_mapping_history')
 export class ColumnMappingHistory extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  mapping_id: string;
+  mappingId: string;
 
   @Column({ type: 'varchar' })
   action: string;
 
   @Column({ type: 'varchar', nullable: true })
-  source_file_name: string;
+  sourceFileName: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  source_columns: Record<string, any>;
+  sourceColumns: Record<string, any>;
 
   @Column({ type: 'jsonb', nullable: true })
-  mapped_columns: Record<string, any>;
+  mappedColumns: Record<string, any>;
 
   @Column({ type: 'jsonb', nullable: true })
-  unmapped_columns: Record<string, any>;
+  unmappedColumns: Record<string, any>;
 
   @Column({ type: 'int', default: 0 })
-  rows_processed: number;
+  rowsProcessed: number;
 
   @Column({ type: 'int', default: 0 })
-  rows_succeeded: number;
+  rowsSucceeded: number;
 
   @Column({ type: 'int', default: 0 })
-  rows_failed: number;
+  rowsFailed: number;
 
   @Column({ type: 'jsonb', nullable: true })
-  error_details: Record<string, any>;
+  errorDetails: Record<string, any>;
 
   @Column({ type: 'uuid', nullable: true })
-  performed_by: string;
+  performedBy: string;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  performed_at: Date;
+  performedAt: Date;
 
   // Relations
   @ManyToOne(() => Company)
@@ -56,5 +56,5 @@ export class ColumnMappingHistory extends BaseEntity {
 
   @ManyToOne(() => UserProfile)
   @JoinColumn({ name: 'performed_by' })
-  performedBy: UserProfile;
+  performedByUser: UserProfile;
 }

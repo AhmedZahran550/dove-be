@@ -9,15 +9,15 @@ import { Paginated, FilterOperator, FilterSuffix } from 'nestjs-paginate';
 import { QueryConfig, QueryOptions } from '@/common/query-options';
 
 export const DEPARTMENTS_PAGINATION_CONFIG: QueryConfig<Department> = {
-  sortableColumns: ['createdAt', 'updatedAt', 'department_name', 'sort_order'],
-  defaultSortBy: [['sort_order', 'ASC']],
-  searchableColumns: ['department_name', 'department_code', 'display_name'],
+  sortableColumns: ['createdAt', 'updatedAt', 'departmentName', 'sortOrder'],
+  defaultSortBy: [['sortOrder', 'ASC']],
+  searchableColumns: ['departmentName', 'departmentCode', 'displayName'],
   select: undefined,
   filterableColumns: {
-    is_active: [FilterOperator.EQ],
-    company_id: [FilterOperator.EQ],
+    isActive: [FilterOperator.EQ],
+    companyId: [FilterOperator.EQ],
   },
-  relations: ['department_settings'],
+  relations: ['departmentSettings'],
 };
 
 @Injectable()
@@ -36,16 +36,16 @@ export class DepartmentsService extends DBService<Department> {
     query: QueryOptions,
   ): Promise<Paginated<Department>> {
     const qb = this.departmentsRepository.createQueryBuilder('department');
-    qb.where('department.company_id = :companyId', { companyId });
-    qb.andWhere('department.is_active = :isActive', { isActive: true });
+    qb.where('department.companyId = :companyId', { companyId });
+    qb.andWhere('department.isActive = :isActive', { isActive: true });
 
     return super.findAll(query, qb);
   }
 
   async findDepartmentById(id: string, companyId: string): Promise<Department> {
     const department = await this.departmentsRepository.findOne({
-      where: { id, company_id: companyId },
-      relations: ['department_settings'],
+      where: { id, companyId: companyId },
+      relations: ['departmentSettings'],
     });
 
     if (!department) {
@@ -60,13 +60,13 @@ export class DepartmentsService extends DBService<Department> {
     dto: CreateDepartmentDto,
   ): Promise<Department> {
     const department = this.departmentsRepository.create({
-      company_id: companyId,
-      department_name: dto.department_name,
-      department_code: dto.department_code,
-      display_name: dto.display_name || dto.department_name,
+      companyId: companyId,
+      departmentName: dto.department_name,
+      departmentCode: dto.department_code,
+      displayName: dto.display_name || dto.department_name,
       description: dto.description,
-      sort_order: dto.sort_order || 0,
-      is_active: true,
+      sortOrder: dto.sort_order || 0,
+      isActive: true,
     });
 
     const savedDepartment = await this.departmentsRepository.save(department);
@@ -78,15 +78,15 @@ export class DepartmentsService extends DBService<Department> {
       for (const filter of dto.includeFilters) {
         if (filter.table && filter.column && filter.value) {
           settingsToInsert.push({
-            company_id: companyId,
-            department_id: savedDepartment.id,
-            department_name: dto.department_name,
-            display_name: dto.display_name || dto.department_name,
-            filter_table: filter.table,
-            filter_column: filter.column,
-            filter_value: filter.value,
-            filter_operator: filter.operator || 'Equals',
-            is_active: true,
+            companyId: companyId,
+            departmentId: savedDepartment.id,
+            departmentName: dto.department_name,
+            displayName: dto.display_name || dto.department_name,
+            filterTable: filter.table,
+            filterColumn: filter.column,
+            filterValue: filter.value,
+            filterOperator: filter.operator || 'Equals',
+            isActive: true,
           });
         }
       }
@@ -96,15 +96,15 @@ export class DepartmentsService extends DBService<Department> {
       for (const filter of dto.excludeFilters) {
         if (filter.table && filter.column && filter.value) {
           settingsToInsert.push({
-            company_id: companyId,
-            department_id: savedDepartment.id,
-            department_name: dto.department_name,
-            display_name: dto.display_name || dto.department_name,
-            filter_table: filter.table,
-            filter_column: filter.column,
-            filter_value: filter.value,
-            filter_operator: filter.operator || '!=',
-            is_active: true,
+            companyId: companyId,
+            departmentId: savedDepartment.id,
+            departmentName: dto.department_name,
+            displayName: dto.display_name || dto.department_name,
+            filterTable: filter.table,
+            filterColumn: filter.column,
+            filterValue: filter.value,
+            filterOperator: filter.operator || '!=',
+            isActive: true,
           });
         }
       }
@@ -124,8 +124,17 @@ export class DepartmentsService extends DBService<Department> {
   ): Promise<Department> {
     const department = await this.findDepartmentById(id, companyId);
 
+    // Map DTO to entity properties
+    const updateData: Partial<Department> = {};
+    if (dto.department_name) updateData.departmentName = dto.department_name;
+    if (dto.department_code) updateData.departmentCode = dto.department_code;
+    if (dto.display_name) updateData.displayName = dto.display_name;
+    if (dto.description) updateData.description = dto.description;
+    if (dto.sort_order !== undefined) updateData.sortOrder = dto.sort_order;
+    if (dto.is_active !== undefined) updateData.isActive = dto.is_active;
+
     await this.departmentsRepository.update(id, {
-      ...dto,
+      ...updateData,
       updatedAt: new Date(),
     });
 
@@ -135,9 +144,9 @@ export class DepartmentsService extends DBService<Department> {
   async deleteDepartment(id: string, companyId: string): Promise<void> {
     const department = await this.findDepartmentById(id, companyId);
 
-    // Soft delete by setting is_active to false
+    // Soft delete by setting isActive to false
     await this.departmentsRepository.update(id, {
-      is_active: false,
+      isActive: false,
       updatedAt: new Date(),
     });
   }

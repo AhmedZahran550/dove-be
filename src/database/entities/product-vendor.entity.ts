@@ -45,7 +45,9 @@ export class ProductVendor extends BaseEntity {
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => PartnumberInfo, (product) => product.productVendors, { onDelete: 'CASCADE' })
+  @ManyToOne(() => PartnumberInfo, (product) => product.productVendors, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'productId' })
   product?: PartnumberInfo;
 }

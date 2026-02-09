@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { UserProfile } from './user-profile.entity';
@@ -46,7 +53,9 @@ export class ScheduleFile extends BaseEntity {
   uploadedBy?: string;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.scheduleFiles, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.scheduleFiles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 

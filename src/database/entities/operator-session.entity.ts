@@ -6,25 +6,25 @@ import { Company } from './company.entity';
 @Entity('operator_sessions')
 export class OperatorSession extends BaseEntity {
   @Column({ type: 'uuid' })
-  operator_id: string;
+  operatorId: string;
 
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'text', unique: true })
-  token_hash: string;
+  tokenHash: string;
 
   @Column({ type: 'timestamptz' })
-  expires_at: Date;
+  expiresAt: Date;
 
   @Column({ type: 'text', nullable: true })
-  user_agent: string;
+  userAgent: string;
 
   @Column({ type: 'inet', nullable: true })
-  ip_address: string;
+  ipAddress: string;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  last_activity_at: Date;
+  lastActivityAt: Date;
 
   // Relations
   @ManyToOne(() => Operator)

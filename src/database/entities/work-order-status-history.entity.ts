@@ -7,43 +7,43 @@ import { UserProfile } from './user-profile.entity';
 @Entity('work_order_status_history')
 export class WorkOrderStatusHistory extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  work_order_id: string;
+  workOrderId: string;
 
   @Column({ type: 'varchar', nullable: true })
-  old_status: string;
+  oldStatus: string;
 
   @Column({ type: 'varchar' })
-  new_status: string;
+  newStatus: string;
 
   @Column({ type: 'varchar' })
-  status_type: string;
+  statusType: string;
 
   @Column({ type: 'uuid', nullable: true })
-  condition_rule_id: string;
+  conditionRuleId: string;
 
   @Column({ type: 'varchar', nullable: true })
-  condition_rule_name: string;
+  conditionRuleName: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  matched_conditions: Record<string, any>;
+  matchedConditions: Record<string, any>;
 
   @Column({ type: 'uuid', nullable: true })
-  changed_by: string;
+  changedBy: string;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  changed_at: Date;
+  changedAt: Date;
 
   @Column({ type: 'text', nullable: true })
-  change_reason: string;
+  changeReason: string;
 
   @Column({ type: 'varchar', nullable: true })
-  change_source: string;
+  changeSource: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  work_order_state: Record<string, any>;
+  workOrderState: Record<string, any>;
 
   // Relations
   @ManyToOne(() => Company)
@@ -56,5 +56,5 @@ export class WorkOrderStatusHistory extends BaseEntity {
 
   @ManyToOne(() => UserProfile)
   @JoinColumn({ name: 'changed_by' })
-  changedBy: UserProfile;
+  changedByUser: UserProfile;
 }

@@ -12,7 +12,11 @@
     ]
   },
   "moduleNameMapper": {
-    "^src/(.*)$": "<rootDir>/../src/$1"
+    "^src/(.*)$": "<rootDir>/../src/$1",
+    "^@/(.*)$": "<rootDir>/../src/$1",
+    "^@config/(.*)$": "<rootDir>/../src/config/$1",
+    "^@entities/(.*)$": "<rootDir>/../src/database/entities/$1",
+    "^@shared/(.*)$": "<rootDir>/../src/common/$1"
   },
   "testTimeout": 60000,
   "verbose": true,

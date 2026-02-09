@@ -11,28 +11,28 @@ import { Company } from './company.entity';
 import { DepartmentSetting } from './department-setting.entity';
 
 @Entity('departments')
-@Index('idx_departments_company_id', ['company_id'])
+@Index('idx_departments_company_id', ['companyId'])
 export class Department extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ length: 255 })
-  department_name: string;
+  departmentName: string;
 
   @Column({ length: 50, nullable: true })
-  department_code: string;
+  departmentCode: string;
 
   @Column({ length: 255, nullable: true })
-  display_name: string;
+  displayName: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'int', default: 0 })
-  sort_order: number;
+  sortOrder: number;
 
   @Column({ default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   // Relations
   @ManyToOne(() => Company)
@@ -40,5 +40,5 @@ export class Department extends BaseEntity {
   company: Company;
 
   @OneToMany(() => DepartmentSetting, (setting) => setting.department)
-  department_settings: DepartmentSetting[];
+  departmentSettings: DepartmentSetting[];
 }

@@ -7,25 +7,25 @@ import { DowntimeCategory } from './downtime-category.entity';
 @Entity('downtime_reasons')
 export class DowntimeReason extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  category_id: string;
+  categoryId: string;
 
   @Column({ type: 'text' })
-  reason_text: string;
+  reasonText: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId: string;
 
   @Column({ type: 'int', default: 0 })
-  display_order: number;
+  displayOrder: number;
 
   // Relations
   @ManyToOne(() => Company)

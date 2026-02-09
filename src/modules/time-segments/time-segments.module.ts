@@ -11,4 +11,3 @@ import { TimeSegmentsController } from './time-segments.controller';
   exports: [TimeSegmentsService],
 })
 export class TimeSegmentsModule {}
-

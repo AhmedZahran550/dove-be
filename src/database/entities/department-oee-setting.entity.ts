@@ -7,37 +7,37 @@ import { UserProfile } from './user-profile.entity';
 @Entity('department_oee_settings')
 export class DepartmentOeeSetting extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid' })
-  department_id: string;
+  departmentId: string;
 
   @Column({ type: 'boolean', default: true })
-  qc_required: boolean;
+  qcRequired: boolean;
 
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 85.0 })
-  availability_goal: number;
+  availabilityGoal: number;
 
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 90.0 })
-  performance_goal: number;
+  performanceGoal: number;
 
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 95.0 })
-  quality_goal: number;
+  qualityGoal: number;
 
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 72.67 })
-  oee_goal: number;
+  oeeGoal: number;
 
   @Column({ type: 'date' })
-  effective_from: Date;
+  effectiveFrom: Date;
 
   @Column({ type: 'date', nullable: true })
-  effective_to: Date;
+  effectiveTo: Date;
 
   @Column({ type: 'text', nullable: true })
   notes: string;
 
   @Column({ type: 'boolean', default: false })
-  is_archived: boolean;
+  isArchived: boolean;
 
   // Relations
   @ManyToOne(() => Company)

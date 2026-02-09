@@ -11,4 +11,3 @@ import { CompaniesController } from './companies.controller';
   exports: [CompaniesService],
 })
 export class CompaniesModule {}
-

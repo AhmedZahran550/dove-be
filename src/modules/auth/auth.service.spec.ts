@@ -44,7 +44,7 @@ class MockAuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.is_active) {
+    if (!user.isActive) {
       throw new UnauthorizedException('Account is deactivated');
     }
 
@@ -54,10 +54,10 @@ class MockAuthService {
       user: {
         id: user.id,
         email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
-        company_id: user.company_id,
+        companyId: user.companyId,
       },
     };
   }
@@ -81,16 +81,16 @@ class MockAuthService {
       user: {
         id: 'user-uuid',
         email: dto.email,
-        first_name: 'John',
-        last_name: 'Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         role: 'company_admin',
-        company_id: 'company-uuid',
+        companyId: 'company-uuid',
       },
     };
   }
 
   async logout(userId: string) {
-    await this.userRepo.update(userId, { refresh_token: undefined });
+    await this.userRepo.update(userId, { refreshToken: undefined });
   }
 }
 
@@ -105,11 +105,11 @@ describe('AuthService', () => {
     id: 'user-uuid',
     email: 'test@example.com',
     password: 'hashed_password',
-    first_name: 'John',
-    last_name: 'Doe',
+    firstName: 'John',
+    lastName: 'Doe',
     role: 'admin',
-    company_id: 'company-uuid',
-    is_active: true,
+    companyId: 'company-uuid',
+    isActive: true,
   };
 
   beforeEach(() => {

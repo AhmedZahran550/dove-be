@@ -7,25 +7,25 @@ import { UserProfile } from './user-profile.entity';
 @Entity('location_statuses')
 export class LocationStatus extends BaseEntity {
   @Column({ type: 'uuid' })
-  location_id: string;
+  locationId: string;
 
   @Column({ type: 'uuid' })
-  status_id: string;
+  statusId: string;
 
   @Column({ type: 'boolean', default: true })
-  is_visible: boolean;
+  isVisible: boolean;
 
   @Column({ type: 'int', default: 0 })
-  sort_order: number;
+  sortOrder: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  location_display_name: string;
+  locationDisplayName: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  location_color: string;
+  locationColor: string;
 
   @Column({ type: 'text', nullable: true })
-  location_notes: string;
+  locationNotes: string;
 
   // Relations
   @ManyToOne(() => Location)

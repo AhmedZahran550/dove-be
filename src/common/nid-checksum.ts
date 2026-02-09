@@ -44,7 +44,7 @@ function isValidNidChecksum(nid) {
 
   // Iterate over the transformations to find a match
   for (let i = 0; i < transformations.length; i++) {
-    let adjustedChecksum = transformations[i];
+    const adjustedChecksum = transformations[i];
     if (adjustedChecksum === checksumDigit) {
       // console.log(`Matched with transformation method ${i + 1}: ${adjustedChecksum}`);
       return true;

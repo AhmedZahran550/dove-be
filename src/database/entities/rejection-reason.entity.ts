@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { RejectionCategory } from './rejection-category.entity';
@@ -47,11 +54,15 @@ export class RejectionReason extends BaseEntity {
   displayOrder: number;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.rejectionReasons, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.rejectionReasons, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => RejectionCategory, (category) => category.rejectionReasons, { onDelete: 'CASCADE' })
+  @ManyToOne(() => RejectionCategory, (category) => category.rejectionReasons, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'categoryId' })
   category?: RejectionCategory;
 

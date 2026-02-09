@@ -15,13 +15,13 @@ export class Equipment extends BaseEntity {
   status: string;
 
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  location_id: string;
+  locationId: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  serial_number: string;
+  serialNumber: string;
 
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })

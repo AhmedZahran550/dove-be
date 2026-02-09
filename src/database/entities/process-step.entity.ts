@@ -6,19 +6,19 @@ import { Department } from './department.entity';
 @Entity('process_steps')
 export class ProcessStep extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
-  department_id: string;
+  departmentId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  step_name: string;
+  stepName: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  step_code: string;
+  stepCode: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  display_name: string;
+  displayName: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
@@ -30,28 +30,28 @@ export class ProcessStep extends BaseEntity {
   attributes: Record<string, any>;
 
   @Column({ type: 'boolean', default: true })
-  is_required: boolean;
+  isRequired: boolean;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'varchar', default: 'required' })
-  step_type: string;
+  stepType: string;
 
   @Column({ type: 'boolean', default: true })
-  oee_enabled: boolean;
+  oeeEnabled: boolean;
 
   @Column({ type: 'boolean', default: true })
-  downtime_enabled: boolean;
+  downtimeEnabled: boolean;
 
   @Column({ type: 'boolean', default: true })
-  qty_required_on_close: boolean;
+  qtyRequiredOnClose: boolean;
 
   @Column({ type: 'boolean', default: false })
-  is_last_step: boolean;
+  isLastStep: boolean;
 
   @Column({ type: 'boolean', default: false })
-  is_primary_production_step: boolean;
+  isPrimaryProductionStep: boolean;
 
   // Relations
   @ManyToOne(() => Company)

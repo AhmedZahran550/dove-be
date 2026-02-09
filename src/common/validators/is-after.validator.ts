@@ -24,7 +24,7 @@ export function IsAfterDate(
   property: string,
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isAfterDate',
       target: object.constructor,

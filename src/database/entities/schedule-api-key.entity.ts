@@ -6,19 +6,19 @@ import { UserProfile } from './user-profile.entity';
 @Entity('schedule_api_keys')
 export class ScheduleApiKey extends BaseEntity {
   @Column({ type: 'uuid' })
-  company_id: string;
+  companyId: string;
 
   @Column({ type: 'varchar', unique: true })
-  api_key: string;
+  apiKey: string;
 
   @Column({ type: 'varchar' })
   name: string;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
-  last_used_at: Date;
+  lastUsedAt: Date;
 
   // Relations
   @ManyToOne(() => Company)

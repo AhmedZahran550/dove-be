@@ -31,11 +31,15 @@ export class WorkOrderOperator extends BaseEntity {
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => WorkOrder, (wo) => wo.workOrderOperators, { onDelete: 'CASCADE' })
+  @ManyToOne(() => WorkOrder, (wo) => wo.workOrderOperators, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workOrderId' })
   workOrder?: WorkOrder;
 
-  @ManyToOne(() => UserProfile, (user) => user.workOrderOperators, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => UserProfile, (user) => user.workOrderOperators, {
+    onDelete: 'RESTRICT',
+  })
   @JoinColumn({ name: 'operatorId' })
   operator?: UserProfile;
 }

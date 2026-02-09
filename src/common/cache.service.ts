@@ -81,9 +81,7 @@ export class CacheService {
         return;
       }
 
-      const keys = Array.from(
-        this.cacheManager.stores[0].store.keys(),
-      ) as string[];
+      const keys = Array.from(this.cacheManager.stores[0].store.keys());
       const matchingKeys = keys.filter((key) => key.startsWith(pattern));
 
       if (matchingKeys.length > 0) {

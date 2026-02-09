@@ -8,7 +8,7 @@ export class OrganizationInvitation extends BaseEntity {
   email: string;
 
   @Column({ type: 'text', nullable: true })
-  recipient_name: string;
+  recipientName: string;
 
   @Column({ type: 'text', unique: true })
   token: string;
@@ -17,16 +17,16 @@ export class OrganizationInvitation extends BaseEntity {
   status: string;
 
   @Column({ type: 'timestamptz' })
-  expires_at: Date;
+  expiresAt: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  accepted_at: Date;
+  acceptedAt: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  created_organization_id: string;
+  createdOrganizationId: string;
 
   @Column({ type: 'text' })
-  organization_name: string;
+  organizationName: string;
 
   // Relations
   @ManyToOne(() => Company)

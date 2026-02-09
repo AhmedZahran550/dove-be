@@ -88,7 +88,7 @@ export class ScheduleController {
     @Paginate() query: QueryOptions,
     @AuthUser() user?: UserProfile,
   ) {
-    return this.scheduleService.findScheduleData(user!.companyId, query);
+    return this.scheduleService.findScheduleData(user.companyId, query);
   }
 
   @Get('data/department/:department')

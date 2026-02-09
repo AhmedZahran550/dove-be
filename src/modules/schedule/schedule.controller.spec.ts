@@ -40,12 +40,16 @@ describe('ScheduleController', () => {
         success: true,
         scheduleFile: { id: 'file-id' },
       };
-      (service.getScheduleSyncConfig as jest.Mock).mockResolvedValue(mockResult);
+      (service.getScheduleSyncConfig as jest.Mock).mockResolvedValue(
+        mockResult,
+      );
 
       const result = await controller.getScheduleSyncConfig(mockUser);
 
       expect(result).toEqual(mockResult);
-      expect(service.getScheduleSyncConfig).toHaveBeenCalledWith(mockUser.companyId);
+      expect(service.getScheduleSyncConfig).toHaveBeenCalledWith(
+        mockUser.companyId,
+      );
     });
   });
 
@@ -60,7 +64,9 @@ describe('ScheduleController', () => {
       const result = await controller.getScheduleColumns(mockUser);
 
       expect(result).toEqual(mockResult);
-      expect(service.getScheduleColumns).toHaveBeenCalledWith(mockUser.companyId);
+      expect(service.getScheduleColumns).toHaveBeenCalledWith(
+        mockUser.companyId,
+      );
     });
   });
 });

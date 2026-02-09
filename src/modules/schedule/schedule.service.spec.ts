@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ScheduleService } from './schedule.service';
-import { ScheduleData, ScheduleFile, CompanyColumnMapping } from '../../database/entities';
+import {
+  ScheduleData,
+  ScheduleFile,
+  CompanyColumnMapping,
+} from '../../database/entities';
 import { Department } from '../../database/entities/department.entity';
 import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
 import { TimeSegment } from '../../database/entities/time-segment.entity';
@@ -91,7 +95,10 @@ describe('ScheduleService', () => {
         publishToSchedulePage: true,
         isActive: true,
         lastSyncedAt: new Date('2026-02-09T15:16:13.831Z'),
-        metadata: { size: 201060, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+        metadata: {
+          size: 201060,
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
         uploadedBy: 'c94a3549-c3d6-4518-8d33-8ff3882ec4ad',
         createdAt: new Date('2026-02-07T19:25:38.480Z'),
         updatedAt: new Date('2026-02-09T15:16:13.860Z'),
@@ -117,8 +124,8 @@ describe('ScheduleService', () => {
       const mockMapping = {
         companyId,
         normalizationRules: {
-          'Status': 'status',
-          'Remarks': 'remarks',
+          Status: 'status',
+          Remarks: 'remarks',
         },
       };
 
@@ -131,7 +138,7 @@ describe('ScheduleService', () => {
       expect(Array.isArray(result.scheduleDataColumns)).toBe(true);
       expect(result.normalizationRules).toEqual(mockMapping.normalizationRules);
       expect(result._debug).toBeDefined();
-      expect(result._debug.company_id).toBe(companyId);
+      expect(result._debug.companyId).toBe(companyId);
     });
   });
 });

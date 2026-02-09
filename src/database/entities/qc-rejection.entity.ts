@@ -117,7 +117,9 @@ export class QCRejection extends BaseEntity {
   attributes: any;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.qcRejections, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.qcRejections, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
@@ -125,7 +127,9 @@ export class QCRejection extends BaseEntity {
   @JoinColumn({ name: 'workOrderId' })
   workOrder?: WorkOrder;
 
-  @ManyToOne(() => RejectionReason, (reason) => reason.qcRejections, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => RejectionReason, (reason) => reason.qcRejections, {
+    onDelete: 'RESTRICT',
+  })
   @JoinColumn({ name: 'rejectionReasonId' })
   rejectionReason?: RejectionReason;
 
