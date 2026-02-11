@@ -120,7 +120,7 @@ describe('ScheduleService', () => {
   });
 
   describe('getScheduleColumns', () => {
-    it('should return the schedule columns with success flag and debug info', async () => {
+    it('should return an array of schedule column mappings', async () => {
       const mockMapping = {
         companyId,
         normalizationRules: {
@@ -133,12 +133,11 @@ describe('ScheduleService', () => {
 
       const result = await service.getScheduleColumns(companyId);
 
-      expect(result.success).toBe(true);
-      expect(result.scheduleDataColumns).toBeDefined();
-      expect(Array.isArray(result.scheduleDataColumns)).toBe(true);
-      expect(result.normalizationRules).toEqual(mockMapping.normalizationRules);
-      expect(result._debug).toBeDefined();
-      expect(result._debug.companyId).toBe(companyId);
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toEqual([
+        { excelName: 'Status', normalizedName: 'status' },
+        { excelName: 'Remarks', normalizedName: 'remarks' },
+      ]);
     });
   });
 });

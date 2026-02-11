@@ -10,13 +10,7 @@ export class ScheduleColumnDto {
 
 export class ScheduleColumnsResponseDto {
   @ApiProperty({ type: [ScheduleColumnDto] })
-  scheduleDataColumns: ScheduleColumnDto[];
-
-  @ApiProperty({ type: [String] })
-  workOrderColumns: string[];
-
-  @ApiProperty({ type: [String] })
-  allColumns: string[];
+  data: ScheduleColumnDto[];
 }
 
 export class ScheduleSyncStatusDto {

@@ -158,7 +158,10 @@ export class ScheduleController {
   @Get('columns')
   @ScheduleSwagger.getScheduleColumns()
   async getScheduleColumns(@AuthUser() user: UserProfile) {
-    return this.scheduleService.getScheduleColumns(user.companyId);
+    const columns = await this.scheduleService.getScheduleColumns(
+      user.companyId,
+    );
+    return { data: columns };
   }
 
   @Get('config')

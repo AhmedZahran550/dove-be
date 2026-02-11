@@ -482,7 +482,9 @@ export class ScheduleService {
     });
   }
 
-  async getScheduleColumns(companyId: string): Promise<any> {
+  async getScheduleColumns(
+    companyId: string,
+  ): Promise<{ excelName: string; normalizedName: string }[]> {
     const mapping = await this.columnMappingRepository.findOne({
       where: { companyId, isDefault: true, isActive: true },
     });
@@ -490,38 +492,10 @@ export class ScheduleService {
     const normalizationRules = mapping?.normalizationRules || {};
     const excelColumns = Object.keys(normalizationRules);
 
-    // Create scheduleDataColumns from normalization rules
-    // Based on spec example, it includes both the original and the normalized versions
-    const scheduleDataColumns: any[] = [];
-
-    // Add original names
-    excelColumns.forEach((excelName) => {
-      scheduleDataColumns.push({
-        excelName: excelName,
-        normalizedName: excelName,
-      });
-    });
-
-    // Add normalized names
-    excelColumns.forEach((excelName) => {
-      scheduleDataColumns.push({
-        excelName: excelName,
-        normalizedName: normalizationRules[excelName],
-      });
-    });
-
-    return {
-      success: true,
-      scheduleDataColumns,
-      normalizationRules,
-      totalColumns: scheduleDataColumns.length,
-      _debug: {
-        companyId: companyId,
-        scheduleColumnNames: scheduleDataColumns.map((c) => c.normalizedName),
-        scheduleColumnCount: scheduleDataColumns.length,
-        workOrderColumnCount: 0,
-      },
-    };
+    return excelColumns.map((excelName) => ({
+      excelName,
+      normalizedName: normalizationRules[excelName],
+    }));
   }
 
   async getScheduleSyncConfig(companyId: string): Promise<any> {

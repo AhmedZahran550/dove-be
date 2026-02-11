@@ -54,16 +54,13 @@ describe('ScheduleController', () => {
   });
 
   describe('getScheduleColumns', () => {
-    it('should return the service result', async () => {
-      const mockResult = {
-        success: true,
-        scheduleDataColumns: [],
-      };
-      (service.getScheduleColumns as jest.Mock).mockResolvedValue(mockResult);
+    it('should return columns wrapped in { data }', async () => {
+      const mockColumns = [{ excelName: 'Status', normalizedName: 'status' }];
+      (service.getScheduleColumns as jest.Mock).mockResolvedValue(mockColumns);
 
       const result = await controller.getScheduleColumns(mockUser);
 
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual({ data: mockColumns });
       expect(service.getScheduleColumns).toHaveBeenCalledWith(
         mockUser.companyId,
       );
