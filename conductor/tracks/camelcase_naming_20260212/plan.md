@@ -2,11 +2,11 @@
 
 Standardize naming across DTOs and Swagger files to use `camelCase`, ensuring alignment with Entities and updating all internal references.
 
-## Phase 1: Discovery & Analysis
+## Phase 1: Discovery & Analysis [checkpoint: 246b928]
 - [x] Task: Audit all files in `src/swagger/` to identify properties currently using `snake_case`.
 - [x] Task: Audit all files in `src/modules/*/dto/` to identify properties currently using `snake_case`.
 - [x] Task: Cross-reference identified DTO properties with their corresponding Entities in `src/database/entities/` to ensure naming alignment.
-- [ ] Task: Conductor - User Manual Verification 'Discovery & Analysis' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Discovery & Analysis' (Protocol in workflow.md)
 
 ## Phase 2: DTO & Swagger Refactoring
 - [ ] Task: Update property names in `src/modules/*/dto/` from `snake_case` to `camelCase`.
