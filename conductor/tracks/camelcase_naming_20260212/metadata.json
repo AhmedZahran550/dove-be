@@ -1,8 +1,0 @@
-{
-  "track_id": "camelcase_naming_20260212",
-  "type": "chore",
-  "status": "new",
-  "created_at": "2026-02-12T21:55:00Z",
-  "updated_at": "2026-02-12T21:55:00Z",
-  "description": "update the swagger docs and files with the naming stratgy camelCase for the atrbutes and dtos"
-}
