@@ -49,7 +49,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @AuthSwagger.refresh()
   async refresh(@Body() dto: RefreshTokenDto): Promise<AuthResponseDto> {
-    return this.authService.refreshTokens(dto.refresh_token);
+    return this.authService.refreshTokens(dto.refreshToken);
   }
 
   @Post('logout')

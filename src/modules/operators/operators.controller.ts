@@ -55,7 +55,7 @@ export class OperatorsController {
   @CacheEvict('operators:all')
   @OperatorsSwagger.create()
   create(@Body() dto: CreateOperatorDto, @AuthUser() user: UserProfile) {
-    dto.company_id = user.companyId;
+    dto.companyId = user.companyId;
     return this.operatorsService.create(dto);
   }
 

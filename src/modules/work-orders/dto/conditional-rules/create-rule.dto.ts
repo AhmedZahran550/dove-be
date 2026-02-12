@@ -13,7 +13,7 @@ export class CreateConditionalStatusRuleDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  rule_name: string;
+  ruleName: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -23,7 +23,7 @@ export class CreateConditionalStatusRuleDto {
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
-  is_active?: boolean;
+  isActive?: boolean;
 
   @ApiPropertyOptional()
   @IsNumber()
@@ -33,7 +33,7 @@ export class CreateConditionalStatusRuleDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  status_name?: string;
+  statusName?: string;
 
   @ApiProperty({ type: 'object', additionalProperties: true })
   @IsObject()
@@ -43,5 +43,5 @@ export class CreateConditionalStatusRuleDto {
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  company_id?: string;
+  companyId?: string;
 }

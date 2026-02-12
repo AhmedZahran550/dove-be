@@ -40,13 +40,13 @@ export class ConditionalStatusRulesService extends DBService<
     options?: TransactionOptions,
   ): Promise<ConditionalStatusRule> {
     const entity = this.rulesRepository.create({
-      ruleName: dto.rule_name,
+      ruleName: dto.ruleName,
       description: dto.description,
-      isActive: dto.is_active,
+      isActive: dto.isActive,
       priority: dto.priority,
-      statusName: dto.status_name,
+      statusName: dto.statusName,
       conditions: dto.conditions,
-      companyId: dto.company_id,
+      companyId: dto.companyId,
     });
     return this.rulesRepository.save(entity);
   }
@@ -56,13 +56,13 @@ export class ConditionalStatusRulesService extends DBService<
     dto: Partial<CreateConditionalStatusRuleDto>,
   ): Promise<ConditionalStatusRule> {
     const updateData: any = {};
-    if (dto.rule_name) updateData.ruleName = dto.rule_name;
+    if (dto.ruleName) updateData.ruleName = dto.ruleName;
     if (dto.description) updateData.description = dto.description;
-    if (dto.is_active !== undefined) updateData.isActive = dto.is_active;
+    if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
     if (dto.priority !== undefined) updateData.priority = dto.priority;
-    if (dto.status_name) updateData.statusName = dto.status_name;
+    if (dto.statusName) updateData.statusName = dto.statusName;
     if (dto.conditions) updateData.conditions = dto.conditions;
-    if (dto.company_id) updateData.companyId = dto.company_id;
+    if (dto.companyId) updateData.companyId = dto.companyId;
 
     await this.rulesRepository.update(id, updateData);
     return this.findById(id);

@@ -52,8 +52,8 @@ export class EquipmentService extends DBService<
       type: dto.type,
       status: dto.status,
       companyId: dto.companyId,
-      locationId: dto.location_id,
-      serialNumber: dto.serial_number,
+      locationId: dto.locationId,
+      serialNumber: dto.serialNumber,
     });
     return this.equipmentRepository.save(entity);
   }
@@ -63,8 +63,8 @@ export class EquipmentService extends DBService<
     if (dto.name) updateData.name = dto.name;
     if (dto.type) updateData.type = dto.type;
     if (dto.status) updateData.status = dto.status;
-    if (dto.location_id) updateData.locationId = dto.location_id;
-    if (dto.serial_number) updateData.serialNumber = dto.serial_number;
+    if (dto.locationId) updateData.locationId = dto.locationId;
+    if (dto.serialNumber) updateData.serialNumber = dto.serialNumber;
 
     await this.equipmentRepository.update(id, updateData);
     return this.findById(id);

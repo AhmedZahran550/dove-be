@@ -12,21 +12,21 @@ describe('WorkOrdersService', () => {
 
   const mockWorkOrder = {
     id: 'wo-uuid',
-    company_id: 'company-uuid',
-    location_id: 'location-uuid',
-    wo_number: 'WO-001',
-    wo_qty: 100,
-    current_status: 'running',
-    start_time: new Date(),
-    closing_time: undefined,
-    created_at: new Date(),
+    companyId: 'company-uuid',
+    locationId: 'location-uuid',
+    woNumber: 'WO-001',
+    woQty: 100,
+    currentStatus: 'running',
+    startTime: new Date(),
+    closingTime: undefined,
+    createdAt: new Date(),
   };
 
   const mockLocation = {
     id: 'location-uuid',
-    company_id: 'company-uuid',
+    companyId: 'company-uuid',
     name: 'Main Factory',
-    is_active: true,
+    isActive: true,
   };
 
   beforeEach(async () => {
@@ -60,9 +60,9 @@ describe('WorkOrdersService', () => {
   });
 
   describe('create', () => {
-    const createDto = {
-      wo_id: 'WO-001',
-      wo_qty: 100,
+    const createDto: any = {
+      woId: 'WO-001',
+      woQty: 100,
     };
 
     it('should create a new work order', async () => {
@@ -115,7 +115,7 @@ describe('WorkOrdersService', () => {
       const result = await service.findActive('company-uuid');
 
       expect(result).toHaveLength(1);
-      expect(result[0].closing_time).toBeUndefined();
+      expect(result[0].closingTime).toBeUndefined();
     });
   });
 
@@ -143,13 +143,13 @@ describe('WorkOrdersService', () => {
         .mockResolvedValueOnce(mockWorkOrder)
         .mockResolvedValueOnce({
           ...mockWorkOrder,
-          closing_time: new Date(),
-          current_status: 'closed',
+          closingTime: new Date(),
+          currentStatus: 'closed',
         });
 
       const result = await service.close('wo-uuid', 'company-uuid', {
-        qty_completed: 95,
-        qty_rejected: 5,
+        qtyCompleted: 95,
+        qtyRejected: 5,
       });
 
       expect(mockWorkOrderRepo.update).toHaveBeenCalled();

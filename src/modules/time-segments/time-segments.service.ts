@@ -45,14 +45,14 @@ export class TimeSegmentsService extends DBService<TimeSegment> {
   ): Promise<TimeSegment> {
     const timeSegment = this.timeSegmentsRepository.create({
       companyId: companyId,
-      workOrderId: dto.work_order_id,
-      operatorId: dto.operator_id,
-      operatorAssId: dto.operator_ass_id,
-      startTime: dto.start_time ? new Date(dto.start_time) : new Date(),
-      segmentType: dto.segment_type || 'productive',
-      shiftId: dto.shift_id,
-      shiftDate: dto.shift_date,
-      equipmentId: dto.equipment_id,
+      workOrderId: dto.workOrderId,
+      operatorId: dto.operatorId,
+      operatorAssId: dto.operatorAssId,
+      startTime: dto.startTime ? new Date(dto.startTime) : new Date(),
+      segmentType: dto.segmentType || 'productive',
+      shiftId: dto.shiftId,
+      shiftDate: dto.shiftDate,
+      equipmentId: dto.equipmentId,
       isActive: true,
     });
 
@@ -111,7 +111,7 @@ export class TimeSegmentsService extends DBService<TimeSegment> {
 
     await this.timeSegmentsRepository.update(id, {
       ...dto,
-      endTime: dto.end_time ? new Date(dto.end_time) : undefined,
+      endTime: dto.endTime ? new Date(dto.endTime) : undefined,
     });
 
     return this.findTimeSegmentById(id, companyId);
@@ -128,7 +128,7 @@ export class TimeSegmentsService extends DBService<TimeSegment> {
       throw new BadRequestException('Time segment is already ended');
     }
 
-    const endTime = dto.end_time ? new Date(dto.end_time) : new Date();
+    const endTime = dto.endTime ? new Date(dto.endTime) : new Date();
     const durationMinutes = Math.round(
       (endTime.getTime() - timeSegment.startTime.getTime()) / (1000 * 60),
     );
@@ -136,8 +136,8 @@ export class TimeSegmentsService extends DBService<TimeSegment> {
     await this.timeSegmentsRepository.update(id, {
       endTime: endTime,
       durationMinutes: durationMinutes,
-      qtyProduced: dto.qty_produced,
-      qtyRejected: dto.qty_rejected,
+      qtyProduced: dto.qtyProduced,
+      qtyRejected: dto.qtyRejected,
       notes: dto.notes,
     });
 

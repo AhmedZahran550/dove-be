@@ -61,11 +61,11 @@ export class DepartmentsService extends DBService<Department> {
   ): Promise<Department> {
     const department = this.departmentsRepository.create({
       companyId: companyId,
-      departmentName: dto.department_name,
-      departmentCode: dto.department_code,
-      displayName: dto.display_name || dto.department_name,
+      departmentName: dto.departmentName,
+      departmentCode: dto.departmentCode,
+      displayName: dto.displayName || dto.departmentName,
       description: dto.description,
-      sortOrder: dto.sort_order || 0,
+      sortOrder: dto.sortOrder || 0,
       isActive: true,
     });
 
@@ -80,8 +80,8 @@ export class DepartmentsService extends DBService<Department> {
           settingsToInsert.push({
             companyId: companyId,
             departmentId: savedDepartment.id,
-            departmentName: dto.department_name,
-            displayName: dto.display_name || dto.department_name,
+            departmentName: dto.departmentName,
+            displayName: dto.displayName || dto.departmentName,
             filterTable: filter.table,
             filterColumn: filter.column,
             filterValue: filter.value,
@@ -98,8 +98,8 @@ export class DepartmentsService extends DBService<Department> {
           settingsToInsert.push({
             companyId: companyId,
             departmentId: savedDepartment.id,
-            departmentName: dto.department_name,
-            displayName: dto.display_name || dto.department_name,
+            departmentName: dto.departmentName,
+            displayName: dto.displayName || dto.departmentName,
             filterTable: filter.table,
             filterColumn: filter.column,
             filterValue: filter.value,
@@ -126,12 +126,12 @@ export class DepartmentsService extends DBService<Department> {
 
     // Map DTO to entity properties
     const updateData: Partial<Department> = {};
-    if (dto.department_name) updateData.departmentName = dto.department_name;
-    if (dto.department_code) updateData.departmentCode = dto.department_code;
-    if (dto.display_name) updateData.displayName = dto.display_name;
+    if (dto.departmentName) updateData.departmentName = dto.departmentName;
+    if (dto.departmentCode) updateData.departmentCode = dto.departmentCode;
+    if (dto.displayName) updateData.displayName = dto.displayName;
     if (dto.description) updateData.description = dto.description;
-    if (dto.sort_order !== undefined) updateData.sortOrder = dto.sort_order;
-    if (dto.is_active !== undefined) updateData.isActive = dto.is_active;
+    if (dto.sortOrder !== undefined) updateData.sortOrder = dto.sortOrder;
+    if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
 
     await this.departmentsRepository.update(id, {
       ...updateData,

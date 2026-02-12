@@ -15,11 +15,11 @@ Standardize naming across DTOs and Swagger files to use `camelCase`, ensuring al
 - [x] Task: Conductor - User Manual Verification 'DTO & Swagger Refactoring' (Protocol in workflow.md)
 
 ## Phase 3: Reference Refactoring
-- [ ] Task: Update Controllers to use the new `camelCase` DTO properties.
-- [ ] Task: Update Services to use the new `camelCase` DTO properties.
-- [ ] Task: Update E2E and Unit tests in `test/` and `src/` to match the new property names.
-- [ ] Task: Update any utility functions or interceptors that reference these properties.
-- [ ] Task: Conductor - User Manual Verification 'Reference Refactoring' (Protocol in workflow.md)
+- [x] Task: Update Controllers to use the new `camelCase` DTO properties.
+- [x] Task: Update Services to use the new `camelCase` DTO properties.
+- [x] Task: Update E2E and Unit tests in `test/` and `src/` to match the new property names.
+- [x] Task: Update any utility functions or interceptors that reference these properties.
+- [x] Task: Conductor - User Manual Verification 'Reference Refactoring' (Protocol in workflow.md)
 
 ## Phase 4: Verification & Cleanup
 - [ ] Task: Run `npm run build` to ensure no TypeScript compilation errors.

@@ -25,10 +25,10 @@ export class ProcessStepsController {
     status: 200,
     description: 'Return all process steps for the department.',
   })
-  @Cacheable({ key: 'process-steps:dept:{{department_id}}', ttl: 300 })
+  @Cacheable({ key: 'process-steps:dept:{{departmentId}}', ttl: 300 })
   async findAll(
     @AuthUser() user: UserProfile,
-    @Query('department_id') departmentId: string,
+    @Query('departmentId') departmentId: string,
   ) {
     if (!departmentId) {
       return { success: true, data: [] };

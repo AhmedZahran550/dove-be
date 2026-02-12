@@ -32,7 +32,7 @@ export class SettingsController {
   @SettingsSwagger.getCategories()
   async getCategories(
     @AuthUser() user: UserProfile,
-    @Query('department_id') departmentId?: string,
+    @Query('departmentId') departmentId?: string,
   ): Promise<RejectionCategory[]> {
     return this.settingsService.findCategories(user.companyId, departmentId);
   }
@@ -80,7 +80,7 @@ export class SettingsController {
   @SettingsSwagger.getReasons()
   async getReasons(
     @AuthUser() user: UserProfile,
-    @Query('category_id') categoryId?: string,
+    @Query('categoryId') categoryId?: string,
   ): Promise<RejectionReason[]> {
     return this.settingsService.findReasons(user.companyId, categoryId);
   }

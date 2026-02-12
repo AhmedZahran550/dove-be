@@ -49,8 +49,8 @@ class MockAuthService {
     }
 
     return {
-      access_token: this.jwtService.sign({}),
-      refresh_token: this.jwtService.sign({}),
+      accessToken: this.jwtService.sign({}),
+      refreshToken: this.jwtService.sign({}),
       user: {
         id: user.id,
         email: user.email,
@@ -76,8 +76,8 @@ class MockAuthService {
     const user = await this.userRepo.save(this.userRepo.create({}));
 
     return {
-      access_token: this.jwtService.sign({}),
-      refresh_token: this.jwtService.sign({}),
+      accessToken: this.jwtService.sign({}),
+      refreshToken: this.jwtService.sign({}),
       user: {
         id: 'user-uuid',
         email: dto.email,
@@ -165,8 +165,8 @@ describe('AuthService', () => {
         password: 'password123',
       });
 
-      expect(result).toHaveProperty('access_token');
-      expect(result).toHaveProperty('refresh_token');
+      expect(result).toHaveProperty('accessToken');
+      expect(result).toHaveProperty('refreshToken');
       expect(result).toHaveProperty('user');
       expect(result.user.email).toBe('test@example.com');
     });
@@ -189,7 +189,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for inactive user', async () => {
-      mockUserRepo.findOne.mockResolvedValue({ ...mockUser, is_active: false });
+      mockUserRepo.findOne.mockResolvedValue({ ...mockUser, isActive: false });
       (argon2.verify as jest.Mock).mockResolvedValue(true);
 
       await expect(
@@ -212,8 +212,8 @@ describe('AuthService', () => {
 
       const result = await service.register(registerDto);
 
-      expect(result).toHaveProperty('access_token');
-      expect(result).toHaveProperty('refresh_token');
+      expect(result).toHaveProperty('accessToken');
+      expect(result).toHaveProperty('refreshToken');
       expect(result).toHaveProperty('user');
       expect(mockCompanyRepo.save).toHaveBeenCalled();
       expect(mockLocationRepo.save).toHaveBeenCalled();
@@ -234,7 +234,7 @@ describe('AuthService', () => {
       await service.logout('user-uuid');
 
       expect(mockUserRepo.update).toHaveBeenCalledWith('user-uuid', {
-        refresh_token: undefined,
+        refreshToken: undefined,
       });
     });
   });

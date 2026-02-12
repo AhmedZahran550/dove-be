@@ -10,13 +10,13 @@ describe('UsersService', () => {
 
   const mockUser = {
     id: 'user-uuid',
-    company_id: 'company-uuid',
+    companyId: 'company-uuid',
     email: 'test@example.com',
-    first_name: 'John',
-    last_name: 'Doe',
+    firstName: 'John',
+    lastName: 'Doe',
     role: 'admin',
-    is_active: true,
-    created_at: new Date(),
+    isActive: true,
+    createdAt: new Date(),
   };
 
   beforeEach(async () => {
@@ -31,7 +31,7 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getRepositoryToken(User), useValue: mockUserRepo },
+        { provide: getRepositoryToken(UserProfile), useValue: mockUserRepo },
       ],
     }).compile();
 

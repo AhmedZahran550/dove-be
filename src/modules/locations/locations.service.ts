@@ -72,7 +72,7 @@ export class LocationsService extends DBService<
       addressLine1: dto.address, // Mapping DTO 'address' to 'addressLine1'
       city: dto.city,
       stateProvince: dto.state, // Mapping DTO 'state' to 'stateProvince'
-      postalCode: dto.postal_code,
+      postalCode: dto.postalCode,
       country: dto.country,
       phone: dto.phone,
       email: dto.email,
@@ -90,11 +90,11 @@ export class LocationsService extends DBService<
     if (dto.address) updateData.addressLine1 = dto.address;
     if (dto.city) updateData.city = dto.city;
     if (dto.state) updateData.stateProvince = dto.state;
-    if (dto.postal_code) updateData.postalCode = dto.postal_code;
+    if (dto.postalCode) updateData.postalCode = dto.postalCode;
     if (dto.country) updateData.country = dto.country;
     if (dto.phone) updateData.phone = dto.phone;
     if (dto.email) updateData.email = dto.email;
-    if (dto.is_active !== undefined) updateData.isActive = dto.is_active;
+    if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
 
     await this.locationsRepository.update(id, updateData);
     return this.findById(id);

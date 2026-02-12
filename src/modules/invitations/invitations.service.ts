@@ -75,7 +75,7 @@ export class InvitationsService extends DBService<Invitation> {
       {
         email: dto.email.toLowerCase(),
         role: dto.role,
-        location_id: dto.location_id,
+        locationId: dto.locationId,
       },
       {
         secret: this.configService.get('jwt.invitationToken.secret'),
@@ -90,7 +90,7 @@ export class InvitationsService extends DBService<Invitation> {
       fullName: (dto.firstName || '') + ' ' + (dto.lastName || ''),
       customMessage: dto.message,
       role: dto.role,
-      locationId: dto.location_id,
+      locationId: dto.locationId,
       token,
       expiresAt: addDays(new Date(), 7),
       invitedBy: invitedBy.id, // Use the user ID, not the full object
@@ -255,7 +255,7 @@ export class InvitationsService extends DBService<Invitation> {
         id: invitation.id,
         role: invitation.role,
         companyId: invitation.companyId,
-        location_id: invitation.locationId,
+        locationId: invitation.locationId,
       },
       {
         secret: this.configService.get('jwt.invitationToken.secret'),

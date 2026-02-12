@@ -298,8 +298,8 @@ export class AuthService {
     });
 
     return {
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
       user: {
         id: user.id,
         email: user.email,
