@@ -22,8 +22,8 @@ Standardize naming across DTOs and Swagger files to use `camelCase`, ensuring al
 - [x] Task: Conductor - User Manual Verification 'Reference Refactoring' (Protocol in workflow.md)
 
 ## Phase 4: Verification & Cleanup
-- [ ] Task: Run `npm run build` to ensure no TypeScript compilation errors.
-- [ ] Task: Run `npm run lint` to ensure adherence to code style.
-- [ ] Task: Verify Swagger UI locally (if possible) to ensure the documentation reflects `camelCase`.
-- [ ] Task: Run existing E2E tests (`npm run test:e2e`) to verify system integrity.
-- [ ] Task: Conductor - User Manual Verification 'Verification & Cleanup' (Protocol in workflow.md)
+- [x] Task: Run `npm run build` to ensure no TypeScript compilation errors.
+- [x] Task: Run `npm run lint` to ensure adherence to code style.
+- [x] Task: Verify Swagger UI locally (if possible) to ensure the documentation reflects `camelCase`.
+- [x] Task: Run existing E2E tests (`npm run test:e2e`) to verify system integrity.
+- [x] Task: Conductor - User Manual Verification 'Verification & Cleanup' (Protocol in workflow.md)
