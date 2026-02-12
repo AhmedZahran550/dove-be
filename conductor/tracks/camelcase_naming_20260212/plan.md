@@ -8,7 +8,7 @@ Standardize naming across DTOs and Swagger files to use `camelCase`, ensuring al
 - [x] Task: Cross-reference identified DTO properties with their corresponding Entities in `src/database/entities/` to ensure naming alignment.
 - [x] Task: Conductor - User Manual Verification 'Discovery & Analysis' (Protocol in workflow.md)
 
-## Phase 2: DTO & Swagger Refactoring
+## Phase 2: DTO & Swagger Refactoring [checkpoint: 89088e6]
 - [x] Task: Update property names in `src/modules/*/dto/` from `snake_case` to `camelCase`.
 - [x] Task: Update property names and `@ApiProperty` decorators in `src/swagger/` to `camelCase`.
 - [x] Task: Ensure `@ApiProperty` names in DTOs match the new `camelCase` properties.
