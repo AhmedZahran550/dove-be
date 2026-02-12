@@ -22,13 +22,13 @@ export class CreateUserDto {
   @IsString()
   @MinLength(1)
   @MaxLength(100)
-  first_name: string;
+  firstName: string;
 
   @ApiProperty({ description: 'User last name' })
   @IsString()
   @MinLength(1)
   @MaxLength(100)
-  last_name: string;
+  lastName: string;
 
   @ApiPropertyOptional({ description: 'User role', default: 'operator' })
   @IsOptional()
@@ -45,12 +45,12 @@ export class CreateUserDto {
   @ApiPropertyOptional({ description: 'Location ID' })
   @IsOptional()
   @IsUUID()
-  location_id?: string;
+  locationId?: string;
 
   @ApiPropertyOptional({ description: 'Avatar URL' })
   @IsOptional()
   @IsString()
-  avatar_url?: string;
+  avatarUrl?: string;
 }
 
 /**
@@ -60,7 +60,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional({ description: 'Is user active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }
 
 /**
@@ -74,10 +74,10 @@ export class UserResponseDto {
   email: string;
 
   @ApiProperty()
-  first_name: string;
+  firstName: string;
 
   @ApiProperty()
-  last_name: string;
+  lastName: string;
 
   @ApiProperty()
   role: string;
@@ -86,23 +86,23 @@ export class UserResponseDto {
   phone?: string;
 
   @ApiPropertyOptional()
-  avatar_url?: string;
+  avatarUrl?: string;
 
   @ApiProperty()
-  is_active: boolean;
+  isActive: boolean;
 
   @ApiProperty()
-  company_id: string;
+  companyId: string;
 
   @ApiPropertyOptional()
-  location_id?: string;
+  locationId?: string;
 
   @ApiPropertyOptional()
-  last_login_at?: Date;
+  lastLoginAt?: Date;
 
   @ApiProperty()
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty()
-  updated_at: Date;
+  updatedAt: Date;
 }

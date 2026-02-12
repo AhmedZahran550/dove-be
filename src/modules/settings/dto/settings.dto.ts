@@ -40,23 +40,23 @@ export class CreateRejectionCategoryDto {
   @ApiPropertyOptional({ description: 'Department ID' })
   @IsOptional()
   @IsUUID()
-  department_id?: string;
+  departmentId?: string;
 
   @ApiPropertyOptional({ description: 'Requires rework', default: false })
   @IsOptional()
   @IsBoolean()
-  requires_rework?: boolean;
+  requiresRework?: boolean;
 
   @ApiPropertyOptional({ description: 'Requires scrap', default: false })
   @IsOptional()
   @IsBoolean()
-  requires_scrap?: boolean;
+  requiresScrap?: boolean;
 
   @ApiPropertyOptional({ description: 'Display order', default: 0 })
   @IsOptional()
   @IsInt()
   @Min(0)
-  display_order?: number;
+  displayOrder?: number;
 }
 
 /**
@@ -68,7 +68,7 @@ export class UpdateRejectionCategoryDto extends PartialType(
   @ApiPropertyOptional({ description: 'Is active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }
 
 /**
@@ -77,7 +77,7 @@ export class UpdateRejectionCategoryDto extends PartialType(
 export class CreateRejectionReasonDto {
   @ApiProperty({ description: 'Category ID' })
   @IsUUID()
-  category_id: string;
+  categoryId: string;
 
   @ApiProperty({ description: 'Reason name' })
   @IsString()
@@ -99,34 +99,34 @@ export class CreateRejectionReasonDto {
   @ApiPropertyOptional({ description: 'Department ID' })
   @IsOptional()
   @IsUUID()
-  department_id?: string;
+  departmentId?: string;
 
   @ApiPropertyOptional({ description: 'Requires photo', default: false })
   @IsOptional()
   @IsBoolean()
-  requires_photo?: boolean;
+  requiresPhoto?: boolean;
 
   @ApiPropertyOptional({ description: 'Requires comment', default: false })
   @IsOptional()
   @IsBoolean()
-  requires_comment?: boolean;
+  requiresComment?: boolean;
 
   @ApiPropertyOptional({ description: 'Requires approval', default: false })
   @IsOptional()
   @IsBoolean()
-  requires_approval?: boolean;
+  requiresApproval?: boolean;
 
   @ApiPropertyOptional({ description: 'Default action' })
   @IsOptional()
   @IsString()
   @MaxLength(20)
-  default_action?: string;
+  defaultAction?: string;
 
   @ApiPropertyOptional({ description: 'Display order', default: 0 })
   @IsOptional()
   @IsInt()
   @Min(0)
-  display_order?: number;
+  displayOrder?: number;
 }
 
 /**
@@ -138,5 +138,5 @@ export class UpdateRejectionReasonDto extends PartialType(
   @ApiPropertyOptional({ description: 'Is active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }

@@ -32,17 +32,17 @@ export class CreateDepartmentDto {
   @ApiProperty({ example: 'Production' })
   @IsString()
   @IsNotEmpty()
-  department_name: string;
+  departmentName: string;
 
   @ApiPropertyOptional({ example: 'PROD' })
   @IsString()
   @IsOptional()
-  department_code?: string;
+  departmentCode?: string;
 
   @ApiPropertyOptional({ example: 'Production Department' })
   @IsString()
   @IsOptional()
-  display_name?: string;
+  displayName?: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -53,7 +53,7 @@ export class CreateDepartmentDto {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  sort_order?: number;
+  sortOrder?: number;
 
   @ApiPropertyOptional({ type: [FilterRuleDto] })
   @IsArray()
@@ -74,17 +74,17 @@ export class UpdateDepartmentDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  department_name?: string;
+  departmentName?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  department_code?: string;
+  departmentCode?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  display_name?: string;
+  displayName?: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -95,9 +95,9 @@ export class UpdateDepartmentDto {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  sort_order?: number;
+  sortOrder?: number;
 
   @ApiPropertyOptional()
   @IsOptional()
-  is_active?: boolean;
+  isActive?: boolean;
 }

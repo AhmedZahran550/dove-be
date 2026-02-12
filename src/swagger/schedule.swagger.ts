@@ -163,8 +163,8 @@ export const ScheduleSwagger = {
   getDepartmentSummary: () =>
     applyDecorators(
       ApiOperation({ summary: 'Get production summary per department' }),
-      ApiQuery({ name: 'release_date_from', required: false, type: String }),
-      ApiQuery({ name: 'release_date_to', required: false, type: String }),
+      ApiQuery({ name: 'releaseDateFrom', required: false, type: String }),
+      ApiQuery({ name: 'releaseDateTo', required: false, type: String }),
       ApiQuery({ name: 'departments', required: false, type: String }),
       ApiResponse({
         status: 200,

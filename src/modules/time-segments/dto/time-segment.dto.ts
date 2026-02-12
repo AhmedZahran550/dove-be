@@ -13,91 +13,91 @@ import { Type } from 'class-transformer';
 export class CreateTimeSegmentDto {
   @ApiProperty()
   @IsUUID()
-  work_order_id: string;
+  workOrderId: string;
 
   @ApiProperty()
   @IsUUID()
-  operator_id: string;
+  operatorId: string;
 
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  operator_ass_id?: string;
+  operatorAssId?: string;
 
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  start_time?: string;
+  startTime?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  segment_type?: string;
+  segmentType?: string;
 
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  shift_id?: string;
+  shiftId?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  shift_date?: string;
+  shiftDate?: string;
 
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  equipment_id?: string;
+  equipmentId?: string;
 }
 
 export class UpdateTimeSegmentDto {
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  end_time?: string;
+  endTime?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  duration_minutes?: number;
+  durationMinutes?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  qty_produced?: number;
+  qtyProduced?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  qty_rejected?: number;
+  qtyRejected?: number;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  segment_type?: string;
+  segmentType?: string;
 
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  downtime_reason_id?: string;
+  downtimeReasonId?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  downtime_category?: string;
+  downtimeCategory?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  downtime_notes?: string;
+  downtimeNotes?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  break_type?: string;
+  breakType?: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -107,26 +107,26 @@ export class UpdateTimeSegmentDto {
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
-  is_active?: boolean;
+  isActive?: boolean;
 }
 
 export class EndTimeSegmentDto {
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  end_time?: string;
+  endTime?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  qty_produced?: number;
+  qtyProduced?: number;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  qty_rejected?: number;
+  qtyRejected?: number;
 
   @ApiPropertyOptional()
   @IsString()

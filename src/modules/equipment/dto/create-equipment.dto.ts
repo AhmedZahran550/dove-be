@@ -25,12 +25,12 @@ export class CreateEquipmentDto {
   })
   @IsUUID()
   @IsOptional()
-  location_id?: string;
+  locationId?: string;
 
   @ApiPropertyOptional({ description: 'Serial number of the equipment' })
   @IsString()
   @IsOptional()
-  serial_number?: string;
+  serialNumber?: string;
 
   // companyId is handled by the controller/service from the authenticated user
   companyId?: string;

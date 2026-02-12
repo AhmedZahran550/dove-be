@@ -27,7 +27,7 @@ export class ScheduleDataQueryDto {
   @ApiPropertyOptional({ description: 'Filter by schedule file ID' })
   @IsOptional()
   @IsUUID()
-  schedule_file_id?: string;
+  scheduleFileId?: string;
 
   @ApiPropertyOptional({ description: 'Page number', default: 1 })
   @IsOptional()
@@ -49,34 +49,34 @@ export class CreateScheduleFileDto {
   @ApiProperty({ description: 'File name' })
   @IsString()
   @MaxLength(255)
-  file_name: string;
+  fileName: string;
 
   @ApiPropertyOptional({ description: 'File path' })
   @IsOptional()
   @IsString()
-  file_path?: string;
+  filePath?: string;
 
   @ApiPropertyOptional({ description: 'File URL' })
   @IsOptional()
   @IsString()
-  file_url?: string;
+  fileUrl?: string;
 
   @ApiPropertyOptional({ description: 'Source type', default: 'database' })
   @IsOptional()
   @IsString()
   @IsIn(['database', 'file', 'api'])
-  source_type?: string;
+  sourceType?: string;
 
   @ApiPropertyOptional({ description: 'Sync frequency', default: 'hourly' })
   @IsOptional()
   @IsString()
   @IsIn(['manual', 'hourly', 'daily', 'weekly'])
-  sync_frequency?: string;
+  syncFrequency?: string;
 
   @ApiPropertyOptional({ description: 'Enable auto sync', default: true })
   @IsOptional()
   @IsBoolean()
-  auto_sync_enabled?: boolean;
+  autoSyncEnabled?: boolean;
 
   @ApiPropertyOptional({
     description: 'Publish to schedule page',
@@ -84,7 +84,7 @@ export class CreateScheduleFileDto {
   })
   @IsOptional()
   @IsBoolean()
-  publish_to_schedule_page?: boolean;
+  publishToSchedulePage?: boolean;
 }
 
 /**
@@ -94,7 +94,7 @@ export class UpdateScheduleFileDto extends PartialType(CreateScheduleFileDto) {
   @ApiPropertyOptional({ description: 'Is active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }
 
 /**
@@ -104,13 +104,13 @@ export class CreateScheduleDataDto {
   @ApiProperty({ description: 'Work order ID' })
   @IsString()
   @MaxLength(100)
-  wo_id: string;
+  woId: string;
 
   @ApiPropertyOptional({ description: 'Work order number' })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  wo_number?: string;
+  woNumber?: string;
 
   @ApiPropertyOptional({ description: 'Department' })
   @IsOptional()
@@ -128,13 +128,13 @@ export class CreateScheduleDataDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  part_number?: string;
+  partNumber?: string;
 
   @ApiPropertyOptional({ description: 'Quantity open' })
   @IsOptional()
   @IsInt()
   @Min(0)
-  qty_open?: number;
+  qtyOpen?: number;
 
   @ApiPropertyOptional({ description: 'Sequence number' })
   @IsOptional()
@@ -145,12 +145,12 @@ export class CreateScheduleDataDto {
   @ApiPropertyOptional({ description: 'Due date' })
   @IsOptional()
   @IsString()
-  due_date?: string;
+  dueDate?: string;
 
   @ApiPropertyOptional({ description: 'Release date' })
   @IsOptional()
   @IsString()
-  release_date?: string;
+  releaseDate?: string;
 }
 
 /**

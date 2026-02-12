@@ -9,10 +9,10 @@ Standardize naming across DTOs and Swagger files to use `camelCase`, ensuring al
 - [x] Task: Conductor - User Manual Verification 'Discovery & Analysis' (Protocol in workflow.md)
 
 ## Phase 2: DTO & Swagger Refactoring
-- [ ] Task: Update property names in `src/modules/*/dto/` from `snake_case` to `camelCase`.
-- [ ] Task: Update property names and `@ApiProperty` decorators in `src/swagger/` to `camelCase`.
-- [ ] Task: Ensure `@ApiProperty` names in DTOs match the new `camelCase` properties.
-- [ ] Task: Conductor - User Manual Verification 'DTO & Swagger Refactoring' (Protocol in workflow.md)
+- [x] Task: Update property names in `src/modules/*/dto/` from `snake_case` to `camelCase`.
+- [x] Task: Update property names and `@ApiProperty` decorators in `src/swagger/` to `camelCase`.
+- [x] Task: Ensure `@ApiProperty` names in DTOs match the new `camelCase` properties.
+- [x] Task: Conductor - User Manual Verification 'DTO & Swagger Refactoring' (Protocol in workflow.md)
 
 ## Phase 3: Reference Refactoring
 - [ ] Task: Update Controllers to use the new `camelCase` DTO properties.

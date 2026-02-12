@@ -51,7 +51,7 @@ export class CreateLocationDto {
   @IsOptional()
   @IsString()
   @MaxLength(20)
-  postal_code?: string;
+  postalCode?: string;
 
   @ApiPropertyOptional({ description: 'Country' })
   @IsOptional()
@@ -80,7 +80,7 @@ export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @ApiPropertyOptional({ description: 'Is location active' })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }
 
 /**
@@ -91,7 +91,7 @@ export class LocationResponseDto {
   id: string;
 
   @ApiProperty()
-  company_id: string;
+  companyId: string;
 
   @ApiProperty()
   name: string;
@@ -112,7 +112,7 @@ export class LocationResponseDto {
   state?: string;
 
   @ApiPropertyOptional()
-  postal_code?: string;
+  postalCode?: string;
 
   @ApiPropertyOptional()
   country?: string;
@@ -124,11 +124,11 @@ export class LocationResponseDto {
   email?: string;
 
   @ApiProperty()
-  is_active: boolean;
+  isActive: boolean;
 
   @ApiProperty()
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty()
-  updated_at: Date;
+  updatedAt: Date;
 }

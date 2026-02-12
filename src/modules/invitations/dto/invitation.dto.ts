@@ -43,7 +43,7 @@ export class CreateInvitationDto {
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  location_id?: string;
+  locationId?: string;
 }
 
 export class AcceptInvitationDto {

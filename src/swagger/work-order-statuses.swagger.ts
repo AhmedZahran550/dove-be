@@ -33,7 +33,7 @@ export const WorkOrderStatusesSwagger = {
             },
             {
               id: '5a38790b-b21a-47db-b74e-126577b4546b',
-              name: 'custom_status',
+              name: 'customStatus',
               code: 'CUSTOM',
               description: 'Company-specific custom status',
               color: '#EF4444',

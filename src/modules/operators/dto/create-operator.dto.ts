@@ -12,17 +12,17 @@ export class CreateOperatorDto {
   @ApiProperty({ description: 'Operator ID/Badge Number' })
   @IsString()
   @IsNotEmpty()
-  operator_id: string;
+  operatorId: string;
 
   @ApiProperty({ description: 'First Name' })
   @IsString()
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @ApiProperty({ description: 'Last Name' })
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @ApiPropertyOptional({ description: 'Email address' })
   @IsEmail()
@@ -44,7 +44,7 @@ export class CreateOperatorDto {
   })
   @IsString()
   @IsOptional()
-  employee_type?: string;
+  employeeType?: string;
 
   @ApiPropertyOptional({ description: 'Shift (Day, Night, etc.)' })
   @IsString()
@@ -54,17 +54,17 @@ export class CreateOperatorDto {
   @ApiPropertyOptional({ description: 'Date of Birth' })
   @IsDateString()
   @IsOptional()
-  date_of_birth?: Date;
+  dateOfBirth?: Date;
 
   @ApiPropertyOptional({ description: 'Hire Date' })
   @IsDateString()
   @IsOptional()
-  hire_date?: Date;
+  hireDate?: Date;
 
   @ApiPropertyOptional({ description: 'Company Employee ID' })
   @IsString()
   @IsOptional()
-  company_employee_id?: string;
+  companyEmployeeId?: string;
 
   @ApiPropertyOptional({ description: 'Status', default: 'active' })
   @IsString()
@@ -74,8 +74,8 @@ export class CreateOperatorDto {
   @ApiPropertyOptional({ description: 'Default Location ID' })
   @IsUUID()
   @IsOptional()
-  default_location_id?: string;
+  defaultLocationId?: string;
 
   // company_id is handled by the controller from the authenticated user
-  company_id?: string;
+  companyId?: string;
 }

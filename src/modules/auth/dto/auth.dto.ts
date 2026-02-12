@@ -49,15 +49,15 @@ export class RefreshTokenDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  refresh_token: string;
+  refreshToken: string;
 }
 
 export class AuthResponseDto {
   @ApiProperty()
-  access_token: string;
+  accessToken: string;
 
   @ApiProperty()
-  refresh_token: string;
+  refreshToken: string;
 
   @ApiProperty()
   user: AuthUserDto;

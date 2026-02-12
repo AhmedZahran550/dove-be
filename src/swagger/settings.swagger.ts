@@ -11,7 +11,7 @@ export const SettingsSwagger = {
   getCategories: () =>
     applyDecorators(
       ApiOperation({ summary: 'Get all rejection categories' }),
-      ApiQuery({ name: 'department_id', required: false }),
+      ApiQuery({ name: 'departmentId', required: false }),
       ApiResponse({
         status: 200,
         description: 'Categories retrieved successfully',
@@ -66,7 +66,7 @@ export const SettingsSwagger = {
   getReasons: () =>
     applyDecorators(
       ApiOperation({ summary: 'Get all rejection reasons' }),
-      ApiQuery({ name: 'category_id', required: false }),
+      ApiQuery({ name: 'categoryId', required: false }),
       ApiResponse({
         status: 200,
         description: 'Reasons retrieved successfully',
