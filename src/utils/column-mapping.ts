@@ -10,15 +10,15 @@ export function getDefaultColumnMapping(): Record<
 > {
   return {
     woId: {
-      source: 'wo_id',
+      source: 'woId',
       alternates: ['work_order_id', 'workorderid', 'wo', 'id'],
     },
     woNumber: {
-      source: 'wo_number',
+      source: 'woNumber',
       alternates: ['work_order_number', 'wo_num'],
     },
     partNumber: {
-      source: 'part_number',
+      source: 'partNumber',
       alternates: ['partnumber', 'part_no', 'pn', 'item'],
     },
     department: {
@@ -30,19 +30,19 @@ export function getDefaultColumnMapping(): Record<
       alternates: ['wo_status', 'state', 'order_status'],
     },
     qtyOpen: {
-      source: 'qty_open',
+      source: 'qtyOpen',
       alternates: ['quantity_open', 'open_qty', 'qty'],
     },
     dueDate: {
-      source: 'due_date',
+      source: 'dueDate',
       alternates: ['duedate', 'due', 'required_date'],
     },
     releaseDate: {
-      source: 'release_date',
+      source: 'releaseDate',
       alternates: ['releasedate', 'release', 'start_date'],
     },
     prodDate: {
-      source: 'prod_date',
+      source: 'prodDate',
       alternates: ['production_date', 'proddate'],
     },
     sequence: {
@@ -50,13 +50,13 @@ export function getDefaultColumnMapping(): Record<
       alternates: ['seq', 'priority', 'order', 'line'],
     },
     shift: { source: 'shift', alternates: ['work_shift', 'shift_id'] },
-    bulkLot: { source: 'bulk_lot', alternates: ['lot', 'lot_number', 'batch'] },
+    bulkLot: { source: 'bulkLot', alternates: ['lot', 'lot_number', 'batch'] },
     prodQty: {
-      source: 'prod_qty',
+      source: 'prodQty',
       alternates: ['production_qty', 'quantity_produced'],
     },
     inspQty: {
-      source: 'insp_qty',
+      source: 'inspQty',
       alternates: ['inspection_qty', 'inspected'],
     },
     rejected: { source: 'rejected', alternates: ['reject_qty', 'rejects'] },
