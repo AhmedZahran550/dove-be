@@ -9,6 +9,15 @@ import {
 import { Department } from '../../database/entities/department.entity';
 import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
 import { TimeSegment } from '../../database/entities/time-segment.entity';
+import * as columnMappingUtils from '../../utils/column-mapping';
+
+jest.mock('../../utils/column-mapping', () => {
+  const actual = jest.requireActual('../../utils/column-mapping');
+  return {
+    ...actual,
+    transformToScheduleData: jest.fn((...args) => actual.transformToScheduleData(...args)),
+  };
+});
 
 describe('ScheduleService', () => {
   let service: ScheduleService;
@@ -28,6 +37,7 @@ describe('ScheduleService', () => {
             findAndCount: jest.fn(),
             count: jest.fn(),
             createQueryBuilder: jest.fn(),
+            upsert: jest.fn(),
           },
         },
         {
@@ -144,6 +154,46 @@ describe('ScheduleService', () => {
       const dueDateCol = result.find(c => c.normalizedName === 'dueDate');
       expect(dueDateCol).toBeDefined();
       expect(dueDateCol.excelName).toBe('Due Date');
+    });
+  });
+
+  describe('importSchedule', () => {
+    it('should call transformToScheduleData with rawData as 5th argument', async () => {
+      const userId = 'user-1';
+      const mockFile = {
+        buffer: Buffer.from('dummy content'),
+      } as Express.Multer.File;
+
+      // Mock XLSX to return one row
+      const XLSX = require('xlsx');
+      jest.spyOn(XLSX, 'read').mockReturnValue({
+        SheetNames: ['Sheet1'],
+        Sheets: { Sheet1: {} },
+      });
+      jest.spyOn(XLSX.utils, 'sheet_to_json').mockReturnValue([
+        { 'Work Order ID': 'WO-1', 'Due Date': '2026-02-15' }
+      ]);
+
+      columnMappingRepo.findOne.mockResolvedValue({
+        id: 'mapping-1',
+        normalizationRules: { 'Work Order ID': 'woId', 'Due Date': 'dueDate' },
+        save: jest.fn()
+      });
+      columnMappingRepo.update.mockResolvedValue({});
+      
+      const scheduleDataRepo = (service as any).scheduleDataRepository;
+      scheduleDataRepo.count.mockResolvedValue(0);
+      scheduleDataRepo.upsert.mockResolvedValue({});
+
+      await service.importSchedule(companyId, userId, mockFile);
+
+      expect(columnMappingUtils.transformToScheduleData).toHaveBeenCalledWith(
+        expect.any(Object),
+        companyId,
+        undefined,
+        expect.any(String),
+        expect.objectContaining({ 'Work Order ID': 'WO-1' })
+      );
     });
   });
 });

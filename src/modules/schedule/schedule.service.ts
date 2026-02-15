@@ -142,7 +142,8 @@ export class ScheduleService {
 
     let normalizationRules = mapping?.normalizationRules;
 
-    if (!normalizationRules) {
+    // Ensure normalization rules exist and use the latest camelCase standard
+    if (!normalizationRules || Object.values(normalizationRules).some(val => val.includes('_'))) {
       normalizationRules = generateNormalizationRules(sourceColumns);
 
       if (mapping) {
@@ -180,6 +181,7 @@ export class ScheduleService {
         companyId,
         scheduleFileId,
         importBatchId,
+        row,
       );
 
       // Skip if no work order ID
