@@ -3,7 +3,7 @@
 ## Phase 1: Normalization & Mapping Logic Update
 Standardize the column normalization and mapping utilities to use camelCase and ensure system columns are handled correctly.
 
-- [ ] Task: Update `normalizeColumnName` in `src/utils/schedule-normalizer.ts` to produce `camelCase` instead of `snake_case`.
+- [x] Task: Update `normalizeColumnName` in `src/utils/schedule-normalizer.ts` to produce `camelCase` instead of `snake_case`. [9b17047]
     - [ ] Modify the regex/logic to capitalize words after spaces/underscores.
     - [ ] Update `COLUMN_ALIASES` to use `camelCase` keys.
 - [ ] Task: Update `getDefaultColumnMapping` in `src/utils/column-mapping.ts` to ensure consistency with `camelCase` entity fields.
