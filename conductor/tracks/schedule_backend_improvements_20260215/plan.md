@@ -6,7 +6,7 @@ Standardize the column normalization and mapping utilities to use camelCase and 
 - [x] Task: Update `normalizeColumnName` in `src/utils/schedule-normalizer.ts` to produce `camelCase` instead of `snake_case`. [9b17047]
     - [ ] Modify the regex/logic to capitalize words after spaces/underscores.
     - [ ] Update `COLUMN_ALIASES` to use `camelCase` keys.
-- [ ] Task: Update `getDefaultColumnMapping` in `src/utils/column-mapping.ts` to ensure consistency with `camelCase` entity fields.
+- [x] Task: Update `getDefaultColumnMapping` in `src/utils/column-mapping.ts` to ensure consistency with `camelCase` entity fields. [182d93b]
 - [ ] Task: Update `transformToScheduleData` in `src/utils/column-mapping.ts` to explicitly handle `dueDate` and `releaseDate` extraction from mapped fields.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Normalization & Mapping Logic Update' (Protocol in workflow.md)
 
