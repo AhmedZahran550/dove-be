@@ -108,7 +108,6 @@ export class ScheduleService {
     companyId: string,
     userId: string,
     file?: Express.Multer.File,
-    fileData?: string,
     scheduleFileId?: string,
   ): Promise<ImportResultDto> {
     // 1. Read and parse file
@@ -116,13 +115,6 @@ export class ScheduleService {
 
     if (file) {
       workbook = XLSX.read(file.buffer, { type: 'buffer' });
-    } else if (fileData) {
-      // Handle base64 data URL
-      const base64Data = fileData.includes(',')
-        ? fileData.split(',')[1]
-        : fileData;
-      const buffer = Buffer.from(base64Data, 'base64');
-      workbook = XLSX.read(buffer, { type: 'buffer' });
     } else {
       throw new BadRequestException('No file or file data provided');
     }

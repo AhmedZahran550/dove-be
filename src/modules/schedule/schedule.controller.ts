@@ -67,15 +67,13 @@ export class ScheduleController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: ImportScheduleDto,
   ): Promise<ImportResultDto> {
-    if (!file && !body.fileData) {
-      throw new BadRequestException('File or fileData is required');
+    if (!file) {
+      throw new BadRequestException('File is required');
     }
-
     return this.scheduleService.importSchedule(
       user.companyId,
       user.id,
       file,
-      body.fileData,
       body.scheduleFileId,
     );
   }
@@ -150,6 +148,7 @@ export class ScheduleController {
   }
 
   @Get('department-summary')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.getDepartmentSummary()
   async getDepartmentSummary(@AuthUser() user: UserProfile) {
     return this.scheduleService.getDepartmentSummary(user.companyId);

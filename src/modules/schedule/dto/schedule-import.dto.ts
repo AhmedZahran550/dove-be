@@ -44,12 +44,9 @@ export class ImportScheduleDto {
   @IsUUID()
   scheduleFileId?: string;
 
-  @ApiPropertyOptional({
-    description: 'Base64 encoded file data (alternative to file upload)',
-  })
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
   @IsOptional()
-  @IsString()
-  fileData?: string;
+  file?: any;
 }
 
 /**
