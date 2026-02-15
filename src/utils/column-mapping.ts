@@ -119,8 +119,9 @@ export function transformToScheduleData(
   companyId: string,
   scheduleFileId?: string,
   importBatchId?: string,
+  rawData?: Record<string, any>,
 ): Record<string, any> {
-  return {
+  const data: Record<string, any> = {
     companyId,
     scheduleFileId: scheduleFileId || null,
     woId: String(mapped.woId || mapped.wo_id || '').trim(),
@@ -140,5 +141,21 @@ export function transformToScheduleData(
     rejected: parseIntSafe(mapped.rejected),
     importBatchId: importBatchId || null,
     isSynced: false,
+    rawData: rawData || null,
   };
+
+  // Fallback for critical date fields from rawData if missing in mapped
+  if (rawData) {
+    if (!data.dueDate) {
+      data.dueDate = findColumnValue(rawData, 'dueDate');
+    }
+    if (!data.releaseDate) {
+      data.releaseDate = findColumnValue(rawData, 'releaseDate');
+    }
+    if (!data.woId) {
+      data.woId = String(findColumnValue(rawData, 'woId') || '').trim();
+    }
+  }
+
+  return data;
 }

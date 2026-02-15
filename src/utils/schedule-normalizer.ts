@@ -130,6 +130,7 @@ export const COLUMN_ALIASES: Record<string, string[]> = {
 
 /**
  * Find the best matching column from a row based on aliases
+ * Supports original Excel headers by normalizing them on the fly
  */
 export function findColumnValue(
   row: Record<string, any>,
@@ -137,9 +138,18 @@ export function findColumnValue(
 ): any {
   const aliases = COLUMN_ALIASES[targetField] || [targetField];
 
+  // First try exact alias matches in the row
   for (const alias of aliases) {
     if (row[alias] !== undefined) {
       return row[alias];
+    }
+  }
+
+  // Fallback: search by normalizing each key in the row
+  for (const [key, value] of Object.entries(row)) {
+    const normalizedKey = normalizeColumnName(key);
+    if (normalizedKey === targetField || aliases.includes(normalizedKey)) {
+      return value;
     }
   }
 

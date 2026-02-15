@@ -44,5 +44,20 @@ describe('column-mapping', () => {
       expect(entity.qtyOpen).toBe(10);
       expect(entity.companyId).toBe('company-1');
     });
+
+    it('should fallback to rawData for dates if missing in mapped', () => {
+      const mapped = {
+        woId: 'WO-123',
+      };
+      const rawData = {
+        'Due Date': '2026-02-15',
+        'Release Date': '2026-02-01',
+      };
+      
+      const entity = transformToScheduleData(mapped, 'company-1', null, null, rawData);
+      
+      expect(entity.dueDate).toBe('2026-02-15');
+      expect(entity.releaseDate).toBe('2026-02-01');
+    });
   });
 });
