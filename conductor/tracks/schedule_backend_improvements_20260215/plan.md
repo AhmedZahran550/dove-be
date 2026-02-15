@@ -13,7 +13,7 @@ Standardize the column normalization and mapping utilities to use camelCase and 
 ## Phase 2: Service Layer & API Enhancements
 Update the `ScheduleService` to enforce the new column standards and ensure `woId` is always present in column definitions.
 
-- [ ] Task: Modify `getScheduleColumns` in `src/modules/schedule/schedule.service.ts`.
+- [x] Task: Modify `getScheduleColumns` in `src/modules/schedule/schedule.service.ts`. [138d65e]
     - [ ] Ensure `woId` is always included in the returned array.
     - [ ] Ensure all `normalizedName` values are returned in `camelCase`.
 - [ ] Task: Update `importSchedule` in `src/modules/schedule/schedule.service.ts`.
