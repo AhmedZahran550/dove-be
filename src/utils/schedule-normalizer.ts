@@ -1,32 +1,46 @@
 /**
- * Normalize a column name to snake_case lowercase format
+ * Normalize a column name to camelCase format
  * Examples:
- *   "Work Order ID" -> "work_order_id"
- *   "PartNumber" -> "part_number"
- *   "Qty Open" -> "qty_open"
+ *   "Work Order ID" -> "woId" (special case)
+ *   "Due Date" -> "dueDate"
+ *   "PartNumber" -> "partNumber"
  */
 export function normalizeColumnName(name: string): string {
   if (!name) return '';
 
-  return (
-    name
-      .trim()
-      // Replace special characters with spaces
-      .replace(/[^\w\s]/g, ' ')
-      // Convert camelCase to snake_case
-      .replace(/([a-z])([A-Z])/g, '$1_$2')
-      // Replace spaces and multiple underscores with single underscore
-      .replace(/[\s_]+/g, '_')
-      // Convert to lowercase
-      .toLowerCase()
-      // Remove leading/trailing underscores
-      .replace(/^_+|_+$/g, '')
-  );
+  // Special cases for exact matches (case-insensitive)
+  const cleanName = name.trim().toLowerCase();
+  if (
+    cleanName === 'work order id' ||
+    cleanName === 'work_order_id' ||
+    cleanName === 'wo id' ||
+    cleanName === 'wo_id'
+  ) {
+    return 'woId';
+  }
+
+  // General camelCase normalization
+  const words = name
+    .trim()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .split(/[\s_]+/)
+    .filter(Boolean);
+
+  if (words.length === 0) return '';
+
+  return words
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index === 0) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join('');
 }
 
 /**
  * Generate normalization rules from Excel column names
- * Maps original Excel column names to normalized snake_case names
+ * Maps original Excel column names to normalized camelCase names
  */
 export function generateNormalizationRules(
   sourceColumns: string[],
@@ -64,12 +78,22 @@ export function applyNormalization(
 
 /**
  * Common column name variations for schedule data fields
- * Maps various possible Excel column names to standard field names
+ * Maps various possible Excel column names to standard camelCase field names
  */
 export const COLUMN_ALIASES: Record<string, string[]> = {
-  wo_id: ['wo_id', 'work_order_id', 'workorderid', 'wo', 'id', 'order_id'],
-  wo_number: ['wo_number', 'work_order_number', 'wo_num', 'number'],
-  part_number: [
+  woId: [
+    'woId',
+    'wo_id',
+    'work_order_id',
+    'workorderid',
+    'wo',
+    'id',
+    'order_id',
+    'work_order',
+  ],
+  woNumber: ['woNumber', 'wo_number', 'work_order_number', 'wo_num', 'number'],
+  partNumber: [
+    'partNumber',
     'part_number',
     'partnumber',
     'part_no',
@@ -79,15 +103,28 @@ export const COLUMN_ALIASES: Record<string, string[]> = {
   ],
   department: ['department', 'dept', 'department_name', 'area'],
   status: ['status', 'wo_status', 'state', 'order_status'],
-  qty_open: ['qty_open', 'quantity_open', 'open_qty', 'qty', 'quantity'],
-  due_date: ['due_date', 'duedate', 'due', 'required_date'],
-  release_date: ['release_date', 'releasedate', 'release', 'start_date'],
-  prod_date: ['prod_date', 'production_date', 'proddate', 'mfg_date'],
+  qtyOpen: [
+    'qtyOpen',
+    'qty_open',
+    'quantity_open',
+    'open_qty',
+    'qty',
+    'quantity',
+  ],
+  dueDate: ['dueDate', 'due_date', 'duedate', 'due', 'required_date'],
+  releaseDate: [
+    'releaseDate',
+    'release_date',
+    'releasedate',
+    'release',
+    'start_date',
+  ],
+  prodDate: ['prodDate', 'prod_date', 'production_date', 'proddate', 'mfg_date'],
   sequence: ['sequence', 'seq', 'priority', 'order', 'line'],
   shift: ['shift', 'work_shift', 'shift_id'],
-  bulk_lot: ['bulk_lot', 'lot', 'lot_number', 'batch'],
-  prod_qty: ['prod_qty', 'production_qty', 'quantity_produced'],
-  insp_qty: ['insp_qty', 'inspection_qty', 'inspected'],
+  bulkLot: ['bulkLot', 'bulk_lot', 'lot', 'lot_number', 'batch'],
+  prodQty: ['prodQty', 'prod_qty', 'production_qty', 'quantity_produced'],
+  inspQty: ['inspQty', 'insp_qty', 'inspection_qty', 'inspected'],
   rejected: ['rejected', 'reject_qty', 'rejects'],
 };
 
