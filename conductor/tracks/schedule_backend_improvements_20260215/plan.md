@@ -1,6 +1,6 @@
 # Implementation Plan: Schedule Module Backend Improvements
 
-## Phase 1: Normalization & Mapping Logic Update
+## Phase 1: Normalization & Mapping Logic Update [checkpoint: 69f3286]
 Standardize the column normalization and mapping utilities to use camelCase and ensure system columns are handled correctly.
 
 - [x] Task: Update `normalizeColumnName` in `src/utils/schedule-normalizer.ts` to produce `camelCase` instead of `snake_case`. [9b17047]
