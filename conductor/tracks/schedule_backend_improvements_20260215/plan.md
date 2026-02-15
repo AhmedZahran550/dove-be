@@ -8,7 +8,7 @@ Standardize the column normalization and mapping utilities to use camelCase and 
     - [ ] Update `COLUMN_ALIASES` to use `camelCase` keys.
 - [x] Task: Update `getDefaultColumnMapping` in `src/utils/column-mapping.ts` to ensure consistency with `camelCase` entity fields. [182d93b]
 - [x] Task: Update `transformToScheduleData` in `src/utils/column-mapping.ts` to explicitly handle `dueDate` and `releaseDate` extraction from mapped fields. [5875608]
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Normalization & Mapping Logic Update' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Normalization & Mapping Logic Update' (Protocol in workflow.md) [a2fb146]
 
 ## Phase 2: Service Layer & API Enhancements
 Update the `ScheduleService` to enforce the new column standards and ensure `woId` is always present in column definitions.
