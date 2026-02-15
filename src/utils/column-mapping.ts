@@ -11,15 +11,22 @@ export function getDefaultColumnMapping(): Record<
   return {
     woId: {
       source: 'woId',
-      alternates: ['work_order_id', 'workorderid', 'wo', 'id'],
+      alternates: [
+        'wo_id',
+        'workOrderId',
+        'work_order_id',
+        'workorderid',
+        'wo',
+        'id',
+      ],
     },
     woNumber: {
       source: 'woNumber',
-      alternates: ['work_order_number', 'wo_num'],
+      alternates: ['wo_number', 'workOrderNumber', 'work_order_number', 'wo_num'],
     },
     partNumber: {
       source: 'partNumber',
-      alternates: ['partnumber', 'part_no', 'pn', 'item'],
+      alternates: ['part_number', 'partnumber', 'part_no', 'pn', 'item'],
     },
     department: {
       source: 'department',
@@ -31,33 +38,33 @@ export function getDefaultColumnMapping(): Record<
     },
     qtyOpen: {
       source: 'qtyOpen',
-      alternates: ['quantity_open', 'open_qty', 'qty'],
+      alternates: ['qty_open', 'quantity_open', 'open_qty', 'qty'],
     },
     dueDate: {
       source: 'dueDate',
-      alternates: ['duedate', 'due', 'required_date'],
+      alternates: ['due_date', 'duedate', 'due', 'required_date'],
     },
     releaseDate: {
       source: 'releaseDate',
-      alternates: ['releasedate', 'release', 'start_date'],
+      alternates: ['release_date', 'releasedate', 'release', 'start_date'],
     },
     prodDate: {
       source: 'prodDate',
-      alternates: ['production_date', 'proddate'],
+      alternates: ['prod_date', 'production_date', 'proddate'],
     },
     sequence: {
       source: 'sequence',
       alternates: ['seq', 'priority', 'order', 'line'],
     },
     shift: { source: 'shift', alternates: ['work_shift', 'shift_id'] },
-    bulkLot: { source: 'bulkLot', alternates: ['lot', 'lot_number', 'batch'] },
+    bulkLot: { source: 'bulkLot', alternates: ['bulk_lot', 'lot', 'lot_number', 'batch'] },
     prodQty: {
       source: 'prodQty',
-      alternates: ['production_qty', 'quantity_produced'],
+      alternates: ['prod_qty', 'production_qty', 'quantity_produced'],
     },
     inspQty: {
       source: 'inspQty',
-      alternates: ['inspection_qty', 'inspected'],
+      alternates: ['insp_qty', 'inspection_qty', 'inspected'],
     },
     rejected: { source: 'rejected', alternates: ['reject_qty', 'rejects'] },
   };
