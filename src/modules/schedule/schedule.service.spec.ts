@@ -120,12 +120,12 @@ describe('ScheduleService', () => {
   });
 
   describe('getScheduleColumns', () => {
-    it('should return an array of schedule column mappings', async () => {
+    it('should return an array of schedule column mappings with camelCase and woId', async () => {
       const mockMapping = {
         companyId,
         normalizationRules: {
           Status: 'status',
-          Remarks: 'remarks',
+          'Due Date': 'due_date', // old snake_case in DB
         },
       };
 
@@ -134,10 +134,16 @@ describe('ScheduleService', () => {
       const result = await service.getScheduleColumns(companyId);
 
       expect(Array.isArray(result)).toBe(true);
-      expect(result).toEqual([
-        { excelName: 'Status', normalizedName: 'status' },
-        { excelName: 'Remarks', normalizedName: 'remarks' },
-      ]);
+      
+      // Should include woId even if not in normalizationRules
+      const woIdCol = result.find(c => c.normalizedName === 'woId');
+      expect(woIdCol).toBeDefined();
+      expect(woIdCol.excelName).toBe('Work Order ID');
+
+      // Should convert existing snake_case in DB to camelCase
+      const dueDateCol = result.find(c => c.normalizedName === 'dueDate');
+      expect(dueDateCol).toBeDefined();
+      expect(dueDateCol.excelName).toBe('Due Date');
     });
   });
 });

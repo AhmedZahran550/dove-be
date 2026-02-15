@@ -19,6 +19,7 @@ import { UserProfile } from '../../database/entities/user-profile.entity';
 import {
   generateNormalizationRules,
   applyNormalization,
+  normalizeColumnName,
 } from '../../utils/schedule-normalizer';
 import {
   applyColumnMapping,
@@ -476,7 +477,7 @@ export class ScheduleService {
 
   async getScheduleColumns(
     companyId: string,
-  ): Promise<{ excelName: string; normalizedName: string }[]> {
+  ): Promise<{ excelName: string; normalizedName: string; is_system?: boolean }[]> {
     const mapping = await this.columnMappingRepository.findOne({
       where: { companyId, isDefault: true, isActive: true },
     });
@@ -484,10 +485,22 @@ export class ScheduleService {
     const normalizationRules = mapping?.normalizationRules || {};
     const excelColumns = Object.keys(normalizationRules);
 
-    return excelColumns.map((excelName) => ({
+    const columns = excelColumns.map((excelName) => ({
       excelName,
-      normalizedName: normalizationRules[excelName],
+      normalizedName: normalizeColumnName(normalizationRules[excelName]),
     }));
+
+    // Ensure woId is always included
+    const hasWoId = columns.some((c) => c.normalizedName === 'woId');
+    if (!hasWoId) {
+      columns.unshift({
+        excelName: 'Work Order ID',
+        normalizedName: 'woId',
+        is_system: true,
+      } as any);
+    }
+
+    return columns;
   }
 
   async getScheduleSyncConfig(companyId: string): Promise<any> {
