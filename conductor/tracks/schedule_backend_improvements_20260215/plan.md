@@ -16,7 +16,7 @@ Update the `ScheduleService` to enforce the new column standards and ensure `woI
 - [x] Task: Modify `getScheduleColumns` in `src/modules/schedule/schedule.service.ts`. [138d65e]
     - [ ] Ensure `woId` is always included in the returned array.
     - [ ] Ensure all `normalizedName` values are returned in `camelCase`.
-- [ ] Task: Update `importSchedule` in `src/modules/schedule/schedule.service.ts`.
+- [x] Task: Update `importSchedule` in `src/modules/schedule/schedule.service.ts`. [a2f5208]
     - [ ] Verify that `normalizationRules` are correctly generated/re-generated for the company if they don't match the new `camelCase` standard.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Service Layer & API Enhancements' (Protocol in workflow.md)
 
