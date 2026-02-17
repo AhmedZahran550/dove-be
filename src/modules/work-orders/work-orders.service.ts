@@ -69,6 +69,9 @@ export class WorkOrdersService {
       startTime: dto.startTime ? new Date(dto.startTime) : new Date(),
       currentStatus: 'running',
       statusUpdatedAt: new Date(),
+      scheduleRow: {
+        id: dto.scheduleRowId,
+      },
     });
 
     return this.workOrdersRepository.save(workOrder);
@@ -120,8 +123,7 @@ export class WorkOrdersService {
 
   async findById(id: string, companyId: string): Promise<WorkOrder> {
     const workOrder = await this.workOrdersRepository.findOne({
-      where: { id, companyId: companyId },
-      relations: ['location', 'statusUpdatedBy'],
+      where: { woNumber: id, companyId: companyId },
     });
 
     if (!workOrder) {

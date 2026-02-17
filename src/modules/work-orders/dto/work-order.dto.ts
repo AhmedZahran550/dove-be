@@ -11,6 +11,11 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateWorkOrderDto {
+  @ApiProperty({ description: 'Schedule row UUID' })
+  @IsUUID()
+  @IsNotEmpty()
+  scheduleRowId: string;
+
   @ApiProperty({ example: 'WO-2024-001' })
   @IsString()
   @IsNotEmpty()

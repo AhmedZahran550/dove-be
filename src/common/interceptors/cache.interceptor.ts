@@ -120,31 +120,40 @@ export class CacheInterceptor implements NestInterceptor {
    * @returns The resolved cache key.
    */
   private resolveKeyWithParams(keyPattern: string, request: any): string {
-    // Replace {{paramName}} with actual values from request.params
+    // Track used parameters to avoid duplication in query string
+    const usedParams = new Set<string>();
+
+    // Replace {{paramName}} with actual values from request.params or request.query
     let resolvedKey = keyPattern.replace(
       /\{\{(\w+)\}\}/g,
       (match, paramName) => {
-        const paramValue = request.params?.[paramName];
-        if (paramValue === undefined) {
-          throw new Error('Paramter in cache key not found in request.params');
+        const paramValue =
+          request.params?.[paramName] ?? request.query?.[paramName];
+
+        // Mark as used if it came from query
+        if (request.query?.[paramName] !== undefined) {
+          usedParams.add(paramName);
         }
-        return String(paramValue); // Use original placeholder if param not found
+
+        return String(paramValue ?? '');
       },
     );
+
     // Add query parameters to the key if present and not already part of the resolved key
     const queryParams = request.query;
     if (queryParams && Object.keys(queryParams).length > 0) {
       // Sort keys for consistent hashing
       const sortedQueryParams = Object.keys(queryParams)
+        .filter((key) => !usedParams.has(key)) // Exclude parameters already used in the key pattern
         .sort()
         .map((key) => `${key}=${queryParams[key]}`)
         .join('&');
-      resolvedKey += `?${sortedQueryParams}`;
+
+      if (sortedQueryParams.length > 0) {
+        resolvedKey += `?${sortedQueryParams}`;
+      }
     }
 
-    // Example: For 'customer:{{id}}' and query params, it might become 'customer:123?page=1&limit=10'
-    // Or you can hash query/params separately and append for a shorter key, similar to generateKey in CacheService
-    // For now, simple append for queries.
     return resolvedKey;
   }
 

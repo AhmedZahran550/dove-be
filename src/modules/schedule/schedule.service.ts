@@ -34,11 +34,10 @@ import {
   CreateColumnMappingDto,
   UpdateColumnMappingDto,
 } from './dto/schedule-mapping.dto';
+import { DBService } from '@/database/db.service';
 
 @Injectable()
-export class ScheduleService {
-  private readonly logger = new Logger(ScheduleService.name);
-
+export class ScheduleService extends DBService<ScheduleData> {
   constructor(
     @InjectRepository(ScheduleData)
     private scheduleDataRepository: Repository<ScheduleData>,
@@ -52,7 +51,9 @@ export class ScheduleService {
     private systemConfigRepository: Repository<SystemConfiguration>,
     @InjectRepository(TimeSegment)
     private timeSegmentRepository: Repository<TimeSegment>,
-  ) {}
+  ) {
+    super(scheduleDataRepository);
+  }
 
   // ===== IMPORT METHODS =====
 
@@ -143,7 +144,10 @@ export class ScheduleService {
     let normalizationRules = mapping?.normalizationRules;
 
     // Ensure normalization rules exist and use the latest camelCase standard
-    if (!normalizationRules || Object.values(normalizationRules).some(val => val.includes('_'))) {
+    if (
+      !normalizationRules ||
+      Object.values(normalizationRules).some((val) => val.includes('_'))
+    ) {
       normalizationRules = generateNormalizationRules(sourceColumns);
 
       if (mapping) {
@@ -281,38 +285,19 @@ export class ScheduleService {
       search?: string;
     },
   ) {
-    const page = query.page || 1;
-    const limit = Math.min(query.limit || 50, 200);
-    const skip = (page - 1) * limit;
-
-    const whereClause: any = { companyId: companyId };
-
-    if (query.department) {
-      whereClause.department = query.department;
-    }
-    if (query.status) {
-      whereClause.status = query.status;
-    }
-    if (query.search) {
-      whereClause.woId = ILike(`%${query.search}%`);
-    }
-
-    const [data, totalItems] = await this.scheduleDataRepository.findAndCount({
-      where: whereClause,
-      order: { sequence: 'ASC', woId: 'ASC' },
-      skip,
-      take: limit,
-    });
-
-    return {
-      data,
-      meta: {
-        itemsPerPage: limit,
-        totalItems,
-        currentPage: page,
-        totalPages: Math.ceil(totalItems / limit),
-      },
-    };
+    const qb = this.repository
+      .createQueryBuilder('scheduleData')
+      .where('scheduleData.companyId = :companyId', { companyId })
+      .leftJoinAndMapOne(
+        'scheduleData.workOrder',
+        'work_order',
+        'wo',
+        'wo.schedule_row_id = scheduleData.id',
+      )
+      .orderBy('scheduleData.sequence', 'ASC')
+      .addOrderBy('scheduleData.woId', 'ASC');
+    const ress = await super.findAll(query, qb);
+    return ress;
   }
 
   async findScheduleDataByDepartment(
@@ -479,7 +464,9 @@ export class ScheduleService {
 
   async getScheduleColumns(
     companyId: string,
-  ): Promise<{ excelName: string; normalizedName: string; is_system?: boolean }[]> {
+  ): Promise<
+    { excelName: string; normalizedName: string; is_system?: boolean }[]
+  > {
     const mapping = await this.columnMappingRepository.findOne({
       where: { companyId, isDefault: true, isActive: true },
     });

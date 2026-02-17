@@ -1,8 +1,17 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Index,
+  Unique,
+  OneToOne,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { ScheduleFile } from './schedule-file.entity';
 import { WorkOrder } from './work-order.entity';
+``;
 
 @Entity('schedule_data')
 @Unique(['companyId', 'woId'])
@@ -79,23 +88,16 @@ export class ScheduleData extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   isSynced: boolean;
 
-  @Column({ type: 'uuid', nullable: true })
-  workOrderId?: string;
-
   // Relations
   @ManyToOne(() => Company, (company) => company.scheduleData, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'companyId' })
+  @JoinColumn({ name: 'company_id' })
   company?: Company;
 
   @ManyToOne(() => ScheduleFile, (file) => file.scheduleData, {
     onDelete: 'SET NULL',
   })
-  @JoinColumn({ name: 'scheduleFileId' })
+  @JoinColumn({ name: 'schedule_file_id' })
   scheduleFile?: ScheduleFile;
-
-  @ManyToOne(() => WorkOrder, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'work_order_id' })
-  WorkOrder?: WorkOrder;
 }

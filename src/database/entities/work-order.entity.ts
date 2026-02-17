@@ -6,6 +6,7 @@ import {
   JoinColumn,
   Index,
   Unique,
+  OneToOne,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
@@ -15,8 +16,9 @@ import { UserProfile } from './user-profile.entity';
 import { TimeSegment } from './time-segment.entity';
 import { QCRejection } from './qc-rejection.entity';
 import { WorkOrderOperator } from './work-order-operator.entity';
+import { ScheduleData } from './schedule-data.entity';
 
-@Entity('work_orders')
+@Entity('work_order')
 @Unique(['companyId', 'woNumber'])
 @Index(['companyId'])
 @Index(['locationId'])
@@ -189,4 +191,11 @@ export class WorkOrder extends BaseEntity {
 
   @OneToMany(() => WorkOrderOperator, (wo) => wo.workOrder)
   workOrderOperators?: WorkOrderOperator[];
+
+  @OneToOne(() => ScheduleData, { cascade: ['insert', 'update'] })
+  @JoinColumn({ name: 'schedule_row_id' })
+  scheduleRow?: ScheduleData;
+
+  @Column({ type: 'uuid', nullable: false })
+  scheduleRowId: string;
 }

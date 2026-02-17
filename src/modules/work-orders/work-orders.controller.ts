@@ -85,10 +85,10 @@ export class WorkOrdersController {
   @Get(':id')
   @WorkOrdersSwagger.findById()
   async findById(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') woNumber: string,
     @AuthUser() user: UserProfile,
   ): Promise<WorkOrder> {
-    return this.workOrdersService.findById(id, user.companyId);
+    return this.workOrdersService.findById(woNumber, user.companyId);
   }
 
   @Patch(':id')
