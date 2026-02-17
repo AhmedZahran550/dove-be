@@ -24,6 +24,8 @@ import { EquipmentModule } from './modules/equipment/equipment.module';
 import { OperatorsModule } from './modules/operators/operators.module';
 import { PartNumbersModule } from './modules/part-numbers/part-numbers.module';
 import { ProcessStepsModule } from './modules/process-steps/process-steps.module';
+import { DowntimeCategoriesModule } from './modules/downtime-categories/downtime-categories.module';
+import { DowntimeReasonsModule } from './modules/downtime-reasons/downtime-reasons.module';
 import { DatabaseModule } from './database/database.module';
 
 import { schemaValidator } from './config/schema-validator';
@@ -84,6 +86,8 @@ const envFilePath = [
     OperatorsModule,
     PartNumbersModule,
     ProcessStepsModule,
+    DowntimeCategoriesModule,
+    DowntimeReasonsModule,
   ],
   controllers: [AppController],
   providers: [
