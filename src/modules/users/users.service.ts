@@ -30,7 +30,9 @@ export class UsersService extends DBService<UserProfile> {
 
   async findById(id: string): Promise<UserProfile> {
     const user = await this.usersRepository.findOne({
-      where: { id },
+      where: {
+        id: id,
+      },
       relations: ['company'],
     });
 
