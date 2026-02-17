@@ -54,7 +54,7 @@ export class UsersController {
     return { success: true, preferences: prefs };
   }
 
-  @Put('me/preferences')
+  @Put('preferences')
   @UsersSwagger.updatePreference()
   async updatePreferences(
     @AuthUser() user: UserProfile,
@@ -68,7 +68,7 @@ export class UsersController {
     return { success: true, data: updated };
   }
 
-  @Delete('me/preferences')
+  @Delete('preferences')
   @UsersSwagger.deletePreference()
   async deletePreferences(
     @AuthUser() user: UserProfile,

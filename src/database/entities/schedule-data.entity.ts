@@ -80,7 +80,7 @@ export class ScheduleData extends BaseEntity {
   isSynced: boolean;
 
   @Column({ type: 'uuid', nullable: true })
-  syncedWorkOrderId?: string;
+  workOrderId?: string;
 
   // Relations
   @ManyToOne(() => Company, (company) => company.scheduleData, {
@@ -96,6 +96,6 @@ export class ScheduleData extends BaseEntity {
   scheduleFile?: ScheduleFile;
 
   @ManyToOne(() => WorkOrder, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'syncedWorkOrderId' })
-  syncedWorkOrder?: WorkOrder;
+  @JoinColumn({ name: 'work_order_id' })
+  WorkOrder?: WorkOrder;
 }
