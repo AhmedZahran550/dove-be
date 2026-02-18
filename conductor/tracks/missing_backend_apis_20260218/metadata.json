@@ -1,0 +1,8 @@
+{
+  "track_id": "missing_backend_apis_20260218",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-18T14:00:00Z",
+  "updated_at": "2026-02-18T14:00:00Z",
+  "description": "Implement missing backend APIs for schedule configuration, connectors, and SQLite connections as required by the frontend."
+}
