@@ -33,6 +33,11 @@ import {
   CreateColumnMappingDto,
   UpdateColumnMappingDto,
 } from './dto/schedule-mapping.dto';
+import {
+  ConnectorResponseDto,
+  SqliteConnectionResponseDto,
+  UpdateSqliteConnectionDto,
+} from './dto/sync-agent.dto';
 
 @ApiTags('schedule')
 @Controller('schedule')
@@ -164,12 +169,14 @@ export class ScheduleController {
   }
 
   @Get('config')
+  @Roles(Role.ADMIN)
   @ScheduleSwagger.getScheduleSyncConfig()
   async getScheduleSyncConfig(@AuthUser() user: UserProfile) {
     return this.scheduleService.getScheduleSyncConfig(user.companyId);
   }
 
   @Post('sync')
+  @Roles(Role.ADMIN)
   @ScheduleSwagger.triggerScheduleSync()
   async triggerScheduleSync(@AuthUser() user: UserProfile) {
     return this.scheduleService.triggerScheduleSync(user.companyId);

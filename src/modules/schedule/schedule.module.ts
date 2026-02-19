@@ -8,6 +8,8 @@ import { SystemConfiguration } from '../../database/entities/system-configuratio
 import { TimeSegment } from '../../database/entities/time-segment.entity';
 import { ScheduleService } from './schedule.service';
 import { ScheduleController } from './schedule.controller';
+import { ConnectorsController } from './connectors.controller';
+import { SqliteConnectionsController } from './sqlite-connections.controller';
 
 @Module({
   imports: [
@@ -20,7 +22,11 @@ import { ScheduleController } from './schedule.controller';
       TimeSegment,
     ]),
   ],
-  controllers: [ScheduleController],
+  controllers: [
+    ScheduleController,
+    ConnectorsController,
+    SqliteConnectionsController,
+  ],
   providers: [ScheduleService],
   exports: [ScheduleService],
 })

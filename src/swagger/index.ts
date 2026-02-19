@@ -17,3 +17,5 @@ export { TimeSegmentsSwagger } from './time-segments.swagger';
 export { PartNumbersSwagger } from './part-numbers.swagger';
 export { DowntimeCategoriesSwagger } from './downtime-categories.swagger';
 export { DowntimeReasonsSwagger } from './downtime-reasons.swagger';
+export { ConnectorsSwagger } from './connectors.swagger';
+export { SqliteSwagger } from './sqlite.swagger';

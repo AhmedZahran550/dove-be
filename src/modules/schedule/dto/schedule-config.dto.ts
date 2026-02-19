@@ -14,20 +14,35 @@ export class ScheduleColumnsResponseDto {
 }
 
 export class ScheduleSyncStatusDto {
-  @ApiProperty({ nullable: true })
-  lastSyncStatus: string | null;
-
-  @ApiProperty({ nullable: true })
-  lastSyncError: string | null;
+  @ApiProperty()
+  id: string;
 
   @ApiProperty()
-  syncRetryCount: number;
+  fileName: string;
 
   @ApiProperty()
   sourceType: string;
 
+  @ApiProperty()
+  syncFrequency: string;
+
+  @ApiProperty()
+  autoSyncEnabled: boolean;
+
+  @ApiProperty()
+  emailNotifications: boolean;
+
+  @ApiProperty()
+  automaticBackups: boolean;
+
   @ApiProperty({ nullable: true })
-  lastSyncedAt: Date | null;
+  lastSyncStatus?: string | null;
+
+  @ApiProperty({ nullable: true })
+  lastSyncError?: string | null;
+
+  @ApiProperty({ nullable: true })
+  lastSyncedAt?: Date | null;
 }
 
 export class ScheduleConfigResponseDto {

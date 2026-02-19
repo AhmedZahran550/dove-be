@@ -34,6 +34,11 @@ import {
   CreateColumnMappingDto,
   UpdateColumnMappingDto,
 } from './dto/schedule-mapping.dto';
+import {
+  ConnectorDto,
+  SqliteConnectionDto,
+  UpdateSqliteConnectionDto,
+} from './dto/sync-agent.dto';
 import { DBService } from '@/database/db.service';
 
 @Injectable()
@@ -545,6 +550,71 @@ export class ScheduleService extends DBService<ScheduleData> {
     return {
       success: true,
       message: 'Sync started',
+    };
+  }
+
+  /**
+   * Get available data connectors for a company
+   */
+  async getAvailableConnectors(companyId: string): Promise<ConnectorDto[]> {
+    // This is a placeholder implementation as the entities don't exist yet.
+    // In a real implementation, this would query a Connectors table.
+    return [
+      {
+        id: '00000000-0000-0000-0000-000000000001',
+        name: 'Production DB',
+        connectorTypeId: 'postgresql',
+        connectionStatus: 'connected',
+        lastSyncedAt: new Date().toISOString(),
+      },
+    ];
+  }
+
+  /**
+   * Get SQLite connections for a company
+   */
+  async getSqliteConnections(companyId: string): Promise<SqliteConnectionDto[]> {
+    // This is a placeholder implementation as the entities don't exist yet.
+    return [
+      {
+        id: '00000000-0000-0000-0000-000000000002',
+        connectionName: 'Local Machine 1',
+        lastSchemaUpdate: new Date().toISOString(),
+        selectedTable: 'orders',
+        trackingColumn: 'updated_at',
+        discoveredTables: {
+          orders: {
+            rowCount: 1500,
+            columns: [
+              { name: 'id', type: 'INTEGER' },
+              { name: 'order_date', type: 'TEXT' },
+              { name: 'updated_at', type: 'TEXT' },
+            ],
+          },
+          products: {
+            rowCount: 50,
+            columns: [
+              { name: 'id', type: 'INTEGER' },
+              { name: 'name', type: 'TEXT' },
+            ],
+          },
+        },
+      },
+    ];
+  }
+
+  /**
+   * Update SQLite connection configuration
+   */
+  async updateSqliteConnection(
+    companyId: string,
+    dto: UpdateSqliteConnectionDto,
+  ): Promise<any> {
+    // This is a placeholder implementation.
+    // In a real implementation, this would update the record in the database.
+    return {
+      success: true,
+      message: 'Configuration saved',
     };
   }
 
