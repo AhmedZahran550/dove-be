@@ -16,6 +16,7 @@ import {
   AuthResponseDto,
   VerifyEmailDto,
   ResendVerificationDto,
+  VerifyPasswordDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthUser } from './decorators/auth-user.decorator';
@@ -66,6 +67,24 @@ export class AuthController {
   async logout(@AuthUser() user: UserProfile): Promise<{ message: string }> {
     await this.authService.logout(user.id);
     return { message: 'Logged out successfully' };
+  }
+
+  @Post('verify-password')
+  @HttpCode(HttpStatus.OK)
+  @Roles(
+    Role.ADMIN,
+    Role.SUPER_ADMIN,
+    Role.COMPANY_ADMIN,
+    Role.LOCATION_ADMIN,
+    Role.USER,
+    Role.OPERATOR,
+  )
+  @AuthSwagger.verifyPassword()
+  async verifyPassword(
+    @AuthUser() user: UserProfile,
+    @Body() dto: VerifyPasswordDto,
+  ): Promise<{ valid: boolean }> {
+    return this.authService.verifyPassword(user.id, dto.password);
   }
 
   @Post('email/verify')

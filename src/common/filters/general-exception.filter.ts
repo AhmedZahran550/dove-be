@@ -65,9 +65,10 @@ export class GeneralExceptionFilter implements ExceptionFilter {
       errors = this.extractErrors(resp?.['message']);
     } else if (exception instanceof UnauthorizedException) {
       statusCode = HttpStatus.UNAUTHORIZED;
-      const resp = exception.getResponse();
-      errorCode = resp?.['code'] || 'UNAUTHORIZED';
-      message = 'Unauthorized';
+      const resp = exception.getResponse() as any;
+      errorCode = resp?.code || 'UNAUTHORIZED';
+      message = resp?.message || exception.message || 'Unauthorized';
+      errors = this.extractErrors(resp);
     } else if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       errorCode = 'HTTP_EXCEPTION';

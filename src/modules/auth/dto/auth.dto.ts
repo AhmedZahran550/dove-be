@@ -75,3 +75,10 @@ export class ResendVerificationDto {
   @IsEmail()
   email: string;
 }
+
+export class VerifyPasswordDto {
+  @ApiProperty({ example: 'SecurePassword123!' })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

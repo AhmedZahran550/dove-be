@@ -227,6 +227,35 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
+  async verifyPassword(
+    userId: string,
+    password: string,
+  ): Promise<{ valid: boolean }> {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: userId })
+      .addSelect('user.password')
+      .getOne();
+
+    if (!user || !user.password) {
+      throw new UnauthorizedException({
+        code: ErrorCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
+    }
+
+    const isPasswordValid = await argon2.verify(user.password, password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException({
+        code: ErrorCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
+    }
+
+    return { valid: true };
+  }
+
   async refreshTokens(refreshToken: string): Promise<AuthResponseDto> {
     try {
       const payload = this.jwtService.verify(refreshToken, {

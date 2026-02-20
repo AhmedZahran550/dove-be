@@ -7,6 +7,7 @@ import {
   RefreshTokenDto,
   VerifyEmailDto,
   ResendVerificationDto,
+  VerifyPasswordDto,
 } from '../modules/auth/dto/auth.dto';
 
 export const AuthSwagger = {
@@ -47,6 +48,22 @@ export const AuthSwagger = {
     applyDecorators(
       ApiOperation({ summary: 'Logout and invalidate refresh token' }),
       ApiResponse({ status: 200, description: 'Logged out successfully' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  verifyPassword: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Verify current user password' }),
+      ApiResponse({
+        status: 200,
+        description: 'Password is correct',
+        schema: {
+          type: 'object',
+          properties: {
+            valid: { type: 'boolean', example: true },
+          },
+        },
+      }),
+      ApiResponse({ status: 401, description: 'Invalid credentials' }),
       ApiBearerAuth('JWT-auth'),
     ),
   verifyEmail: () =>
