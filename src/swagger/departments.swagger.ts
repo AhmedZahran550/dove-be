@@ -100,4 +100,38 @@ export const DepartmentsSwagger = {
       }),
       ApiBearerAuth('JWT-auth'),
     ),
+  getOeeSettings: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Get OEE settings for a department' }),
+      ApiParam({ name: 'id', description: 'Department UUID' }),
+      ApiQuery({
+        name: 'current',
+        required: false,
+        type: Boolean,
+        description: 'Get only current active setting',
+      }),
+      ApiResponse({
+        status: 200,
+        description: 'Settings retrieved successfully',
+      }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  createOeeSetting: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Create a new OEE setting for a department' }),
+      ApiParam({ name: 'id', description: 'Department UUID' }),
+      ApiResponse({ status: 201, description: 'Setting created successfully' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  archiveOeeSetting: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Archive an OEE setting' }),
+      ApiParam({ name: 'id', description: 'Department UUID' }),
+      ApiParam({ name: 'settingId', description: 'OEE Setting UUID' }),
+      ApiResponse({
+        status: 200,
+        description: 'Setting archived successfully',
+      }),
+      ApiBearerAuth('JWT-auth'),
+    ),
 };

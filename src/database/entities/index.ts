@@ -47,6 +47,8 @@ export { ScheduleOperatorAssignment } from './schedule-operator-assignment.entit
 export { Shift } from './shift.entity';
 export { SystemConfiguration } from './system-configuration.entity';
 export { WorkOrderCustomStatus } from './work-order-custom-status.entity';
+export { Product } from './product.entity';
+
 export { WorkOrderDowntime } from './work-order-downtime.entity';
 export { WorkOrderOperator } from './work-order-operator.entity';
 export { WorkOrderStatusHistory } from './work-order-status-history.entity';

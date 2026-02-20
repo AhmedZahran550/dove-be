@@ -112,4 +112,63 @@ export class DepartmentsController {
       message: 'Department deleted successfully',
     };
   }
+
+  // --- OEE Settings Endpoints ---
+
+  @Get(':id/oee-settings')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  @DepartmentsSwagger.getOeeSettings()
+  async getOeeSettings(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('current') current: string,
+    @AuthUser() user: UserProfile,
+  ) {
+    if (current === 'true') {
+      const setting = await this.departmentsService.getCurrentOeeSetting(
+        id,
+        user.companyId,
+      );
+      if (!setting) {
+        return { success: true, data: null };
+      }
+      return { success: true, data: setting };
+    }
+    const settings = await this.departmentsService.getOeeSettingsHistory(
+      id,
+      user.companyId,
+    );
+    return { success: true, data: settings };
+  }
+
+  @Post(':id/oee-settings')
+  @CacheEvict('departments:{{id}}')
+  @DepartmentsSwagger.createOeeSetting()
+  async createOeeSetting(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: import('./dto/oee-setting.dto').CreateOeeSettingDto,
+    @AuthUser() user: UserProfile,
+  ) {
+    const setting = await this.departmentsService.createOeeSetting(
+      id,
+      user.companyId,
+      dto,
+      user.id,
+    );
+    return { success: true, data: setting };
+  }
+
+  @Patch(':id/oee-settings/:settingId')
+  @CacheEvict('departments:{{id}}')
+  @DepartmentsSwagger.archiveOeeSetting()
+  async archiveOeeSetting(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('settingId', ParseUUIDPipe) settingId: string,
+    @AuthUser() user: UserProfile,
+  ) {
+    const setting = await this.departmentsService.archiveOeeSetting(
+      settingId,
+      user.companyId,
+    );
+    return { success: true, data: setting };
+  }
 }

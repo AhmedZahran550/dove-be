@@ -5,9 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { Department } from '../../database/entities';
+import { Department, DepartmentOeeSetting } from '../../database/entities';
 import { DepartmentSetting } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
+import {
+  CreateOeeSettingDto,
+  UpdateOeeSettingDto,
+} from './dto/oee-setting.dto';
 import { DBService } from '@/database/db.service';
 import { Paginated, FilterOperator, FilterSuffix } from 'nestjs-paginate';
 import { QueryConfig, QueryOptions } from '@/common/query-options';
@@ -30,11 +34,17 @@ const ALLOWED_TABLES: Record<string, string[]> = {
     'current_status',
     'department_id',
     'equipment_id',
-    'part_number',
-    'shift',
+    'location_id',
+    'wo_number',
   ],
   schedule_data: ['department', 'status', 'part_number', 'shift'],
-  products: ['category', 'type'],
+  products: ['name', 'category', 'type'],
+  partnumber_info: [
+    'department',
+    'product_category',
+    'lifecycle_status',
+    'inventory_type',
+  ],
 };
 
 @Injectable()
@@ -44,6 +54,8 @@ export class DepartmentsService extends DBService<Department> {
     private departmentsRepository: Repository<Department>,
     @InjectRepository(DepartmentSetting)
     private settingsRepository: Repository<DepartmentSetting>,
+    @InjectRepository(DepartmentOeeSetting)
+    private oeeSettingsRepository: Repository<DepartmentOeeSetting>,
     private dataSource: DataSource,
   ) {
     super(departmentsRepository, DEPARTMENTS_PAGINATION_CONFIG);
@@ -195,5 +207,89 @@ export class DepartmentsService extends DBService<Department> {
     );
 
     return rows.map((r) => r.value).filter(Boolean);
+  }
+
+  // --- OEE Settings Methods ---
+
+  async getCurrentOeeSetting(
+    departmentId: string,
+    companyId: string,
+  ): Promise<DepartmentOeeSetting | null> {
+    return this.oeeSettingsRepository.findOne({
+      where: {
+        departmentId,
+        companyId,
+        isArchived: false,
+        effectiveTo: null,
+      },
+      order: { effectiveFrom: 'DESC' },
+    });
+  }
+
+  async getOeeSettingsHistory(
+    departmentId: string,
+    companyId: string,
+  ): Promise<DepartmentOeeSetting[]> {
+    return this.oeeSettingsRepository.find({
+      where: { departmentId, companyId },
+      order: { effectiveFrom: 'DESC' },
+    });
+  }
+
+  async createOeeSetting(
+    departmentId: string,
+    companyId: string,
+    dto: CreateOeeSettingDto,
+    userId: string,
+  ): Promise<DepartmentOeeSetting> {
+    // 1. Find the current active setting and close it (set effectiveTo)
+    const currentActive = await this.getCurrentOeeSetting(
+      departmentId,
+      companyId,
+    );
+    if (currentActive) {
+      currentActive.effectiveTo = new Date(dto.effectiveFrom);
+      await this.oeeSettingsRepository.save(currentActive);
+    }
+
+    // 2. Calculate OEE Goal
+    const oeeGoal = Number(
+      (
+        (dto.availabilityGoal * dto.performanceGoal * dto.qualityGoal) /
+        10000
+      ).toFixed(2),
+    );
+
+    // 3. Create new setting
+    const newSetting = this.oeeSettingsRepository.create({
+      departmentId,
+      companyId,
+      qcRequired: dto.qcRequired ?? true,
+      availabilityGoal: dto.availabilityGoal,
+      performanceGoal: dto.performanceGoal,
+      qualityGoal: dto.qualityGoal,
+      oeeGoal,
+      effectiveFrom: new Date(dto.effectiveFrom),
+      notes: dto.notes,
+      createdBy: userId,
+    });
+
+    return this.oeeSettingsRepository.save(newSetting);
+  }
+
+  async archiveOeeSetting(
+    settingId: string,
+    companyId: string,
+  ): Promise<DepartmentOeeSetting> {
+    const setting = await this.oeeSettingsRepository.findOne({
+      where: { id: settingId, companyId },
+    });
+
+    if (!setting) {
+      throw new NotFoundException(`OEE setting with ID ${settingId} not found`);
+    }
+
+    setting.isArchived = true;
+    return this.oeeSettingsRepository.save(setting);
   }
 }
