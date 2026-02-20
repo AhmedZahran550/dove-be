@@ -4,6 +4,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import {
   CreateDepartmentDto,
@@ -29,6 +30,33 @@ export const DepartmentsSwagger = {
         status: 200,
         description: 'Filter options retrieved successfully',
       }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
+  getUniqueValues: () =>
+    applyDecorators(
+      ApiOperation({
+        summary: 'Get distinct values for a column in a given table',
+      }),
+      ApiQuery({
+        name: 'table',
+        description: 'Target table name',
+        example: 'work_orders',
+      }),
+      ApiQuery({
+        name: 'column',
+        description: 'Column to get unique values for',
+        example: 'current_status',
+      }),
+      ApiResponse({
+        status: 200,
+        description: 'Unique values retrieved successfully',
+        schema: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      }),
+      ApiResponse({ status: 400, description: 'Table or column not allowed' }),
       ApiResponse({ status: 401, description: 'Unauthorized' }),
       ApiBearerAuth('JWT-auth'),
     ),

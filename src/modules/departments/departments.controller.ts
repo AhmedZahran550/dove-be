@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -47,6 +48,16 @@ export class DepartmentsController {
   @DepartmentsSwagger.getFilterOptions()
   async getFilterOptions(@AuthUser() user: UserProfile) {
     return this.departmentsService.getFilterOptions(user.companyId);
+  }
+
+  @Get('unique-values')
+  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
+  @DepartmentsSwagger.getUniqueValues()
+  async getUniqueValues(
+    @Query('table') table: string,
+    @Query('column') column: string,
+  ): Promise<string[]> {
+    return this.departmentsService.getUniqueValues(table, column);
   }
 
   @Get(':id')

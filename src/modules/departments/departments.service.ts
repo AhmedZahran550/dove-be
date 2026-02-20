@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Department } from '../../database/entities';
 import { DepartmentSetting } from '../../database/entities';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/department.dto';
@@ -20,6 +24,19 @@ export const DEPARTMENTS_PAGINATION_CONFIG: QueryConfig<Department> = {
   relations: ['departmentSettings'],
 };
 
+// Whitelist to prevent SQL injection
+const ALLOWED_TABLES: Record<string, string[]> = {
+  work_order: [
+    'current_status',
+    'department_id',
+    'equipment_id',
+    'part_number',
+    'shift',
+  ],
+  schedule_data: ['department', 'status', 'part_number', 'shift'],
+  products: ['category', 'type'],
+};
+
 @Injectable()
 export class DepartmentsService extends DBService<Department> {
   constructor(
@@ -27,6 +44,7 @@ export class DepartmentsService extends DBService<Department> {
     private departmentsRepository: Repository<Department>,
     @InjectRepository(DepartmentSetting)
     private settingsRepository: Repository<DepartmentSetting>,
+    private dataSource: DataSource,
   ) {
     super(departmentsRepository, DEPARTMENTS_PAGINATION_CONFIG);
   }
@@ -154,14 +172,28 @@ export class DepartmentsService extends DBService<Department> {
   async getFilterOptions(
     companyId: string,
   ): Promise<{ tables: string[]; columns: Record<string, string[]> }> {
-    // Return available filter options
     return {
-      tables: ['schedule_data', 'work_orders', 'products'],
-      columns: {
-        schedule_data: ['department', 'status', 'part_number', 'shift'],
-        work_orders: ['current_status', 'department_id', 'equipment_id'],
-        products: ['category', 'type'],
-      },
+      tables: Object.keys(ALLOWED_TABLES),
+      columns: ALLOWED_TABLES,
     };
+  }
+
+  async getUniqueValues(table: string, column: string): Promise<string[]> {
+    const allowedColumns = ALLOWED_TABLES[table];
+    if (!allowedColumns) {
+      throw new BadRequestException(`Table "${table}" is not allowed`);
+    }
+    if (!allowedColumns.includes(column)) {
+      throw new BadRequestException(
+        `Column "${column}" is not allowed for table "${table}"`,
+      );
+    }
+
+    // Safe to interpolate — validated against whitelist above
+    const rows: { value: string }[] = await this.dataSource.query(
+      `SELECT DISTINCT "${column}" AS value FROM "${table}" WHERE "${column}" IS NOT NULL ORDER BY value ASC`,
+    );
+
+    return rows.map((r) => r.value).filter(Boolean);
   }
 }
