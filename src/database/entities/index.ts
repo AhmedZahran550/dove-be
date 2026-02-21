@@ -52,3 +52,4 @@ export { Product } from './product.entity';
 export { WorkOrderDowntime } from './work-order-downtime.entity';
 export { WorkOrderOperator } from './work-order-operator.entity';
 export { WorkOrderStatusHistory } from './work-order-status-history.entity';
+export { VerificationCode, VerificationCodeType } from './verification-code.entity';
