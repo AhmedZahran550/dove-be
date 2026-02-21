@@ -64,10 +64,14 @@ export class AuthResponseDto {
 }
 
 export class VerifyEmailDto {
-  @ApiProperty({ description: 'Email verification token' })
+  @ApiProperty({ example: 'john@example.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: 'ABC123', description: '6-character alphanumeric verification code' })
   @IsString()
   @IsNotEmpty()
-  token: string;
+  code: string;
 }
 
 export class ResendVerificationDto {

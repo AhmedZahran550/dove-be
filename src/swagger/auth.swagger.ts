@@ -68,13 +68,13 @@ export const AuthSwagger = {
     ),
   verifyEmail: () =>
     applyDecorators(
-      ApiOperation({ summary: 'Verify email address with token' }),
+      ApiOperation({ summary: 'Verify email address with code' }),
       ApiResponse({
         status: 200,
         description: 'Email verified successfully, returns auth tokens',
         type: AuthResponseDto,
       }),
-      ApiResponse({ status: 400, description: 'Invalid or expired token' }),
+      ApiResponse({ status: 400, description: 'Invalid or expired code' }),
     ),
   resendVerification: () =>
     applyDecorators(

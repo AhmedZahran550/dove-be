@@ -92,7 +92,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @AuthSwagger.verifyEmail()
   async verifyEmail(@Body() dto: VerifyEmailDto): Promise<AuthResponseDto> {
-    return this.authService.verifyEmail(dto.token);
+    return this.authService.verifyEmail(dto.email, dto.code);
   }
 
   @Post('email/resend')

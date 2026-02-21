@@ -18,6 +18,8 @@ import { Role } from './role.model';
 import { EmailService } from '../../common/mailer/email.service';
 import { EMAIL_SERVICE } from '../../common/mailer/email.module';
 import { Inject } from '@nestjs/common';
+import { VerificationCodeService } from './verification-code.service';
+import { VerificationCodeType } from '../../database/entities';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +35,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     @Inject(EMAIL_SERVICE) private emailService: EmailService,
+    private verificationCodeService: VerificationCodeService,
   ) {}
 
   async register(dto: RegisterDto): Promise<{ message: string }> {
@@ -95,80 +98,68 @@ export class AuthService {
   }
 
   /**
-   * Generate and send email verification token
+   * Generate and send email verification code
    */
   private async sendVerificationEmail(
     user: UserProfile,
     organizationName?: string,
   ): Promise<void> {
     try {
-      const verificationToken = this.jwtService.sign(
-        {
-          sub: user.id,
-          email: user.email,
-          type: 'email_verification',
-        },
-        {
-          secret: this.configService.get('jwt.verificationToken.secret'),
-          expiresIn: '24h',
-        },
-      );
+      const verificationCode = await this.verificationCodeService.createCode(user.id);
 
       const userName = user.firstName || user.email.split('@')[0];
       await this.emailService.sendEmailVerification(
         user.email,
         userName,
-        verificationToken,
+        verificationCode.code,
         organizationName,
       );
-      this.logger.log(`Verification email sent to ${user.email}`);
+      this.logger.log(`Verification code sent to ${user.email}`);
     } catch (error) {
       this.logger.error(
         `Failed to send verification email to ${user.email}`,
         error,
       );
-      // Don't throw - registration should still succeed
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      // Don't throw for other errors - registration should still succeed
     }
   }
 
   /**
-   * Verify email with token and return auth tokens
+   * Verify email with code and return auth tokens
    */
-  async verifyEmail(token: string): Promise<AuthResponseDto> {
-    try {
-      const payload = this.jwtService.verify(token, {
-        secret: this.configService.get('jwt.verificationToken.secret'),
-      });
+  async verifyEmail(email: string, code: string): Promise<AuthResponseDto> {
+    const user = await this.usersRepository.findOne({
+      where: { email: email.toLowerCase() },
+    });
 
-      if (payload.type !== 'email_verification') {
-        throw new BadRequestException('Invalid verification token');
-      }
-
-      const user = await this.usersRepository.findOne({
-        where: { id: payload.sub },
-      });
-
-      if (!user) {
-        throw new BadRequestException('User not found');
-      }
-
-      if (user.isVerified) {
-        throw new BadRequestException('Email already verified');
-      }
-
-      // Update user as verified
-      await this.usersRepository.update(user.id, { isVerified: true });
-      user.isVerified = true;
-
-      this.logger.log(`Email verified for user ${user.email}`);
-
-      return this.generateTokens(user);
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new BadRequestException('Invalid or expired verification token');
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
+
+    if (user.isVerified) {
+      throw new BadRequestException('Email already verified');
+    }
+
+    const isValid = await this.verificationCodeService.verifyCode(
+      user.id,
+      code,
+      VerificationCodeType.EMAIL_VERIFICATION,
+    );
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+
+    // Update user as verified
+    await this.usersRepository.update(user.id, { isVerified: true });
+    user.isVerified = true;
+
+    this.logger.log(`Email verified for user ${user.email}`);
+
+    return this.generateTokens(user);
   }
 
   /**
@@ -180,9 +171,10 @@ export class AuthService {
     });
 
     if (!user) {
-      // Don't reveal if user exists or not
+      // Don't reveal if user exists or not for security, 
+      // but in this case we're throwing anyway to match original behavior
       throw new BadRequestException(
-        'If an account exists with this email, a verification email will be sent',
+        'If an account exists with this email, a verification code will be sent',
       );
     }
 
@@ -190,7 +182,7 @@ export class AuthService {
       throw new BadRequestException('Email is already verified');
     }
 
-    this.sendVerificationEmail(user);
+    await this.sendVerificationEmail(user);
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {
