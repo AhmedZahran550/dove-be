@@ -37,34 +37,23 @@
 
       <p style='color: #4b5563; font-size: 16px; margin-bottom: 20px;'>
         <strong style='color: #dc2626;'>Important:</strong>
-        Before you can log in, please confirm your email address by clicking the
-        button below:
+        Before you can log in, please confirm your email address by entering the
+        verification code below in the application:
       </p>
 
       <div style='text-align: center; margin: 35px 0;'>
-        <a
-          href='{{verificationUrl}}'
-          style='display: inline-block; background: #2563eb; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);'
+        <div
+          style='display: inline-block; background: #f3f4f6; color: #2563eb; padding: 20px 40px; border-radius: 12px; font-weight: 700; font-size: 32px; letter-spacing: 8px; border: 2px dashed #2563eb;'
         >
-          Confirm Email Address
-        </a>
+          {{verificationCode}}
+        </div>
       </div>
 
       <p
         style='color: #6b7280; font-size: 14px; text-align: center; margin-top: 20px;'
       >
-        After confirming your email, you'll be able to log in and start using
+        This code will expire in 10 minutes. After confirming your email, you'll be able to log in and start using
         DOVMFG.
-      </p>
-
-      <p
-        style='color: #9ca3af; font-size: 12px; text-align: center; margin-top: 15px;'
-      >
-        If the button doesn't work, copy and paste this link into your browser:<br
-        />
-        <span
-          style='color: #2563eb; word-break: break-all; font-size: 11px;'
-        >{{verificationUrl}}</span>
       </p>
 
       <p
