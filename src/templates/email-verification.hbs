@@ -30,9 +30,13 @@
       </h2>
 
       <p style='color: #4b5563; font-size: 16px; margin-bottom: 20px;'>
-        Your account and organization
-        <strong>{{organizationName}}</strong>
-        have been successfully created!
+        {{#if organizationName}}
+          Your account and organization
+          <strong>{{organizationName}}</strong>
+          have been successfully created!
+        {{else}}
+          Your account has been successfully created!
+        {{/if}}
       </p>
 
       <p style='color: #4b5563; font-size: 16px; margin-bottom: 20px;'>
@@ -52,8 +56,8 @@
       <p
         style='color: #6b7280; font-size: 14px; text-align: center; margin-top: 20px;'
       >
-        This code will expire in 10 minutes. After confirming your email, you'll be able to log in and start using
-        DOVMFG.
+        This code will expire in 10 minutes. After confirming your email, you'll
+        be able to log in and start using DOVMFG.
       </p>
 
       <p

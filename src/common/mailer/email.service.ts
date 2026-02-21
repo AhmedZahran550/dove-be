@@ -71,7 +71,7 @@ export class EmailService {
         template: './email-verification',
         context: {
           userName: userName,
-          organizationName: organizationName || 'your organization',
+          organizationName: organizationName,
           verificationCode: verificationCode,
           appUrl: frontendUrl,
           year: new Date().getFullYear(),

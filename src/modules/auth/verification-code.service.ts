@@ -1,7 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
-import { VerificationCode, VerificationCodeType } from '../../database/entities';
+import {
+  VerificationCode,
+  VerificationCodeType,
+} from '../../database/entities';
 import { addMinutes, isAfter } from 'date-fns';
 
 @Injectable()
@@ -14,13 +17,13 @@ export class VerificationCodeService {
   /**
    * Generate a random 6-character alphanumeric code
    */
-  private generateCode(length = 6): string {
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude similar looking chars like I, O, 0, 1
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
+  private generateCode(): string {
+    // Get the last 6 digits of the current timestamp
+    const timestampPart = Date.now().toString().slice(-3);
+    // Generate a 4-digit random number
+    const randomPart = Math.floor(100 + Math.random() * 900).toString();
+
+    return randomPart + timestampPart;
   }
 
   /**
@@ -39,10 +42,12 @@ export class VerificationCodeService {
     if (lastCode) {
       const cooldownTime = 60 * 1000; // 60 seconds
       const timeSinceLast = Date.now() - lastCode.createdAt.getTime();
-      
+
       if (timeSinceLast < cooldownTime) {
         const remaining = Math.ceil((cooldownTime - timeSinceLast) / 1000);
-        throw new BadRequestException(`Please wait ${remaining} seconds before requesting a new code.`);
+        throw new BadRequestException(
+          `Please wait ${remaining} seconds before requesting a new code.`,
+        );
       }
     }
 
@@ -89,8 +94,10 @@ export class VerificationCodeService {
     }
 
     // Mark as used
-    await this.verificationCodeRepository.update(validCode.id, { isUsed: true });
-    
+    await this.verificationCodeRepository.update(validCode.id, {
+      isUsed: true,
+    });
+
     return true;
   }
 }
