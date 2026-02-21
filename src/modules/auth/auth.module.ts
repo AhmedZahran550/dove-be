@@ -8,15 +8,21 @@ import { AuthController } from './auth.controller';
 import { ProfileController } from './profile.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { EmailModule } from '../../common/mailer/email.module';
-import { UserProfile, Company, Location } from '../../database/entities';
+import {
+  UserProfile,
+  Company,
+  Location,
+  VerificationCode,
+} from '../../database/entities';
 import { SMSService } from './sms.service';
+import { VerificationCodeService } from './verification-code.service';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserProfile, Company, Location]),
+    TypeOrmModule.forFeature([UserProfile, Company, Location, VerificationCode]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -35,6 +41,7 @@ import { RolesGuard } from './guards/roles.guard';
     AuthService,
     JwtStrategy,
     SMSService,
+    VerificationCodeService,
     {
       provide: APP_GUARD,
       useExisting: JwtAuthGuard,
@@ -46,6 +53,6 @@ import { RolesGuard } from './guards/roles.guard';
     },
     RolesGuard,
   ],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService, JwtModule, VerificationCodeService],
 })
 export class AuthModule {}
