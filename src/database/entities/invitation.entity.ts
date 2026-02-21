@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 import { Role } from '@/modules/auth/role.model';
 
 export enum InvitationStatus {
@@ -62,7 +62,7 @@ export class Invitation extends BaseEntity {
   @Column({ type: 'uuid' })
   companyId: string;
 
-  @ManyToOne(() => UserProfile, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'invited_by' })
-  invitedByUser: UserProfile;
+  invitedByUser: User;
 }

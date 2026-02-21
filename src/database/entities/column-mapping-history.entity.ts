@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { CompanyColumnMapping } from './company-column-mapping.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('column_mapping_history')
 export class ColumnMappingHistory extends BaseEntity {
@@ -54,7 +54,7 @@ export class ColumnMappingHistory extends BaseEntity {
   @JoinColumn({ name: 'mapping_id' })
   mapping: CompanyColumnMapping;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'performed_by' })
-  performedByUser: UserProfile;
+  performedByUser: User;
 }

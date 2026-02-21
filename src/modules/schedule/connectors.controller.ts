@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ScheduleService } from '../schedule/schedule.service';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { UserProfile } from '@/database/entities/user-profile.entity';
+import { User } from '@/database/entities/user.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { ConnectorResponseDto } from '../schedule/dto/sync-agent.dto';
@@ -18,7 +18,7 @@ export class ConnectorsController {
   @Get()
   @ConnectorsSwagger.getAvailableConnectors()
   async getAvailableConnectors(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ConnectorResponseDto> {
     const connectors = await this.scheduleService.getAvailableConnectors(
       user.companyId,

@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrderStatus } from './work-order-status.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('conditional_status_rules')
 export class ConditionalStatusRule extends BaseEntity {
@@ -60,7 +60,7 @@ export class ConditionalStatusRule extends BaseEntity {
   @JoinColumn({ name: 'status_id' })
   status: WorkOrderStatus;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  createdByUser: UserProfile;
+  createdByUser: User;
 }

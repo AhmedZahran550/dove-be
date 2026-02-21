@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Location } from './location.entity';
 import { WorkOrderStatus } from './work-order-status.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('location_statuses')
 export class LocationStatus extends BaseEntity {
@@ -36,11 +36,11 @@ export class LocationStatus extends BaseEntity {
   @JoinColumn({ name: 'status_id' })
   status: WorkOrderStatus;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  createdByUser: UserProfile;
+  createdByUser: User;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'updated_by' })
-  updatedByUser: UserProfile;
+  updatedByUser: User;
 }

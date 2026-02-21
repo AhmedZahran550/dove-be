@@ -3,7 +3,7 @@ import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
 import { DowntimeReason } from './downtime-reason.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('work_order_downtime')
 export class WorkOrderDowntime extends BaseEntity {
@@ -44,7 +44,7 @@ export class WorkOrderDowntime extends BaseEntity {
   @JoinColumn({ name: 'downtime_reason_id' })
   downtimeReason: DowntimeReason;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'operator_id' })
-  operator: UserProfile;
+  operator: User;
 }

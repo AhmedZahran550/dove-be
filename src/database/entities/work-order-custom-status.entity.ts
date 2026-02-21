@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Department } from './department.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('work_order_custom_statuses')
 export class WorkOrderCustomStatus extends BaseEntity {
@@ -36,7 +36,7 @@ export class WorkOrderCustomStatus extends BaseEntity {
   @JoinColumn({ name: 'department_id' })
   department: Department;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  createdByUser: UserProfile;
+  createdByUser: User;
 }

@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn, Index, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('system_configurations')
 @Unique(['companyId', 'configKey'])
@@ -40,11 +40,11 @@ export class SystemConfiguration extends BaseEntity {
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'createdBy' })
-  creator?: UserProfile;
+  creator?: User;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'updatedBy' })
-  updater?: UserProfile;
+  updater?: User;
 }

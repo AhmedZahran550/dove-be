@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ScheduleController } from './schedule.controller';
 import { ScheduleService } from './schedule.service';
-import { UserProfile } from '../../database/entities/user-profile.entity';
+import { User } from '../../database/entities/user.entity';
 
 describe('ScheduleController', () => {
   let controller: ScheduleController;
@@ -10,7 +10,7 @@ describe('ScheduleController', () => {
   const mockUser = {
     id: 'user-uuid',
     companyId: 'company-uuid',
-  } as UserProfile;
+  } as User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

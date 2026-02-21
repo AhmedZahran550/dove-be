@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Location } from './location.entity';
 import { Department } from './department.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('location_departments')
 export class LocationDepartment extends BaseEntity {
@@ -33,11 +33,11 @@ export class LocationDepartment extends BaseEntity {
   @JoinColumn({ name: 'department_id' })
   department: Department;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  createdByUser: UserProfile;
+  createdByUser: User;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'updated_by' })
-  updatedByUser: UserProfile;
+  updatedByUser: User;
 }

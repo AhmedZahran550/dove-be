@@ -50,26 +50,29 @@ export class AuthService {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ') || '';
 
-    // Generate slug from organization name
-    const slug = this.generateSlug(dto.organizationName);
+    let savedCompany = null;
+    if (dto.organizationName) {
+      // Generate slug from organization name
+      const slug = this.generateSlug(dto.organizationName);
 
-    const company: Company = this.companiesRepository.create({
-      name: dto.organizationName,
-      slug,
-      phone: dto.phone,
-      timezone: 'America/Toronto',
-      subscriptionTier: 'free',
-      subscriptionStatus: 'trial',
-      trialEndsAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
-      maxUsers: 5,
-      maxLocations: 1,
-      isActive: true,
-    });
+      const company: Company = this.companiesRepository.create({
+        name: dto.organizationName,
+        slug,
+        phone: dto.phone,
+        timezone: 'America/Toronto',
+        subscriptionTier: 'free',
+        subscriptionStatus: 'trial',
+        trialEndsAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
+        maxUsers: 5,
+        maxLocations: 1,
+        isActive: true,
+      });
 
-    const savedCompany = await this.companiesRepository.save(company);
+      savedCompany = await this.companiesRepository.save(company);
+    }
 
     const user = this.usersRepository.create({
-      companyId: savedCompany.id,
+      companyId: savedCompany?.id,
       email: dto.email.toLowerCase(),
       firstName: firstName,
       lastName: lastName,

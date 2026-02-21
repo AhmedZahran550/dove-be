@@ -2,7 +2,7 @@
 export { BaseEntity } from './base.entity';
 export { Company } from './company.entity';
 export { Location } from './location.entity';
-export { UserProfile } from './user-profile.entity';
+export { User as UserProfile } from './user.entity';
 export { WorkOrder } from './work-order.entity';
 export { Department } from './department.entity';
 export { DepartmentSetting } from './department-setting.entity';

@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 import { ScheduleData } from './schedule-data.entity';
 
 @Entity('schedule_files')
@@ -59,9 +59,9 @@ export class ScheduleFile extends BaseEntity {
   @JoinColumn({ name: 'companyId' })
   company?: Company;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'uploadedBy' })
-  uploader?: UserProfile;
+  uploader?: User;
 
   @OneToMany(() => ScheduleData, (data) => data.scheduleFile)
   scheduleData?: ScheduleData[];

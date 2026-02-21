@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { JwtAuthGuard } from '../src/modules/auth/guards/jwt-auth.guard';
 import { Role } from '../src/modules/auth/role.model';
 import { JwtService } from '@nestjs/jwt';
-import { UserProfile } from '../src/database/entities/user-profile.entity';
+import { User } from '../src/database/entities/user.entity';
 import { ScheduleService } from '../src/modules/schedule/schedule.service';
 import { ScheduleFile } from '../src/database/entities';
 
@@ -47,8 +47,9 @@ describe('Schedule Configuration and Sync (e2e)', () => {
 
     scheduleService = moduleFixture.get<ScheduleService>(ScheduleService);
     // Mock the service methods to return consistent data for testing
-    jest.spyOn(scheduleService, 'getScheduleSyncConfig').mockImplementation(
-      async (companyId: string) => {
+    jest
+      .spyOn(scheduleService, 'getScheduleSyncConfig')
+      .mockImplementation(async (companyId: string) => {
         const mockScheduleFile: Partial<ScheduleFile> = {
           id: 'schedule-file-uuid',
           fileName: 'mock_schedule.xlsx',
@@ -68,8 +69,7 @@ describe('Schedule Configuration and Sync (e2e)', () => {
             automaticBackups: true,
           },
         };
-      },
-    );
+      });
     jest
       .spyOn(scheduleService, 'triggerScheduleSync')
       .mockResolvedValue({ success: true, message: 'Sync started' });

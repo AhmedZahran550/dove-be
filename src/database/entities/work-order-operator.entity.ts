@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, Index, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('work_order_operators')
 @Unique(['workOrderId', 'operatorId'])
@@ -37,9 +37,9 @@ export class WorkOrderOperator extends BaseEntity {
   @JoinColumn({ name: 'workOrderId' })
   workOrder?: WorkOrder;
 
-  @ManyToOne(() => UserProfile, (user) => user.workOrderOperators, {
+  @ManyToOne(() => User, (user) => user.workOrderOperators, {
     onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'operatorId' })
-  operator?: UserProfile;
+  operator?: User;
 }

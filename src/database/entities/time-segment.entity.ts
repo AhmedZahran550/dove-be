@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('time_segments')
 @Index(['companyId'])
@@ -91,17 +91,17 @@ export class TimeSegment extends BaseEntity {
   @JoinColumn({ name: 'workOrderId' })
   workOrder?: WorkOrder;
 
-  @ManyToOne(() => UserProfile, (user) => user.timeSegments, {
+  @ManyToOne(() => User, (user) => user.timeSegments, {
     onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'operatorId' })
-  operator?: UserProfile;
+  operator?: User;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'operatorAssId' })
-  operatorAssistant?: UserProfile;
+  operatorAssistant?: User;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'approvedBy' })
-  approver?: UserProfile;
+  approver?: User;
 }

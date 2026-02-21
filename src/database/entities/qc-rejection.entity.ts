@@ -3,7 +3,7 @@ import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { WorkOrder } from './work-order.entity';
 import { RejectionReason } from './rejection-reason.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('qc_rejections')
 @Index(['companyId'])
@@ -133,19 +133,19 @@ export class QCRejection extends BaseEntity {
   @JoinColumn({ name: 'rejectionReasonId' })
   rejectionReason?: RejectionReason;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'inspectorId' })
-  inspector?: UserProfile;
+  inspector?: User;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'resolvedBy' })
-  resolver?: UserProfile;
+  resolver?: User;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'operatorId' })
-  operator?: UserProfile;
+  operator?: User;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'dispositionApprovedBy' })
-  dispositionApprover?: UserProfile;
+  dispositionApprover?: User;
 }

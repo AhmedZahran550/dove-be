@@ -17,12 +17,12 @@ import * as argon from 'argon2';
 import { Exclude } from 'class-transformer';
 import { Role } from '@/modules/auth/role.model';
 
-@Entity('user_profiles')
+@Entity('users')
 @Index(['companyId'])
 @Index(['locationId'])
 @Index(['email'])
-export class UserProfile extends BaseEntity {
-  @Column({ type: 'uuid' })
+export class User extends BaseEntity {
+  @Column({ type: 'uuid', nullable: true })
   companyId: string;
 
   @Column({ type: 'uuid', nullable: true })
@@ -92,13 +92,14 @@ export class UserProfile extends BaseEntity {
   password: string;
 
   // Relations
-  @ManyToOne(() => Company, (company) => company.userProfiles, {
+  @ManyToOne(() => Company, (company) => company.users, {
+    nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'company_id' })
   company?: Company;
 
-  @ManyToOne(() => Location, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Location, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'location_id' })
   location?: Location;
 

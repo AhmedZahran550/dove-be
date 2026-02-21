@@ -4,7 +4,7 @@ import { BaseEntity } from './base.entity';
 // Given previous prompts, I will use string/uuid for user_id if User entity is not clearly defined in current context, or try to import UserProfile if that's the main user entity.
 // Schema says REFERENCES auth.users(id), which is usually Supabase/Firebase auth or similar distinct schema.
 // I will treat it as a column for now unless User entity is available in "src/database/entities" (it is not in the list I saw earlier, only user-profile.entity.ts).
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('email_verification_tokens')
 export class EmailVerificationToken extends BaseEntity {

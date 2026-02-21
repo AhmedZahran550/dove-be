@@ -23,10 +23,10 @@ export class RegisterDto {
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: 'Acme Manufacturing' })
+  @ApiProperty({ example: 'Acme Manufacturing', required: false })
   @IsString()
-  @IsNotEmpty()
-  organizationName: string;
+  @IsOptional()
+  organizationName?: string;
 
   @ApiProperty({ example: 'SecurePassword123!' })
   @IsString()

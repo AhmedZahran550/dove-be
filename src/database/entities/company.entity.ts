@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Location } from './location.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 import { WorkOrderStatus } from './work-order-status.entity';
 import { WorkOrder } from './work-order.entity';
 import { TimeSegment } from './time-segment.entity';
@@ -126,8 +126,8 @@ export class Company extends BaseEntity {
   @OneToMany(() => Location, (location) => location.company)
   locations?: Location[];
 
-  @OneToMany(() => UserProfile, (userProfile) => userProfile.company)
-  userProfiles?: UserProfile[];
+  @OneToMany(() => User, (user) => user.company)
+  users?: User[];
 
   @OneToMany(() => WorkOrderStatus, (status) => status.company)
   workOrderStatuses?: WorkOrderStatus[];

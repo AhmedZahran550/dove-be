@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { PartnumberInfo } from './partnumber-info.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('product_cost_history')
 @Index(['productId'])
@@ -40,7 +40,7 @@ export class ProductCostHistory extends BaseEntity {
   @JoinColumn({ name: 'productId' })
   product?: PartnumberInfo;
 
-  @ManyToOne(() => UserProfile, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'changedBy' })
-  changedByUser?: UserProfile;
+  changedByUser?: User;
 }

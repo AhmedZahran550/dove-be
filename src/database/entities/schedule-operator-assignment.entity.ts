@@ -5,7 +5,7 @@ import { ScheduleData } from './schedule-data.entity';
 import { Operator } from './operator.entity';
 import { Shift } from './shift.entity';
 import { ProcessStep } from './process-step.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 
 @Entity('schedule_operator_assignments')
 export class ScheduleOperatorAssignment extends BaseEntity {
@@ -60,7 +60,7 @@ export class ScheduleOperatorAssignment extends BaseEntity {
   @JoinColumn({ name: 'process_step_id' })
   processStep: ProcessStep;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'assigned_by' })
-  assignedByUser: UserProfile;
+  assignedByUser: User;
 }

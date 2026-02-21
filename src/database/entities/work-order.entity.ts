@@ -12,7 +12,7 @@ import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Location } from './location.entity';
 import { WorkOrderStatus } from './work-order-status.entity';
-import { UserProfile } from './user-profile.entity';
+import { User } from './user.entity';
 import { TimeSegment } from './time-segment.entity';
 import { QCRejection } from './qc-rejection.entity';
 import { WorkOrderOperator } from './work-order-operator.entity';
@@ -179,9 +179,9 @@ export class WorkOrder extends BaseEntity {
   @JoinColumn({ name: 'statusId' })
   status?: WorkOrderStatus;
 
-  @ManyToOne(() => UserProfile)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'statusUpdatedBy' })
-  statusUpdatedByUser?: UserProfile;
+  statusUpdatedByUser?: User;
 
   @OneToMany(() => TimeSegment, (segment) => segment.workOrder)
   timeSegments?: TimeSegment[];

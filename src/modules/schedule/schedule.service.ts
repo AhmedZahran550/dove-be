@@ -15,7 +15,7 @@ import { Department } from '../../database/entities/department.entity';
 import { SystemConfiguration } from '../../database/entities/system-configuration.entity';
 import { TimeSegment } from '../../database/entities/time-segment.entity';
 import { Equipment } from '../../database/entities/equipment.entity';
-import { UserProfile } from '../../database/entities/user-profile.entity';
+import { User } from '../../database/entities/user.entity';
 import {
   generateNormalizationRules,
   applyNormalization,
@@ -573,7 +573,9 @@ export class ScheduleService extends DBService<ScheduleData> {
   /**
    * Get SQLite connections for a company
    */
-  async getSqliteConnections(companyId: string): Promise<SqliteConnectionDto[]> {
+  async getSqliteConnections(
+    companyId: string,
+  ): Promise<SqliteConnectionDto[]> {
     // This is a placeholder implementation as the entities don't exist yet.
     return [
       {

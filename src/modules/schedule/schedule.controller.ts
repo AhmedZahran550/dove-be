@@ -20,7 +20,7 @@ import { ScheduleData, CompanyColumnMapping } from '../../database/entities';
 import { ScheduleFile } from '../../database/entities';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { QueryOptions, Paginate } from '../../common/query-options';
-import { UserProfile } from '@/database/entities/user-profile.entity';
+import { User } from '@/database/entities/user.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { multerMemoryConfig } from './multer.config';
@@ -52,7 +52,7 @@ export class ScheduleController {
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.saveConfig()
   async saveConfig(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
     @Body() dto: SaveScheduleConfigDto,
   ): Promise<{ success: boolean; data: ScheduleFile }> {
     const scheduleFile = await this.scheduleService.saveConfig(
@@ -68,7 +68,7 @@ export class ScheduleController {
   @UseInterceptors(FileInterceptor('file', multerMemoryConfig))
   @ScheduleSwagger.importFile()
   async importFile(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: ImportScheduleDto,
   ): Promise<ImportResultDto> {
@@ -89,7 +89,7 @@ export class ScheduleController {
   @ScheduleSwagger.findScheduleData()
   async findScheduleData(
     @Paginate() query: QueryOptions,
-    @AuthUser() user?: UserProfile,
+    @AuthUser() user?: User,
   ) {
     return this.scheduleService.findScheduleData(user.companyId, query);
   }
@@ -98,7 +98,7 @@ export class ScheduleController {
   @ScheduleSwagger.findByDepartment()
   async findByDepartment(
     @Param('department') department: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ScheduleData[]> {
     return this.scheduleService.findScheduleDataByDepartment(
       user.companyId,
@@ -110,7 +110,7 @@ export class ScheduleController {
   @ScheduleSwagger.findByWoId()
   async findByWoId(
     @Param('woId') woId: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ScheduleData | null> {
     return this.scheduleService.findScheduleDataByWoId(woId, user.companyId);
   }
@@ -119,7 +119,7 @@ export class ScheduleController {
   @ScheduleSwagger.findById()
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ScheduleData> {
     return this.scheduleService.findScheduleDataById(id, user.companyId);
   }
@@ -129,7 +129,7 @@ export class ScheduleController {
   async updateScheduleData(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateData: Partial<ScheduleData>,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ScheduleData> {
     return this.scheduleService.updateScheduleData(
       id,
@@ -140,28 +140,26 @@ export class ScheduleController {
 
   @Get('departments')
   @ScheduleSwagger.getDepartments()
-  async getDepartments(@AuthUser() user: UserProfile): Promise<string[]> {
+  async getDepartments(@AuthUser() user: User): Promise<string[]> {
     return this.scheduleService.getAvailableDepartments(user.companyId);
   }
 
   @Get('files')
   @ScheduleSwagger.getScheduleFiles()
-  async getScheduleFiles(
-    @AuthUser() user: UserProfile,
-  ): Promise<ScheduleFile[]> {
+  async getScheduleFiles(@AuthUser() user: User): Promise<ScheduleFile[]> {
     return this.scheduleService.getScheduleFiles(user.companyId);
   }
 
   @Get('department-summary')
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.getDepartmentSummary()
-  async getDepartmentSummary(@AuthUser() user: UserProfile) {
+  async getDepartmentSummary(@AuthUser() user: User) {
     return this.scheduleService.getDepartmentSummary(user.companyId);
   }
 
   @Get('columns')
   @ScheduleSwagger.getScheduleColumns()
-  async getScheduleColumns(@AuthUser() user: UserProfile) {
+  async getScheduleColumns(@AuthUser() user: User) {
     const columns = await this.scheduleService.getScheduleColumns(
       user.companyId,
     );
@@ -171,21 +169,21 @@ export class ScheduleController {
   @Get('config')
   @Roles(Role.ADMIN)
   @ScheduleSwagger.getScheduleSyncConfig()
-  async getScheduleSyncConfig(@AuthUser() user: UserProfile) {
+  async getScheduleSyncConfig(@AuthUser() user: User) {
     return this.scheduleService.getScheduleSyncConfig(user.companyId);
   }
 
   @Post('sync')
   @Roles(Role.ADMIN)
   @ScheduleSwagger.triggerScheduleSync()
-  async triggerScheduleSync(@AuthUser() user: UserProfile) {
+  async triggerScheduleSync(@AuthUser() user: User) {
     return this.scheduleService.triggerScheduleSync(user.companyId);
   }
 
   @Get('column-mappings')
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
   @ScheduleSwagger.getColumnMappings()
-  async getColumnMappings(@AuthUser() user: UserProfile) {
+  async getColumnMappings(@AuthUser() user: User) {
     const mappings = await this.scheduleService.getColumnMappings(
       user.companyId,
     );
@@ -196,7 +194,7 @@ export class ScheduleController {
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.createColumnMapping()
   async createColumnMapping(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
     @Body() dto: CreateColumnMappingDto,
   ) {
     const mapping = await this.scheduleService.createColumnMapping(
@@ -210,7 +208,7 @@ export class ScheduleController {
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.updateColumnMapping()
   async updateColumnMapping(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateColumnMappingDto,
   ) {
@@ -226,7 +224,7 @@ export class ScheduleController {
   @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN, Role.OPERATOR, Role.USER)
   async getScheduleByWoNumber(
     @Param('woNumber') woNumber: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; data: { schedule: ScheduleData | null } }> {
     const schedule = await this.scheduleService.findScheduleDataByWoId(
       woNumber,
@@ -243,7 +241,7 @@ export class ScheduleController {
   @Get('files/active')
   @ScheduleSwagger.getActiveScheduleFile()
   async getActiveScheduleFile(
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<ScheduleFile | null> {
     return this.scheduleService.getActiveScheduleFile(user.companyId);
   }
@@ -253,7 +251,7 @@ export class ScheduleController {
   @ScheduleSwagger.getTimeSegments()
   async getTimeSegments(
     @Param('id', ParseUUIDPipe) id: string,
-    @AuthUser() user: UserProfile,
+    @AuthUser() user: User,
   ): Promise<{ success: boolean; data: any[] }> {
     const data = await this.scheduleService.getTimeSegmentsByScheduleId(
       id,
