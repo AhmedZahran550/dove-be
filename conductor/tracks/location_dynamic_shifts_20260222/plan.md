@@ -16,7 +16,7 @@ This phase focuses on updating the database schema and NestJS entities to reflec
     - Update `CreateLocationDto` to include `shifts` (array of objects) and `adminEmail` (string).
     - Update `UpdateLocationDto` similarly.
     - Ensure mapping in `LocationsService` uses the correct fields.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Database and Entity Updates' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 1: Database and Entity Updates' (Protocol in workflow.md)** (b929a0c)
 
 ## Phase 2: Validation and Utilities [checkpoint: 72dfa09]
 This phase introduces validation logic for the new dynamic shift format.
@@ -28,7 +28,7 @@ This phase introduces validation logic for the new dynamic shift format.
   - Apply this validation to the `shifts` array in the DTOs.
 - [x] **Task: Write Unit Tests for Shift Validation** (6e8d622)
   - Create a test file (e.g., `src/modules/locations/utils/shift-validator.spec.ts`) to verify various time range scenarios.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 2: Validation and Utilities' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 2: Validation and Utilities' (Protocol in workflow.md)** (72dfa09)
 
 ## Phase 3: Service Logic and Invitations [checkpoint: 98ff3ac]
 This phase updates the business logic to handle the new data and automate invitations.
@@ -43,16 +43,16 @@ This phase updates the business logic to handle the new data and automate invita
   - Modify `LocationsService.update` to:
     - Support updating the `shifts` array.
     - Trigger an invitation if `adminEmail` is updated to a new email address.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 3: Service Logic and Invitations' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 3: Service Logic and Invitations' (Protocol in workflow.md)** (98ff3ac)
 
-## Phase 4: Integration Testing and Verification
+## Phase 4: Integration Testing and Verification [checkpoint: 3a2d81c]
 This phase ensures everything works together correctly.
 
-- [ ] **Task: Write E2E Tests for Location Creation with Shifts and Invitations**
-  - Update or create E2E tests in `test/locations.e2e-spec.ts` (if it exists) or a new file.
+- [x] **Task: Write E2E Tests for Location Creation with Shifts and Invitations** (3a2d81c)
+  - Update or create E2E tests in `test/locations.e2e-spec.ts`.
   - Verify that shifts are saved correctly in the database.
   - Verify that an invitation record is created when an `adminEmail` is provided.
-- [ ] **Task: Final Verification and Documentation**
+- [x] **Task: Final Verification and Documentation** (3a2d81c)
   - Ensure all tests pass.
   - Check for regressions in other modules that might have used the location `email` column.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4: Integration Testing and Verification' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 4: Integration Testing and Verification' (Protocol in workflow.md)** (3a2d81c)
