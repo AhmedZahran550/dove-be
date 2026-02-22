@@ -4,6 +4,24 @@ import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserProfile } from '../../database/entities';
 
+jest.mock('nestjs-paginate', () => ({
+  paginate: jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      totalItems: 0,
+      itemCount: 0,
+      itemsPerPage: 10,
+      totalPages: 0,
+      currentPage: 1,
+    },
+    links: {},
+  }),
+  FilterOperator: { EQ: 'eq' },
+  FilterSuffix: { NOT: 'not' },
+}));
+
+import { paginate } from 'nestjs-paginate';
+
 describe('UsersService', () => {
   let service: UsersService;
   let mockUserRepo: any;
@@ -19,6 +37,16 @@ describe('UsersService', () => {
     createdAt: new Date(),
   };
 
+  const mockQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    leftJoinAndSelect: jest.fn().mockReturnThis(),
+    skip: jest.fn().mockReturnThis(),
+    take: jest.fn().mockReturnThis(),
+    getManyAndCount: jest.fn().mockResolvedValue([[mockUser], 1]),
+  };
+
   beforeEach(async () => {
     mockUserRepo = {
       findOne: jest.fn(),
@@ -26,6 +54,12 @@ describe('UsersService', () => {
       create: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      metadata: {
+        target: UserProfile,
+        columns: [],
+        relations: [],
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -83,20 +117,25 @@ describe('UsersService', () => {
 
   describe('findByCompany', () => {
     it('should return all users for a company', async () => {
-      mockUserRepo.find.mockResolvedValue([mockUser]);
+      const mockResult = {
+        data: [mockUser],
+        meta: { totalItems: 1, currentPage: 1 },
+      };
+      (paginate as jest.Mock).mockResolvedValue(mockResult);
 
-      const result = await service.findByCompany('company-uuid');
+      const mockQuery: any = { path: 'users' };
+      const result = await service.findByCompany('company-uuid', mockQuery);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].companyId).toBe('company-uuid');
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].companyId).toBe('company-uuid');
     });
 
-    it('should return empty array if no users found', async () => {
-      mockUserRepo.find.mockResolvedValue([]);
+    it('should return empty result if no users found', async () => {
+      (paginate as jest.Mock).mockResolvedValue({ data: [], meta: { totalItems: 0 } });
+      const mockQuery: any = { path: 'users' };
+      const result = await service.findByCompany('company-uuid', mockQuery);
 
-      const result = await service.findByCompany('company-uuid');
-
-      expect(result).toHaveLength(0);
+      expect(result.data).toHaveLength(0);
     });
   });
 });

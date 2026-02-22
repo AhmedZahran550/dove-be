@@ -5,6 +5,24 @@ import { WorkOrdersService } from './work-orders.service';
 import { WorkOrder } from '../../database/entities';
 import { Location } from '../../database/entities';
 
+jest.mock('nestjs-paginate', () => ({
+  paginate: jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      totalItems: 0,
+      itemCount: 0,
+      itemsPerPage: 10,
+      totalPages: 0,
+      currentPage: 1,
+    },
+    links: {},
+  }),
+  FilterOperator: { EQ: 'eq' },
+  FilterSuffix: { NOT: 'not' },
+}));
+
+import { paginate } from 'nestjs-paginate';
+
 describe('WorkOrdersService', () => {
   let service: WorkOrdersService;
   let mockWorkOrderRepo: any;
@@ -33,11 +51,22 @@ describe('WorkOrdersService', () => {
     mockWorkOrderRepo = {
       findOne: jest.fn(),
       find: jest.fn(),
-      findAndCount: jest.fn(),
+      findAndCount: jest.fn().mockResolvedValue([[mockWorkOrder], 1]),
       create: jest.fn((data) => ({ id: 'wo-uuid', ...data })),
       save: jest.fn((wo) => Promise.resolve(wo)),
       update: jest.fn().mockResolvedValue({ affected: 1 }),
       remove: jest.fn().mockResolvedValue(mockWorkOrder),
+      createQueryBuilder: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+      }),
+      metadata: {
+        target: WorkOrder,
+        columns: [],
+        relations: [],
+      },
     };
 
     mockLocationRepo = {
@@ -95,12 +124,19 @@ describe('WorkOrdersService', () => {
 
   describe('findAll', () => {
     it('should return paginated work orders', async () => {
+      const mockResult = {
+        data: [mockWorkOrder],
+        meta: { totalItems: 1, currentPage: 1 },
+      };
+      // In this case WorkOrdersService.findAll doesn't use paginate utility
+      // but we still want to test its logic.
       mockWorkOrderRepo.findAndCount.mockResolvedValue([[mockWorkOrder], 1]);
 
       const result = await service.findAll('company-uuid', {
+        path: 'work-orders',
         page: 1,
         limit: 20,
-      });
+      } as any);
 
       expect(result.data).toHaveLength(1);
       expect(result.meta.totalItems).toBe(1);
@@ -156,7 +192,7 @@ describe('WorkOrdersService', () => {
     });
 
     it('should throw BadRequestException if already closed', async () => {
-      const closedWo = { ...mockWorkOrder, closing_time: new Date() };
+      const closedWo = { ...mockWorkOrder, closingTime: new Date() };
       mockWorkOrderRepo.findOne.mockResolvedValue(closedWo);
 
       await expect(
