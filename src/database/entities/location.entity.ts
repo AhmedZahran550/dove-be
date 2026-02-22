@@ -67,8 +67,8 @@ export class Location extends BaseEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   phone?: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  email?: string;
+  @Column({ type: 'jsonb', nullable: true })
+  shifts: any[];
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
