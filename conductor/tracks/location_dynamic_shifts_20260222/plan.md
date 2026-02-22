@@ -21,12 +21,12 @@ This phase focuses on updating the database schema and NestJS entities to reflec
 ## Phase 2: Validation and Utilities
 This phase introduces validation logic for the new dynamic shift format.
 
-- [ ] **Task: Implement Shift Time Validation**
+- [x] **Task: Implement Shift Time Validation** (6e8d622)
   - Create a custom validation decorator or utility to:
     - Validate the time format (e.g., "08:00 AM").
     - Ensure the `end` time is after the `start` time.
   - Apply this validation to the `shifts` array in the DTOs.
-- [ ] **Task: Write Unit Tests for Shift Validation**
+- [x] **Task: Write Unit Tests for Shift Validation** (6e8d622)
   - Create a test file (e.g., `src/modules/locations/utils/shift-validator.spec.ts`) to verify various time range scenarios.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Validation and Utilities' (Protocol in workflow.md)**
 
