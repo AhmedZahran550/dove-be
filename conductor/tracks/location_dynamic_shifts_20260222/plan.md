@@ -1,6 +1,6 @@
 # Implementation Plan: Dynamic Location Shifts and Admin Invitations
 
-## Phase 1: Database and Entity Updates
+## Phase 1: Database and Entity Updates [checkpoint: b929a0c]
 This phase focuses on updating the database schema and NestJS entities to reflect the new requirements.
 
 - [x] **Task: Create Database Migration** (113a389)
