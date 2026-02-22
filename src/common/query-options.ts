@@ -16,6 +16,7 @@ export interface TransactionOptions {
   isolationLevel?: IsolationLevel;
   manager?: EntityManager;
   queryRunner?: QueryRunner;
+  user?: any;
 }
 export interface QueryOptions extends PaginateQuery, TransactionOptions {
   enableCache?: boolean;

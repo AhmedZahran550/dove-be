@@ -11,6 +11,8 @@ import {
 } from '@/common/query-options';
 import { CreateLocationDto } from './dto/location.dto';
 import { UpdateLocationDto } from './dto/location.dto';
+import { InvitationsService } from '../invitations/invitations.service';
+import { Role } from '../auth/role.model';
 
 export const LOCATIONS_PAGINATION_CONFIG: QueryConfig<Location> = {
   sortableColumns: ['createdAt', 'updatedAt', 'name', 'city'],
@@ -33,6 +35,7 @@ export class LocationsService extends DBService<
   constructor(
     @InjectRepository(Location)
     private locationsRepository: Repository<Location>,
+    private invitationsService: InvitationsService,
   ) {
     super(locationsRepository, LOCATIONS_PAGINATION_CONFIG);
   }
@@ -80,10 +83,40 @@ export class LocationsService extends DBService<
       companyId: dto.company.id,
       isActive: true,
     });
-    return this.locationsRepository.save(entity);
+    const savedLocation = await this.locationsRepository.save(entity);
+
+    // If adminEmail is provided and we have user context, trigger invitation
+    if (dto.adminEmail && options?.user) {
+      try {
+        await this.invitationsService.createInvitation(
+          dto.company.id,
+          options.user,
+          {
+            email: dto.adminEmail,
+            role: Role.LOCATION_ADMIN,
+            locationId: savedLocation.id,
+          },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to create invitation for ${dto.adminEmail} for location ${savedLocation.id}`,
+          error,
+        );
+        // We don't throw error to avoid rolling back location creation
+        // Invitation failure shouldn't prevent location creation
+      }
+    }
+
+    return savedLocation;
   }
 
-  async update(id: string, dto: UpdateLocationDto): Promise<Location> {
+  async update(
+    id: string,
+    dto: UpdateLocationDto,
+    options?: TransactionOptions,
+  ): Promise<Location> {
+    const existingLocation = await this.findById(id);
+
     const updateData: any = {};
     if (dto.name) updateData.name = dto.name;
     if (dto.code) updateData.code = dto.code;
@@ -99,6 +132,31 @@ export class LocationsService extends DBService<
     if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
 
     await this.locationsRepository.update(id, updateData);
+
+    // If adminEmail is updated and it's different from current managerEmail
+    if (
+      dto.adminEmail &&
+      dto.adminEmail !== existingLocation.managerEmail &&
+      options?.user
+    ) {
+      try {
+        await this.invitationsService.createInvitation(
+          existingLocation.companyId,
+          options.user,
+          {
+            email: dto.adminEmail,
+            role: Role.LOCATION_ADMIN,
+            locationId: id,
+          },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to create invitation for ${dto.adminEmail} during update for location ${id}`,
+          error,
+        );
+      }
+    }
+
     return this.findById(id);
   }
 }

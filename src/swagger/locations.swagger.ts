@@ -32,4 +32,16 @@ export const LocationsSwagger = {
       }),
       ApiBearerAuth('JWT-auth'),
     ),
+  update: () =>
+    applyDecorators(
+      ApiOperation({ summary: 'Update an existing location' }),
+      ApiResponse({
+        status: 200,
+        description: 'Location updated successfully',
+      }),
+      ApiResponse({ status: 400, description: 'Validation error' }),
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiResponse({ status: 404, description: 'Location not found' }),
+      ApiBearerAuth('JWT-auth'),
+    ),
 };
