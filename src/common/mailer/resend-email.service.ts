@@ -102,17 +102,16 @@ export class ResendEmailService {
   async sendEmailVerification(
     email: string,
     userName: string,
-    verificationToken: string,
+    verificationCode: string,
     organizationName?: string,
   ) {
     const frontendUrl = this.configService.get('FRONTEND_URL');
-    const verificationUrl = `${frontendUrl}/email-verification?token=${verificationToken}`;
 
     try {
       const html = this.renderTemplate('email-verification', {
         userName: userName,
         organizationName: organizationName || 'your organization',
-        verificationUrl: verificationUrl,
+        verificationCode: verificationCode,
         appUrl: frontendUrl,
         year: new Date().getFullYear(),
       });

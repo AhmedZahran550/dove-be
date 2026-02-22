@@ -63,7 +63,6 @@ export class EmailService {
     organizationName?: string,
   ) {
     const frontendUrl = this.configService.get('FRONTEND_URL');
-
     try {
       await this.mailerService.sendMail({
         to: email,
