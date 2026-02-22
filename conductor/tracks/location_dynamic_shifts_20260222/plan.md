@@ -11,7 +11,7 @@ This phase focuses on updating the database schema and NestJS entities to reflec
     - Add `@Column({ type: 'jsonb', nullable: true }) shifts: any[];`
     - Remove the `email` property.
     - Ensure `managerEmail` is properly documented/used.
-- [ ] **Task: Update Location DTOs**
+- [x] **Task: Update Location DTOs** (c6b8339)
   - Modify `src/modules/locations/dto/location.dto.ts`:
     - Update `CreateLocationDto` to include `shifts` (array of objects) and `adminEmail` (string).
     - Update `UpdateLocationDto` similarly.
