@@ -16,7 +16,7 @@ import { AuthUserDto } from '../auth/dto/auth-user.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/role.model';
 import { Paginate, QueryOptions } from '@/common/query-options';
-import { UUIDParam } from '@/common/decorators/uuid-param.decorator';
+import { UuidParam } from '@/common/decorators/uuid-param.decorator';
 
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 
@@ -44,7 +44,7 @@ export class LocationsController {
   @CacheEvict('locations:all')
   @LocationsSwagger.update()
   async update(
-    @UUIDParam('id') id: string,
+    @UuidParam('id') id: string,
     @AuthUser() user: AuthUserDto,
     @Body() updateLocationDto: UpdateLocationDto,
   ) {
