@@ -30,7 +30,7 @@ This phase introduces validation logic for the new dynamic shift format.
   - Create a test file (e.g., `src/modules/locations/utils/shift-validator.spec.ts`) to verify various time range scenarios.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Validation and Utilities' (Protocol in workflow.md)**
 
-## Phase 3: Service Logic and Invitations
+## Phase 3: Service Logic and Invitations [checkpoint: 98ff3ac]
 This phase updates the business logic to handle the new data and automate invitations.
 
 - [x] **Task: Update LocationsService Create Logic** (75aa062)
