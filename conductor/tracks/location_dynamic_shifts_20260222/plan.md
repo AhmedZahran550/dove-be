@@ -33,13 +33,13 @@ This phase introduces validation logic for the new dynamic shift format.
 ## Phase 3: Service Logic and Invitations
 This phase updates the business logic to handle the new data and automate invitations.
 
-- [ ] **Task: Update LocationsService Create Logic**
+- [x] **Task: Update LocationsService Create Logic** (75aa062)
   - Modify `LocationsService.create` to:
     - Save the `shifts` JSONB array.
     - Map `adminEmail` to `managerEmail`.
     - Map `address` to `addressLine1` and `state` to `stateProvince`.
     - Trigger `InvitationsService.createInvitation` if `adminEmail` is provided.
-- [ ] **Task: Update LocationsService Update Logic**
+- [x] **Task: Update LocationsService Update Logic** (75aa062)
   - Modify `LocationsService.update` to:
     - Support updating the `shifts` array.
     - Trigger an invitation if `adminEmail` is updated to a new email address.
