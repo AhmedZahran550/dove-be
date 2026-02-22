@@ -5,6 +5,7 @@ import {
   IsBoolean,
   MaxLength,
   MinLength,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { UUIDObject } from '@/common/decorators/isObjId.decorator';
@@ -22,7 +23,7 @@ export class CreateLocationDto {
   @ApiProperty({ description: 'Location code (unique within company)' })
   @IsString()
   @MinLength(1)
-  @MaxLength(50)
+  @MaxLength(20)
   code: string;
 
   @ApiPropertyOptional({ description: 'Description' })
@@ -65,10 +66,15 @@ export class CreateLocationDto {
   @MaxLength(50)
   phone?: string;
 
-  @ApiPropertyOptional({ description: 'Email address' })
+  @ApiPropertyOptional({ description: 'Admin Email address (Location Admin)' })
   @IsOptional()
   @IsEmail()
-  email?: string;
+  adminEmail?: string;
+
+  @ApiPropertyOptional({ description: 'Location shifts', type: 'array' })
+  @IsOptional()
+  @IsArray()
+  shifts?: any[];
 
   company: UUIDObject;
 }
@@ -121,7 +127,10 @@ export class LocationResponseDto {
   phone?: string;
 
   @ApiPropertyOptional()
-  email?: string;
+  managerEmail?: string;
+
+  @ApiPropertyOptional()
+  shifts?: any[];
 
   @ApiProperty()
   isActive: boolean;

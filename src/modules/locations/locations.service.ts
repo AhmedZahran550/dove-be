@@ -75,7 +75,8 @@ export class LocationsService extends DBService<
       postalCode: dto.postalCode,
       country: dto.country,
       phone: dto.phone,
-      email: dto.email,
+      managerEmail: dto.adminEmail,
+      shifts: dto.shifts,
       companyId: dto.company.id,
       isActive: true,
     });
@@ -93,7 +94,8 @@ export class LocationsService extends DBService<
     if (dto.postalCode) updateData.postalCode = dto.postalCode;
     if (dto.country) updateData.country = dto.country;
     if (dto.phone) updateData.phone = dto.phone;
-    if (dto.email) updateData.email = dto.email;
+    if (dto.adminEmail) updateData.managerEmail = dto.adminEmail;
+    if (dto.shifts) updateData.shifts = dto.shifts;
     if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
 
     await this.locationsRepository.update(id, updateData);
