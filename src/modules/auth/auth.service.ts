@@ -105,7 +105,9 @@ export class AuthService {
     organizationName?: string,
   ): Promise<void> {
     try {
-      const verificationCode = await this.verificationCodeService.createCode(user.id);
+      const verificationCode = await this.verificationCodeService.createCode(
+        user.id,
+      );
 
       const userName = user.firstName || user.email.split('@')[0];
       await this.emailService.sendEmailVerification(
@@ -171,7 +173,7 @@ export class AuthService {
     });
 
     if (!user) {
-      // Don't reveal if user exists or not for security, 
+      // Don't reveal if user exists or not for security,
       // but in this case we're throwing anyway to match original behavior
       throw new BadRequestException(
         'If an account exists with this email, a verification code will be sent',
@@ -300,6 +302,9 @@ export class AuthService {
 
       // Needs onboarding if missing industry OR no locations
       needsCompanyOnboarding = !hasIndustry || !hasLocations;
+    }
+    if (!user.companyId && user.roles?.includes(Role.COMPANY_ADMIN)) {
+      needsCompanyOnboarding = true;
     }
     const payload = {
       sub: user.id,
