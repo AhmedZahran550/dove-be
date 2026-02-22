@@ -3,10 +3,10 @@
 ## Phase 1: Database and Entity Updates
 This phase focuses on updating the database schema and NestJS entities to reflect the new requirements.
 
-- [ ] **Task: Create Database Migration**
+- [x] **Task: Create Database Migration** (113a389)
   - Add `shifts` JSONB column to the `locations` table.
   - Remove the existing `email` column.
-- [ ] **Task: Update Location Entity**
+- [x] **Task: Update Location Entity** (113a389)
   - Modify `src/database/entities/location.entity.ts`:
     - Add `@Column({ type: 'jsonb', nullable: true }) shifts: any[];`
     - Remove the `email` property.
