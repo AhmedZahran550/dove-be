@@ -17,6 +17,7 @@ This backend system aims to solve the following core problems:
 ## Key Functionalities/Features
 The system will provide the following key functionalities to address identified pain points:
 *   User and role management: Securely manage different user types and assign appropriate roles and permissions.
+*   Location and Shift Management: Define locations with dynamic shifts and automate administrator invitations.
 *   Work order and schedule management: Efficiently create, assign, track, and manage work orders and operational schedules.
 *   Real-time data dashboards and reporting: Provide interactive dashboards and comprehensive reports for monitoring key performance indicators and operational insights.
 *   API for third-party integrations: Expose a well-documented API to allow seamless integration with other internal or external systems.
