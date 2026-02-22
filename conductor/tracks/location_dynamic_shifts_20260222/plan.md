@@ -18,7 +18,7 @@ This phase focuses on updating the database schema and NestJS entities to reflec
     - Ensure mapping in `LocationsService` uses the correct fields.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Database and Entity Updates' (Protocol in workflow.md)**
 
-## Phase 2: Validation and Utilities
+## Phase 2: Validation and Utilities [checkpoint: 72dfa09]
 This phase introduces validation logic for the new dynamic shift format.
 
 - [x] **Task: Implement Shift Time Validation** (6e8d622)
