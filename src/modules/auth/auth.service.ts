@@ -53,29 +53,29 @@ export class AuthService {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ') || '';
 
-    let savedCompany = null;
-    if (dto.organizationName) {
-      // Generate slug from organization name
-      const slug = this.generateSlug(dto.organizationName);
+    const organizationName =
+      dto.organizationName || `${dto.fullName}'s Company`;
 
-      const company: Company = this.companiesRepository.create({
-        name: dto.organizationName,
-        slug,
-        phone: dto.phone,
-        timezone: 'America/Toronto',
-        subscriptionTier: 'free',
-        subscriptionStatus: 'trial',
-        trialEndsAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
-        maxUsers: 5,
-        maxLocations: 1,
-        isActive: true,
-      });
+    // Generate slug from organization name
+    const slug = this.generateSlug(organizationName);
 
-      savedCompany = await this.companiesRepository.save(company);
-    }
+    const company: Company = this.companiesRepository.create({
+      name: organizationName,
+      slug,
+      phone: dto.phone,
+      timezone: 'America/Toronto',
+      subscriptionTier: 'free',
+      subscriptionStatus: 'trial',
+      trialEndsAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days trial
+      maxUsers: 5,
+      maxLocations: 1,
+      isActive: true,
+    });
+
+    const savedCompany = await this.companiesRepository.save(company);
 
     const user = this.usersRepository.create({
-      companyId: savedCompany?.id,
+      companyId: savedCompany.id,
       email: dto.email.toLowerCase(),
       firstName: firstName,
       lastName: lastName,
