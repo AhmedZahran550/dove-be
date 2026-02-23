@@ -10,6 +10,7 @@ import {
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { UUIDObject } from '@/common/decorators/isObjId.decorator';
 import { IsShiftsArray } from '../validators/shift.validator';
+import { Shift } from '@/database';
 
 /**
  * DTO for creating a new location
@@ -75,7 +76,7 @@ export class CreateLocationDto {
   @ApiPropertyOptional({ description: 'Location shifts', type: 'array' })
   @IsOptional()
   @IsShiftsArray()
-  shifts?: any[];
+  shifts?: Shift[];
 
   company: UUIDObject;
 }

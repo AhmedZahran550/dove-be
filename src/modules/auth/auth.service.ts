@@ -291,20 +291,16 @@ export class AuthService {
     if (user.roles?.includes(Role.COMPANY_ADMIN) && user.companyId) {
       const company = await this.companiesRepository.findOne({
         where: { id: user.companyId },
+        relations: ['locations'],
       });
 
       const hasIndustry = !!company?.industry;
 
-      const locationCount = await this.locationsRepository.count({
-        where: { companyId: user.companyId },
-      });
+      const locationCount = company?.locations?.length;
       const hasLocations = locationCount > 0;
 
       // Needs onboarding if missing industry OR no locations
-      needsCompanyOnboarding = !hasIndustry || !hasLocations;
-    }
-    if (!user.companyId && user.roles?.includes(Role.COMPANY_ADMIN)) {
-      needsCompanyOnboarding = true;
+      needsCompanyOnboarding = !hasLocations;
     }
     const payload = {
       sub: user.id,
