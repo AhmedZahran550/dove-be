@@ -55,14 +55,14 @@ export class Invitation extends BaseEntity {
   acceptedAt: Date;
 
   // Relations`
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Company, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
   @Column({ type: 'uuid' })
   companyId: string;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'invited_by' })
   invitedByUser: User;
 }

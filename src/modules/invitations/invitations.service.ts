@@ -217,6 +217,7 @@ export class InvitationsService extends DBService<Invitation> {
         lastName: dto.lastName,
         roles: [invitation.role],
         password: dto.password,
+        phone: dto.phoneNumber,
         isVerified: true,
         isActive: true,
       });

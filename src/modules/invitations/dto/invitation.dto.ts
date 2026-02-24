@@ -66,4 +66,9 @@ export class AcceptInvitationDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
 }
