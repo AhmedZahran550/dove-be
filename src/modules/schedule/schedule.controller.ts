@@ -49,7 +49,6 @@ export class ScheduleController {
   // ===== IMPORT ENDPOINTS =====
 
   @Post('config')
-  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.saveConfig()
   async saveConfig(
     @AuthUser() user: User,
@@ -64,7 +63,6 @@ export class ScheduleController {
   }
 
   @Post('import')
-  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @UseInterceptors(FileInterceptor('file', multerMemoryConfig))
   @ScheduleSwagger.importFile()
   async importFile(
@@ -151,7 +149,6 @@ export class ScheduleController {
   }
 
   @Get('department-summary')
-  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.getDepartmentSummary()
   async getDepartmentSummary(@AuthUser() user: User) {
     return this.scheduleService.getDepartmentSummary(user.companyId);
@@ -167,14 +164,12 @@ export class ScheduleController {
   }
 
   @Get('config')
-  @Roles(Role.ADMIN)
   @ScheduleSwagger.getScheduleSyncConfig()
   async getScheduleSyncConfig(@AuthUser() user: User) {
     return this.scheduleService.getScheduleSyncConfig(user.companyId);
   }
 
   @Post('sync')
-  @Roles(Role.ADMIN)
   @ScheduleSwagger.triggerScheduleSync()
   async triggerScheduleSync(@AuthUser() user: User) {
     return this.scheduleService.triggerScheduleSync(user.companyId);
@@ -191,7 +186,6 @@ export class ScheduleController {
   }
 
   @Post('column-mappings')
-  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.createColumnMapping()
   async createColumnMapping(
     @AuthUser() user: User,
@@ -205,7 +199,6 @@ export class ScheduleController {
   }
 
   @Put('column-mappings/:id')
-  @Roles(Role.COMPANY_ADMIN, Role.LOCATION_ADMIN)
   @ScheduleSwagger.updateColumnMapping()
   async updateColumnMapping(
     @AuthUser() user: User,
